@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,13 +18,12 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}#toast.ok{border-color:var(--gr);color:var(--gr);}#toast.err{border-color:var(--re);color:var(--re);}
 .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-wrap.open{opacity:1;pointer-events:all;}
-.modal{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:24px;width:360px;max-width:95vw;max-height:85vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;}
+.modal{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:24px;width:380px;max-width:95vw;max-height:90vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;}
 .modal-wrap.open .modal{transform:translateY(0);}
 .modal-title{font-size:.85rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;}
 .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
-/* AUTH */
 #authScreen{position:fixed;inset:0;z-index:9000;background:radial-gradient(ellipse at 35% 55%,#091830 0%,var(--bg) 65%);display:flex;align-items:center;justify-content:center;}
-.auth-box{background:var(--s1);border:1px solid var(--bd2);border-radius:20px;padding:36px;width:380px;max-width:95vw;box-shadow:0 40px 80px rgba(0,0,0,.7);}
+.auth-box{background:var(--s1);border:1px solid var(--bd2);border-radius:20px;padding:36px;width:400px;max-width:95vw;box-shadow:0 40px 80px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto;}
 .auth-logo{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--gr);letter-spacing:5px;text-align:center;margin-bottom:3px;}
 .auth-tagline{text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:3px;margin-bottom:28px;}
 .auth-tabs{display:flex;gap:3px;background:var(--s2);border-radius:9px;padding:3px;margin-bottom:18px;}
@@ -43,21 +41,19 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .ae-pill:hover{border-color:var(--gr);}
 .ae-del{margin-left:auto;font-size:.65rem;color:var(--muted);padding:2px 6px;border-radius:4px;background:transparent;border:none;cursor:pointer;}
 .ae-del:hover{color:var(--re);}
-/* APP */
 #app{display:none;flex-direction:column;height:100%;}#app.on{display:flex;}
 .topbar{display:flex;align-items:center;height:46px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
-.topbar-logo{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--gr);letter-spacing:4px;padding:0 18px;border-right:1px solid var(--bd);height:100%;display:flex;align-items:center;}
+.topbar-logo{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--gr);letter-spacing:4px;padding:0 14px;border-right:1px solid var(--bd);height:100%;display:flex;align-items:center;}
 .nav-list{display:flex;height:100%;}
-.nav-btn{display:flex;align-items:center;gap:5px;padding:0 14px;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid transparent;height:100%;transition:all .15s;}
+.nav-btn{display:flex;align-items:center;gap:5px;padding:0 11px;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid transparent;height:100%;transition:all .15s;}
 .nav-btn:hover{color:var(--txt);}.nav-btn.active{color:var(--gr);border-bottom-color:var(--gr);}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:14px;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px;padding-right:10px;}
 .user-pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:4px 10px;font-size:.75rem;font-weight:700;cursor:pointer;}
 .rec-row{display:flex;gap:3px;}
 .rb{font-size:.65rem;font-weight:800;padding:2px 6px;border-radius:4px;}
 .rb-w{background:rgba(0,229,122,.12);color:var(--gr);}.rb-d{background:rgba(90,99,128,.12);color:var(--muted);}.rb-l{background:rgba(255,61,90,.12);color:var(--re);}
 .main{flex:1;overflow:hidden;position:relative;}
 .screen{display:none;width:100%;height:100%;}.screen.active{display:flex;flex-direction:column;}
-/* PANELS */
 .two-col{display:flex;flex:1;overflow:hidden;}
 .col-left{width:250px;flex-shrink:0;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--s1);}
 .col-right{flex:1;overflow-y:auto;padding:16px;}
@@ -65,13 +61,12 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .col-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
 .col-body{flex:1;overflow-y:auto;padding:8px;}
 ::-webkit-scrollbar{width:3px;height:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px;}
-/* BTNS */
 .btn{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700;padding:7px 14px;border:none;border-radius:7px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
 .btn:active{transform:scale(.97);}
 .btn-gr{background:var(--gr);color:#07080e;}.btn-gr:hover{background:var(--gr2);}
 .btn-s3{background:var(--s4);color:var(--txt);border:1px solid var(--bd2);}.btn-s3:hover{background:var(--s5);}
 .btn-re{background:rgba(255,61,90,.12);color:var(--re);border:1px solid rgba(255,61,90,.2);}.btn-re:hover{background:rgba(255,61,90,.2);}
-.btn-bl{background:var(--bl);color:#fff;}
+.btn-bl{background:var(--bl);color:#fff;}.btn-pu{background:var(--pu);color:#fff;}
 .btn-sm{font-size:.68rem;padding:5px 10px;}.btn-xs{font-size:.62rem;padding:3px 7px;}
 .inp{font-family:'Syne',sans-serif;font-size:.82rem;background:var(--s3);border:1px solid var(--bd2);border-radius:7px;color:var(--txt);padding:7px 10px;outline:none;transition:border-color .15s;width:100%;}
 .inp:focus{border-color:var(--gr);}.inp::placeholder{color:var(--muted);}
@@ -111,7 +106,6 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .rtab{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;background:var(--s2);border:1px solid var(--bd);cursor:pointer;font-size:.72rem;font-weight:700;transition:all .12s;white-space:nowrap;flex-shrink:0;}
 .rtab.on{border-color:var(--gr);background:rgba(0,229,122,.08);color:var(--gr);}
 .prog-canvas{flex:1;overflow-y:auto;padding:14px;background:var(--bg);}
-/* program blocks */
 .prog-seq{display:flex;flex-direction:column;gap:2px;}
 .start-blk{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:9px 9px 0 0;background:#153a20;border:1.5px solid #2a7040;font-size:.78rem;font-weight:800;color:#00ff88;letter-spacing:.5px;}
 .end-blk{padding:7px 14px;border-radius:0 0 9px 9px;background:#0d1f12;border:1.5px solid #1a4028;border-top:none;font-size:.68rem;font-weight:800;color:rgba(0,255,136,.3);letter-spacing:.5px;}
@@ -121,7 +115,6 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .pb-cat{font-size:.58rem;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;margin-left:auto;}
 .pb-del{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:.75rem;padding:2px 5px;border-radius:4px;margin-left:4px;flex-shrink:0;transition:all .1s;}
 .pb-del:hover{color:var(--re);background:rgba(255,61,90,.15);}
-/* IF */
 .if-wrap{border-radius:6px;overflow:hidden;margin:2px 0;}
 .if-head{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:.76rem;font-weight:700;background:#2a1650;border-left:3px solid var(--pu);}
 .if-cond-sel{background:rgba(159,111,255,.2);border:1px solid rgba(159,111,255,.3);border-radius:5px;color:var(--pu);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;padding:3px 7px;cursor:pointer;outline:none;flex:1;max-width:230px;}
@@ -145,16 +138,18 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 /* MATCH */
 .match-shell{display:flex;flex:1;overflow:hidden;}
 .match-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.match-hud{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
-.hud-team{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:100px;}
+.match-hud{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.hud-team{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:90px;}
 .hud-name{font-size:.75rem;font-weight:800;letter-spacing:1px;}
 .hud-poss{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;min-height:14px;}
-.hud-score-c{display:flex;align-items:center;flex-direction:column;gap:3px;}
+.hud-score-c{display:flex;align-items:center;flex-direction:column;gap:2px;}
 .hud-score-row{display:flex;align-items:center;gap:14px;}
 .hud-score{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;}
 .hud-time{font-size:.68rem;font-weight:800;color:var(--muted);letter-spacing:2px;}
-.match-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;}
-.match-sidebar{width:210px;flex-shrink:0;background:var(--s1);border-left:1px solid var(--bd);display:flex;flex-direction:column;}
+.hud-period-badge{font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(245,196,0,.15);color:var(--ye);letter-spacing:1px;}
+.match-canvas-wrap{flex:1;display:flex;align-items:stretch;justify-content:center;background:#0a0f08;position:relative;overflow:hidden;}
+#matchCanvas{width:100%;height:100%;display:block;}
+.match-sidebar{width:200px;flex-shrink:0;background:var(--s1);border-left:1px solid var(--bd);display:flex;flex-direction:column;}
 .ms-head{padding:10px 12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
 .ms-title{font-size:.62rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
 .ms-log{flex:1;overflow-y:auto;padding:6px;}
@@ -163,31 +158,72 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .le-action{color:var(--txt);border-color:var(--s4);}.le-chip{color:var(--cy);border-color:rgba(0,212,232,.3);}
 .le-info{color:var(--muted);}.le-if{color:var(--pu);border-color:rgba(159,111,255,.3);}
 .ms-ctrl{padding:8px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:5px;}
-.match-overlay{position:absolute;inset:0;background:rgba(7,8,14,.92);z-index:10;display:flex;align-items:center;justify-content:center;}
-.mo-box{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:28px;width:360px;}
-.mo-title{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--gr);letter-spacing:3px;margin-bottom:18px;text-align:center;}
-.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
-.vs-card{padding:14px;border:1px solid var(--bd);border-radius:10px;cursor:pointer;text-align:center;transition:all .15s;background:var(--s3);}
+.match-overlay{position:absolute;inset:0;background:rgba(7,8,14,.92);z-index:10;display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+.mo-box{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:24px;width:400px;max-width:95vw;my:auto;}
+.mo-title{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--gr);letter-spacing:3px;margin-bottom:16px;text-align:center;}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.vs-card{padding:12px;border:1px solid var(--bd);border-radius:10px;cursor:pointer;text-align:center;transition:all .15s;background:var(--s3);}
 .vs-card:hover,.vs-card.on{border-color:var(--gr);background:rgba(0,229,122,.06);}
-.vs-ico{font-size:1.8rem;margin-bottom:5px;}.vs-lbl{font-size:.78rem;font-weight:700;}
-.dur-row{display:flex;gap:6px;margin-bottom:14px;}
-.dur-btn{flex:1;padding:7px;border:1px solid var(--bd);border-radius:7px;background:var(--s3);color:var(--muted);font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .12s;}
+.vs-ico{font-size:1.6rem;margin-bottom:4px;}.vs-lbl{font-size:.78rem;font-weight:700;}
+.dur-row{display:flex;gap:5px;margin-bottom:12px;}
+.dur-btn{flex:1;padding:6px;border:1px solid var(--bd);border-radius:7px;background:var(--s3);color:var(--muted);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s;}
 .dur-btn.on{border-color:var(--gr);color:var(--gr);background:rgba(0,229,122,.08);}
 .mo-err{font-size:.73rem;color:var(--re);margin-top:6px;}
+.mo-sect{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+/* Stadium picker */
+.stad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.stad-card{padding:8px;border:1px solid var(--bd);border-radius:8px;cursor:pointer;text-align:center;transition:all .15s;background:var(--s3);}
+.stad-card:hover,.stad-card.on{border-color:var(--cy);background:rgba(0,212,232,.06);}
+.stad-ico{font-size:1.3rem;margin-bottom:3px;}
+.stad-lbl{font-size:.62rem;font-weight:700;color:var(--txt);}
+.stad-sub{font-size:.55rem;color:var(--muted);}
+/* Weather picker */
+.wx-row{display:flex;gap:6px;margin-bottom:12px;}
+.wx-btn{flex:1;padding:6px;border:1px solid var(--bd);border-radius:7px;background:var(--s3);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .12s;text-align:center;}
+.wx-btn.on{border-color:var(--bl);color:var(--cy);background:rgba(61,127,255,.1);}
 /* ONLINE */
-.online-wrap{flex:1;overflow-y:auto;padding:20px;max-width:820px;margin:0 auto;width:100%;}
-.online-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:600px){.online-grid{grid-template-columns:1fr;}}
+.online-wrap{flex:1;overflow-y:auto;padding:20px;}
+.online-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:0 auto;}
+@media(max-width:700px){.online-grid{grid-template-columns:1fr;}}
 .o-card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:18px;}
 .o-card-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
-.code-big{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;letter-spacing:10px;color:var(--gr);text-align:center;padding:12px 0;}
+.code-big{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;letter-spacing:8px;color:var(--gr);text-align:center;padding:10px 0;}
 .rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
 .rec-box{background:var(--s3);border:1px solid var(--bd);border-radius:8px;padding:10px;text-align:center;}
 .rec-num{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;}
 .rec-lbl{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
 .divider{height:1px;background:var(--bd);margin:12px 0;}
+/* RANKED */
+.rank-tier{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;border:1px solid var(--bd);background:var(--s3);margin-bottom:6px;}
+.rank-ico{font-size:1.4rem;}
+.rank-name{font-size:.82rem;font-weight:800;}
+.rank-pts{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);}
+.rank-bar-wrap{height:4px;background:var(--s4);border-radius:2px;overflow:hidden;margin-top:3px;}
+.rank-bar-fill{height:100%;border-radius:2px;}
+/* LEAGUES */
+.league-card{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.league-card:hover{border-color:var(--bd2);}
+.league-table{width:100%;border-collapse:collapse;font-size:.72rem;}
+.league-table th{font-size:.6rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:5px 8px;text-align:left;border-bottom:1px solid var(--bd);}
+.league-table td{padding:6px 8px;border-bottom:1px solid var(--bd);}
+.league-table tr:last-child td{border:none;}
+.lt-pos{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:.65rem;}
+.lt-pts{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ye);}
+/* CLANS */
+.clan-card{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:8px;}
+.clan-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:6px;}
+/* End match overlay */
+.end-overlay{position:absolute;inset:0;background:rgba(7,8,14,.88);z-index:20;display:flex;align-items:center;justify-content:center;}
+.end-box{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:32px;text-align:center;width:320px;}
+.end-title{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;letter-spacing:3px;margin-bottom:8px;}
+.end-score{font-family:'JetBrains Mono',monospace;font-size:2.5rem;font-weight:700;margin-bottom:12px;}
+.end-rank{font-size:.72rem;color:var(--muted);margin-bottom:18px;}
+/* Rain overlay */
+#rainCanvas{position:absolute;inset:0;pointer-events:none;z-index:5;}
 @keyframes livepulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .live-dot{display:inline-block;animation:livepulse 1s ease-in-out infinite;}
+@keyframes rankup{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+.rankup-anim{animation:rankup .4s ease;}
 </style>
 </head>
 <body>
@@ -212,14 +248,19 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
       <button class="nav-btn" onclick="goScreen('scratch',this)">🧩 Program</button>
       <button class="nav-btn" onclick="goScreen('field',this)">🏟 Formation</button>
       <button class="nav-btn" onclick="goScreen('match',this)">⚽ Match</button>
+      <button class="nav-btn" onclick="goScreen('ranked',this)">🏆 Ranked</button>
+      <button class="nav-btn" onclick="goScreen('leagues',this)">🥇 Leagues</button>
+      <button class="nav-btn" onclick="goScreen('clans',this)">🛡 Clans</button>
       <button class="nav-btn" onclick="goScreen('online',this)">🌐 Online</button>
     </nav>
     <div class="topbar-right">
       <div class="rec-row"><span class="rb rb-w" id="recW">W 0</span><span class="rb rb-d" id="recD">D 0</span><span class="rb rb-l" id="recL">L 0</span></div>
+      <div id="rankBadge" style="font-size:.7rem;font-weight:800;padding:3px 8px;border-radius:5px;background:rgba(245,196,0,.15);color:var(--ye);">🥉 BRONZE</div>
       <div class="user-pill" onclick="signOut()"><span id="userAva">🤖</span><span id="userName">—</span><span style="color:var(--muted);font-size:.65rem">↩</span></div>
     </div>
   </div>
   <div class="main">
+    <!-- ROBOTS -->
     <div id="screen-robots" class="screen active">
       <div class="two-col">
         <div class="col-left">
@@ -231,6 +272,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
         </div>
       </div>
     </div>
+    <!-- SCRATCH -->
     <div id="screen-scratch" class="screen">
       <div class="scratch-wrap">
         <div class="palette">
@@ -244,6 +286,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
         </div>
       </div>
     </div>
+    <!-- FIELD -->
     <div id="screen-field" class="screen">
       <div class="field-wrap">
         <div class="field-side">
@@ -260,6 +303,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
         <div class="field-canvas-area" id="fieldCanvasArea"><canvas id="fieldCanvas"></canvas></div>
       </div>
     </div>
+    <!-- MATCH -->
     <div id="screen-match" class="screen">
       <div class="match-shell">
         <div class="match-main">
@@ -268,11 +312,13 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
             <div class="hud-score-c">
               <div class="hud-score-row"><div class="hud-score" id="hudSH">0</div><div style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--muted)">:</div><div class="hud-score" id="hudSA">0</div></div>
               <div class="hud-time" id="hudTime">—</div>
+              <div class="hud-period-badge" id="hudPeriodBadge">P1</div>
             </div>
             <div class="hud-team" style="align-items:flex-end"><div class="hud-name" id="hudA" style="color:var(--re)">—</div><div class="hud-poss" id="hudPA"></div></div>
           </div>
           <div class="match-canvas-wrap" id="matchCanvasWrap">
             <canvas id="matchCanvas"></canvas>
+            <canvas id="rainCanvas" style="display:none;"></canvas>
             <div class="match-overlay" id="matchOverlay">
               <div class="mo-box">
                 <div class="mo-title">⚽ KICK OFF</div>
@@ -281,14 +327,26 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
                   <div class="vs-card" id="vsFriend" onclick="pickVs('friend')"><div class="vs-ico">👥</div><div class="vs-lbl">vs Friend</div></div>
                 </div>
                 <div id="friendCodeRow" style="display:none;margin-bottom:10px;"><input class="inp" id="friendCodeInp" placeholder="Friend's 4-char code…" maxlength="4" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"></div>
-                <div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Duration</div>
+                <div class="mo-sect" style="margin-bottom:6px;">Duration (4 periods × time)</div>
                 <div class="dur-row">
-                  <button class="dur-btn" onclick="pickDur(60,this)">1 min</button>
-                  <button class="dur-btn on" onclick="pickDur(180,this)">3 min</button>
-                  <button class="dur-btn" onclick="pickDur(300,this)">5 min</button>
+                  <button class="dur-btn" onclick="pickDur(30,this)">30s</button>
+                  <button class="dur-btn on" onclick="pickDur(60,this)">1min</button>
+                  <button class="dur-btn" onclick="pickDur(90,this)">1.5m</button>
                 </div>
-                <button class="btn btn-gr" style="width:100%;justify-content:center;padding:11px;" onclick="kickOff()">⚽ Kick Off!</button>
+                <div class="mo-sect">Stadium</div>
+                <div class="stad-grid" id="stadGrid"></div>
+                <div class="mo-sect">Weather</div>
+                <div class="wx-row" id="wxRow"></div>
+                <button class="btn btn-gr" style="width:100%;justify-content:center;padding:11px;margin-top:4px;" onclick="kickOff()">⚽ Kick Off!</button>
                 <div class="mo-err" id="moErr"></div>
+              </div>
+            </div>
+            <div id="endOverlay" style="display:none;" class="end-overlay">
+              <div class="end-box">
+                <div class="end-title" id="endTitle">FULL TIME</div>
+                <div class="end-score" id="endScore">0 : 0</div>
+                <div class="end-rank" id="endRankInfo"></div>
+                <button class="btn btn-gr" style="width:100%;justify-content:center;" onclick="closeEndOverlay()">Play Again</button>
               </div>
             </div>
           </div>
@@ -298,11 +356,58 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
           <div class="ms-log" id="matchLog"></div>
           <div class="ms-ctrl">
             <button class="btn btn-s3 btn-sm" id="speedBtn" onclick="toggleSpeed()" style="justify-content:center;">⏩ 3× Speed</button>
-            <button class="btn btn-re btn-sm" onclick="stopMatch()" style="justify-content:center;">⏹ Stop & Reset</button>
+            <button class="btn btn-re btn-sm" onclick="stopMatch()" style="justify-content:center;">⏹ Stop</button>
           </div>
         </div>
       </div>
     </div>
+    <!-- RANKED -->
+    <div id="screen-ranked" class="screen">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:700px;margin:0 auto;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:1rem;font-weight:800;">Ranked Mode</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Earn RP · Climb divisions · Prove your code</div>
+          </div>
+          <button class="btn btn-gr" onclick="startRankedMatch()">▶ Find Match</button>
+        </div>
+        <div id="rankedTiers"></div>
+        <div style="margin-top:18px;">
+          <div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Your Stats</div>
+          <div id="rankedStats"></div>
+        </div>
+      </div>
+    </div>
+    <!-- LEAGUES -->
+    <div id="screen-leagues" class="screen">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:800px;margin:0 auto;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:1rem;font-weight:800;">Leagues</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Season-based competition · 8-team tables</div>
+          </div>
+          <button class="btn btn-gr" onclick="joinLeague()">Join League</button>
+        </div>
+        <div id="leagueContent"></div>
+      </div>
+    </div>
+    <!-- CLANS -->
+    <div id="screen-clans" class="screen">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:800px;margin:0 auto;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:1rem;font-weight:800;">Clans</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Team up · Climb together · Clan wars coming</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-s3 btn-sm" onclick="openJoinClanModal()">Join Clan</button>
+            <button class="btn btn-gr btn-sm" onclick="openCreateClanModal()">+ Create</button>
+          </div>
+        </div>
+        <div id="clanContent"></div>
+      </div>
+    </div>
+    <!-- ONLINE -->
     <div id="screen-online" class="screen">
       <div class="online-wrap">
         <div class="online-grid">
@@ -332,6 +437,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
     </div>
   </div>
 </div>
+<!-- MODALS -->
 <div class="modal-wrap" id="robotModal">
   <div class="modal">
     <div class="modal-title">Create Robot</div>
@@ -351,6 +457,23 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
     <div class="modal-title">Pick Icon</div>
     <div class="emo-grid" id="emojiGrid"></div>
     <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('emojiModal')">Close</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="createClanModal">
+  <div class="modal">
+    <div class="modal-title">Create Clan</div>
+    <div class="af-field"><label class="af-label">Clan Name</label><input class="inp" id="clanName" placeholder="e.g. Iron Wolves"></div>
+    <div class="af-field"><label class="af-label">Tag (3 chars)</label><input class="inp" id="clanTag" placeholder="e.g. IW" maxlength="3" oninput="this.value=this.value.toUpperCase()"></div>
+    <div class="af-field"><label class="af-label">Color</label><div class="cpal" id="clanColors"></div></div>
+    <div class="af-field"><label class="af-label">Icon</label><div class="emo-grid" id="clanEmojis" style="max-height:100px;overflow-y:auto;"></div></div>
+    <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('createClanModal')">Cancel</button><button class="btn btn-gr" onclick="saveClan()">Create Clan</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="joinClanModal">
+  <div class="modal">
+    <div class="modal-title">Join a Clan</div>
+    <div id="joinClanList"></div>
+    <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('joinClanModal')">Close</button></div>
   </div>
 </div>
 <div id="toast"></div>
@@ -438,17 +561,39 @@ const IF_CONDS=[
   {id:'high_str',l:'robot strength > 7'},{id:'high_int',l:'robot intelligence > 7'},
   {id:'random',l:'50% chance'},
 ];
+// STADIUMS
+const STADIUMS=[
+  {id:'classic',name:'Classic',sub:'Standard size',icon:'🏟',scale:1.0,nightMode:false},
+  {id:'night',name:'Night',sub:'Classic + lights',icon:'🌃',scale:1.0,nightMode:true},
+  {id:'rain',name:'Storm',sub:'Slippery ball',icon:'🌧',scale:1.0,nightMode:true,rain:true},
+  {id:'small',name:'Micro',sub:'Smaller arena',icon:'⬛',scale:0.78,nightMode:false},
+  {id:'big',name:'Mega',sub:'Bigger arena',icon:'⬜',scale:1.28,nightMode:false},
+  {id:'nightrain',name:'Night Storm',sub:'Dark + rain',icon:'⛈',scale:1.0,nightMode:true,rain:true},
+];
+// RANKED TIERS
+const RANK_TIERS=[
+  {name:'Wood',icon:'🪵',color:'#a0785a',min:0,max:200},
+  {name:'Bronze',icon:'🥉',color:'#cd7f32',min:200,max:500},
+  {name:'Silver',icon:'🥈',color:'#c0c0c0',min:500,max:900},
+  {name:'Gold',icon:'🥇',color:'#f5c400',min:900,max:1400},
+  {name:'Platinum',icon:'💠',color:'#00d4e8',min:1400,max:2000},
+  {name:'Diamond',icon:'💎',color:'#9f6fff',min:2000,max:3000},
+  {name:'Elite',icon:'👑',color:'#ff7a2f',min:3000,max:999999},
+];
+function getTier(rp){return RANK_TIERS.find(t=>rp>=t.min&&rp<t.max)||RANK_TIERS[0];}
 
 // STATE
 let ACCOUNTS={},CUR=null,DRAG=null,SEL_ROBOT=null,PROG_ROBOT=null,PAL_CAT='move';
 let _emojiCb=null,_newEmoji='🤖',_newColor=COLORS[0],_newStats={spd:5,str:5,int:5};
-let fCanvas,fCtx,fDragId=null,mCanvas,mCtx,mRAF=null;
-let MS={running:false,speed:1,vsMode:'ai',duration:180};
+let _clanEmoji='🛡️',_clanColor=COLORS[0];
+let fCanvas,fCtx,fDragId=null,mCanvas,mCtx,mRAF=null,rainCanvas,rainCtx;
+let MS={running:false,speed:1,vsMode:'ai',duration:60,stadium:'classic',weather:'clear'};
 let MG={};
+let rainDrops=[];
 
 function acct(){return ACCOUNTS[CUR];}
-function save(){localStorage.setItem('bf3_acc',JSON.stringify(ACCOUNTS));localStorage.setItem('bf3_cur',CUR||'');}
-function loadSt(){try{ACCOUNTS=JSON.parse(localStorage.getItem('bf3_acc')||'{}');}catch(e){ACCOUNTS={};}CUR=localStorage.getItem('bf3_cur')||null;}
+function save(){localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));localStorage.setItem('bf5_cur',CUR||'');}
+function loadSt(){try{ACCOUNTS=JSON.parse(localStorage.getItem('bf5_acc')||'{}');}catch(e){ACCOUNTS={};}CUR=localStorage.getItem('bf5_cur')||null;}
 
 let _tt;
 function toast(m,t='ok'){const el=document.getElementById('toast');el.textContent=m;el.className='show '+(t==='err'?'err':'ok');clearTimeout(_tt);_tt=setTimeout(()=>el.className='',2400);}
@@ -485,7 +630,7 @@ function doRegister(){
   if(!u||!p){document.getElementById('authErr').textContent='Fill in all fields.';return;}
   if(u.length<3){document.getElementById('authErr').textContent='Username 3+ chars.';return;}
   if(ACCOUNTS[u]){document.getElementById('authErr').textContent='Username taken.';return;}
-  ACCOUNTS[u]={password:btoa(p),teamName:t,avatar:'🤖',color:COLORS[Math.floor(Math.random()*COLORS.length)],robots:[],field:{},programs:{},record:{w:0,d:0,l:0},code:null};
+  ACCOUNTS[u]={password:btoa(p),teamName:t,avatar:'🤖',color:COLORS[Math.floor(Math.random()*COLORS.length)],robots:[],field:{},programs:{},record:{w:0,d:0,l:0},code:null,rp:250,clan:null,leagueId:null};
   save();loginAs(u);
 }
 function quickLogin(u){CUR=u;save();enterApp();}
@@ -497,7 +642,17 @@ function enterApp(){
   const app=document.getElementById('app');app.style.display='flex';app.className='on';
   document.getElementById('userName').textContent=CUR;document.getElementById('userAva').textContent=acct().avatar||'🤖';
   if(!acct().programs)acct().programs={};if(!acct().field)acct().field={};if(!acct().record)acct().record={w:0,d:0,l:0};
-  updateRec();renderRobotsList();renderScratchTabs();renderFieldSide();renderOnline();
+  if(acct().rp===undefined)acct().rp=250;
+  if(!acct().clan)acct().clan=null;
+  updateRec();updateRankBadge();renderRobotsList();renderScratchTabs();renderFieldSide();renderOnline();
+  initStadPicker();initWxPicker();
+}
+function updateRankBadge(){
+  if(!CUR)return;
+  const t=getTier(acct().rp||0);
+  document.getElementById('rankBadge').textContent=`${t.icon} ${t.name.toUpperCase()}`;
+  document.getElementById('rankBadge').style.color=t.color;
+  document.getElementById('rankBadge').style.background=t.color+'22';
 }
 
 // NAVIGATION
@@ -509,6 +664,9 @@ function goScreen(id,btn){
   if(id==='scratch')renderScratchFull();
   if(id==='field')renderFieldScreen();
   if(id==='online')renderOnline();
+  if(id==='ranked')renderRanked();
+  if(id==='leagues')renderLeagues();
+  if(id==='clans')renderClans();
 }
 
 // ROBOTS
@@ -537,8 +695,6 @@ function renameRobot(id,v){const r=acct().robots.find(x=>x.id===id);if(r){r.name
 function recolorRobot(id,c){const r=acct().robots.find(x=>x.id===id);if(r){r.color=c;save();renderRobotsList();renderRobotEditor();}}
 function deleteRobot(id){if(!confirm('Delete this robot?'))return;acct().robots=acct().robots.filter(x=>x.id!==id);delete acct().programs[id];delete acct().field[id];SEL_ROBOT=null;save();renderRobotsList();document.getElementById('robotEditor').innerHTML=`<div class="empty-hint"><div class="big">🤖</div><div class="txt">Select a robot to edit</div></div>`;}
 function openEmojiForRobot(id){openEmojiModal(e=>{const r=acct().robots.find(x=>x.id===id);if(r){r.emoji=e;save();renderRobotsList();renderRobotEditor();}});}
-
-// NEW ROBOT MODAL
 function openNewRobotModal(){
   _newEmoji='🤖';_newColor=COLORS[0];_newStats={spd:5,str:5,int:5};
   document.getElementById('newRobotName').value='';document.getElementById('newRobotAva').textContent='🤖';document.getElementById('newRobotAva').style.background='';
@@ -562,7 +718,7 @@ function saveNewRobot(){
   save();closeModal('robotModal');renderRobotsList();selectRobot(r.id);renderScratchTabs();toast('Robot created!');
 }
 
-// SCRATCH EDITOR
+// SCRATCH
 function renderScratchFull(){renderPalette();renderScratchTabs();if(PROG_ROBOT)renderProgram();}
 function renderPalette(){
   const q=(document.getElementById('palSearch')?.value||'').toLowerCase();
@@ -574,7 +730,6 @@ function renderPalette(){
 }
 function setPalCat(cat){PAL_CAT=cat;renderPalette();}
 function startDrag(e,id){DRAG={type:'chip',id};e.dataTransfer.effectAllowed='copy';}
-
 function renderScratchTabs(){
   const el=document.getElementById('progTabs'),R=acct()?.robots||[];
   if(!R.length){el.innerHTML=`<span style="font-size:.68rem;color:var(--muted);font-weight:700;">CREATE ROBOTS FIRST</span>`;return;}
@@ -582,7 +737,6 @@ function renderScratchTabs(){
     R.map(r=>`<div class="rtab${PROG_ROBOT===r.id?' on':''}" onclick="openProgramTab('${r.id}')"><span>${r.emoji}</span><span>${r.name}</span></div>`).join('');
 }
 function openProgramTab(id){PROG_ROBOT=id;renderScratchTabs();renderProgram();}
-
 function renderProgram(){
   const el=document.getElementById('progCanvas');
   const r=acct().robots.find(x=>x.id===PROG_ROBOT);
@@ -679,6 +833,7 @@ function renderFieldScreen(){
   fCanvas.ondrop=e=>{
     e.preventDefault();if(!fDragId)return;
     const rect=fCanvas.getBoundingClientRect();
+    // RIGHT half = your half (x > 0.5)
     let nx=(e.clientX-rect.left)/rect.width,ny=(e.clientY-rect.top)/rect.height;
     nx=Math.max(.52,Math.min(.97,nx));ny=Math.max(.05,Math.min(.95,ny));
     acct().field[fDragId]={x:nx,y:ny};fDragId=null;save();drawField();renderFieldSide();
@@ -704,8 +859,11 @@ function drawField(){
   const gw=7,gh=H*.22;
   [[p-gw,(H-gh)/2],[W-p,(H-gh)/2]].forEach(([gx,gy])=>{ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(gx,gy,gw,gh);ctx.strokeRect(gx,gy,gw,gh);});
   const paw=W*.13,pah=H*.5;ctx.strokeRect(p,(H-pah)/2,paw,pah);ctx.strokeRect(W-p-paw,(H-pah)/2,paw,pah);
+  // highlight YOUR half (right)
   ctx.fillStyle='rgba(0,229,122,.07)';ctx.fillRect(W/2,p,W/2-p,H-p*2);
-  ctx.font=`700 ${W*.01}px Syne`;ctx.fillStyle='rgba(0,229,122,.3)';ctx.textAlign='center';ctx.fillText('YOUR HALF',W*.76,H*.08);
+  ctx.font=`700 ${Math.max(9,W*.01)}px Syne`;ctx.fillStyle='rgba(0,229,122,.4)';ctx.textAlign='center';ctx.fillText('YOUR HALF (attack right →)',W*.75,H*.08);
+  ctx.fillStyle='rgba(255,61,90,.07)';ctx.fillRect(p,p,W/2-p,H-p*2);
+  ctx.fillStyle='rgba(255,61,90,.3)';ctx.fillText('← ENEMY GOAL',W*.25,H*.08);
   for(const[rid,pos] of Object.entries(acct().field||{})){
     const r=(acct().robots||[]).find(x=>x.id===rid);if(!r)continue;
     const px=pos.x*W,py=pos.y*H;
@@ -713,21 +871,61 @@ function drawField(){
     ctx.beginPath();ctx.arc(px,py,13,0,Math.PI*2);ctx.fillStyle=r.color+'cc';ctx.fill();
     ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1.2;ctx.stroke();
     ctx.font='13px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(r.emoji,px,py);
-    ctx.font=`700 ${W*.009}px Syne`;ctx.fillStyle='rgba(255,255,255,.85)';ctx.textBaseline='top';ctx.fillText(r.name,px,py+15);
+    ctx.font=`700 ${Math.max(8,W*.009)}px Syne`;ctx.fillStyle='rgba(255,255,255,.85)';ctx.textBaseline='top';ctx.fillText(r.name,px,py+15);
   }
 }
 function applyFormation(f){
   if(!(acct().robots||[]).length){toast('Add robots first','err');return;}
-  const fm={'442':[[.76,.5],[.66,.22],[.66,.45],[.66,.6],[.66,.78],[.59,.28],[.59,.5],[.59,.66],[.55,.22],[.55,.5],[.55,.78]],'433':[[.76,.5],[.66,.18],[.66,.43],[.66,.58],[.66,.82],[.59,.28],[.59,.5],[.59,.72],[.54,.22],[.54,.5],[.54,.78]],'352':[[.76,.5],[.66,.22],[.66,.5],[.66,.78],[.59,.15],[.59,.35],[.59,.5],[.59,.65],[.59,.85],[.54,.33],[.54,.67]],'532':[[.76,.5],[.65,.12],[.65,.3],[.65,.5],[.65,.7],[.65,.88],[.58,.3],[.58,.5],[.58,.7],[.54,.33],[.54,.67]]};
+  // formations are in the RIGHT half (your half, x>0.5)
+  const fm={'442':[[.76,.5],[.67,.22],[.67,.44],[.67,.60],[.67,.78],[.60,.28],[.60,.50],[.60,.66],[.55,.22],[.55,.50],[.55,.78]],
+    '433':[[.76,.5],[.67,.18],[.67,.43],[.67,.58],[.67,.82],[.60,.28],[.60,.50],[.60,.72],[.55,.22],[.55,.50],[.55,.78]],
+    '352':[[.76,.5],[.67,.22],[.67,.50],[.67,.78],[.60,.15],[.60,.35],[.60,.50],[.60,.65],[.60,.85],[.55,.33],[.55,.67]],
+    '532':[[.76,.5],[.66,.12],[.66,.30],[.66,.50],[.66,.70],[.66,.88],[.59,.30],[.59,.50],[.59,.70],[.54,.33],[.54,.67]]};
   acct().field={};(acct().robots||[]).slice(0,11).forEach((r,i)=>{if(fm[f][i])acct().field[r.id]={x:fm[f][i][0],y:fm[f][i][1]};});
   save();if(fCanvas)drawField();renderFieldSide();toast(`Formation ${f} applied`);
 }
 
-// MATCH ENGINE
-function pickVs(v){MS.vsMode=v;document.getElementById('vsAI').classList.toggle('on',v==='ai');document.getElementById('vsFriend').classList.toggle('on',v==='friend');document.getElementById('friendCodeRow').style.display=v==='friend'?'block':'none';}
+// STADIUM & WEATHER PICKERS
+function initStadPicker(){
+  document.getElementById('stadGrid').innerHTML=STADIUMS.map(s=>
+    `<div class="stad-card${MS.stadium===s.id?' on':''}" onclick="pickStad('${s.id}')"><div class="stad-ico">${s.icon}</div><div class="stad-lbl">${s.name}</div><div class="stad-sub">${s.sub}</div></div>`
+  ).join('');
+}
+function pickStad(id){
+  MS.stadium=id;
+  document.querySelectorAll('.stad-card').forEach(c=>c.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+}
+function initWxPicker(){
+  const wxOptions=[{id:'clear',icon:'☀️',label:'Clear'},{id:'night',icon:'🌙',label:'Night'},{id:'rain',icon:'🌧',label:'Rain'}];
+  document.getElementById('wxRow').innerHTML=wxOptions.map(w=>
+    `<button class="wx-btn${MS.weather===w.id?' on':''}" onclick="pickWx('${w.id}',this)">${w.icon} ${w.label}</button>`
+  ).join('');
+}
+function pickWx(id,btn){
+  MS.weather=id;
+  document.querySelectorAll('.wx-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
 function pickDur(d,btn){MS.duration=d;document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
 function toggleSpeed(){MS.speed=MS.speed===1?3:1;document.getElementById('speedBtn').textContent=MS.speed===3?'🐢 1× Speed':'⏩ 3× Speed';}
-function stopMatch(){endMatch();if(mRAF)cancelAnimationFrame(mRAF);document.getElementById('matchOverlay').style.display='flex';}
+function stopMatch(){
+  MS.running=false;
+  if(mRAF)cancelAnimationFrame(mRAF);
+  stopRain();
+  document.getElementById('matchOverlay').style.display='flex';
+}
+function closeEndOverlay(){
+  document.getElementById('endOverlay').style.display='none';
+  document.getElementById('matchOverlay').style.display='flex';
+}
+
+function pickVs(v){
+  MS.vsMode=v;
+  document.getElementById('vsAI').classList.toggle('on',v==='ai');
+  document.getElementById('vsFriend').classList.toggle('on',v==='friend');
+  document.getElementById('friendCodeRow').style.display=v==='friend'?'block':'none';
+}
 
 function kickOff(){
   const err=document.getElementById('moErr');err.textContent='';
@@ -738,12 +936,16 @@ function kickOff(){
   if(MS.vsMode==='friend'){
     const code=document.getElementById('friendCodeInp').value.trim();
     if(code.length<4){err.textContent='Enter a 4-char code';return;}
-    const saved=localStorage.getItem('bf3_team_'+code);
+    const saved=localStorage.getItem('bf3_team_'+code)||localStorage.getItem('bf5_team_'+code);
     if(!saved){err.textContent='No team found for that code';return;}
     try{awayData=JSON.parse(saved);}catch(e){err.textContent='Invalid code';return;}
   }else{awayData=buildAITeam();}
   document.getElementById('matchOverlay').style.display='none';
-  initMatch(robots,acct().programs||{},acct().field||{},acct().teamName||CUR,awayData);
+  document.getElementById('endOverlay').style.display='none';
+  const stad=STADIUMS.find(s=>s.id===MS.stadium)||STADIUMS[0];
+  const isRain=(stad.rain||MS.weather==='rain');
+  const isNight=(stad.nightMode||MS.weather==='night'||MS.weather==='rain');
+  initMatch(robots,acct().programs||{},acct().field||{},acct().teamName||CUR,awayData,isRain,isNight,stad.scale||1);
 }
 
 function buildAITeam(){
@@ -762,49 +964,134 @@ function buildAITeam(){
     ai4:[{type:'if',cond:'losing',then:mk(['s05','a01']),else:mk(['m03','p06'])}],
     ai5:mk(['p01','m05','a08','a10']),
   };
-  const field={ai1:{x:.24,y:.5},ai2:{x:.35,y:.3},ai3:{x:.35,y:.7},ai4:{x:.43,y:.2},ai5:{x:.43,y:.8}};
+  // Away team starts on LEFT half (x < 0.5), mirrored
+  const field={ai1:{x:0.24,y:.5},ai2:{x:.34,y:.3},ai3:{x:.34,y:.7},ai4:{x:.43,y:.25},ai5:{x:.43,y:.75}};
   return{name:'Bot FC',robots:aiR,programs:progs,field};
 }
 
+// ─── REPLACED: full physics match engine below ───
+
 function rnd(r){return(Math.random()-.5)*r*2;}
 
-function initMatch(homeRobots,homeProgs,homeField,homeName,away){
+// Spawn formations: evenly spaced, no clumping
+// HOME = right half (x 0.55–0.92), attacks LEFT goal (x=0)
+// AWAY = left half  (x 0.08–0.45), attacks RIGHT goal (x=1)
+function makeSpawnPositions(isAway, count){
+  const cols=3, rows=Math.ceil(count/cols);
+  const positions=[];
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(positions.length>=count)break;
+      const t=(count<=1)?0.5:(positions.length/(count-1));
+      // stagger nicely
+      const yBase=0.12+(r/(Math.max(rows-1,1)))*0.76;
+      const xBase=isAway?(0.10+c*0.12):(0.92-c*0.12);
+      positions.push({x:xBase+rnd(0.03), y:yBase+rnd(0.04)});
+    }
+  }
+  return positions;
+}
+
+function initMatch(homeRobots,homeProgs,homeField,homeName,away,isRain,isNight,scale){
   mCanvas=document.getElementById('matchCanvas');
+  rainCanvas=document.getElementById('rainCanvas');
   const wrap=document.getElementById('matchCanvasWrap');
-  mCanvas.width=wrap.clientWidth;mCanvas.height=wrap.clientHeight;
+  // Force layout so we get real dimensions
+  const baseW=wrap.offsetWidth||wrap.clientWidth||800;
+  const baseH=wrap.offsetHeight||wrap.clientHeight||500;
+  mCanvas.width=baseW; mCanvas.height=baseH;
+  rainCanvas.width=baseW; rainCanvas.height=baseH;
+  // Make canvas fill wrap
+  mCanvas.style.position='absolute';mCanvas.style.inset='0';mCanvas.style.width='100%';mCanvas.style.height='100%';
+  rainCanvas.style.position='absolute';rainCanvas.style.inset='0';
   mCtx=mCanvas.getContext('2d');
+  rainCtx=rainCanvas.getContext('2d');
+
   document.getElementById('hudH').textContent=homeName||'Home';
   document.getElementById('hudA').textContent=away.name||'Away';
-  document.getElementById('hudSH').textContent='0';document.getElementById('hudSA').textContent='0';
+  document.getElementById('hudSH').textContent='0';
+  document.getElementById('hudSA').textContent='0';
   document.getElementById('matchLog').innerHTML='';
 
-  const mkP=(robots,progs,field,team,flip)=>robots.slice(0,11).map((r,i)=>{
-    const pos=field[r.id]?{x:field[r.id].x,y:field[r.id].y}:{x:.7+rnd(.08),y:.2+i*.13};
-    if(flip)pos.x=1-pos.x;
-    return{id:r.id,team,robot:r,prog:buildFlatProg(progs[r.id]||[]),progIdx:0,
-      rx:pos.x,ry:pos.y,tx:pos.x,ty:pos.y,baseX:pos.x,baseY:pos.y,
-      trail:[],execTimer:Math.floor(Math.random()*80)};
-  });
+  // ── Build player lists with proper half-locked spawn positions ──
+  function buildPlayers(robots, progs, userField, team, isAway){
+    const n=Math.min(robots.length,11);
+    // Try to use user-placed field positions, clamped to correct half
+    const spawns=makeSpawnPositions(isAway, n);
+    return robots.slice(0,n).map((r,i)=>{
+      let bx,by;
+      const fp=userField[r.id];
+      if(fp){
+        // Mirror user field: user places in right half; away gets left half mirror
+        bx=isAway?(1-fp.x):fp.x;
+        by=fp.y;
+      } else {
+        bx=spawns[i].x;
+        by=spawns[i].y;
+      }
+      // Hard clamp to correct half
+      bx=isAway?Math.max(0.04,Math.min(0.45,bx)):Math.max(0.55,Math.min(0.96,bx));
+      by=Math.max(0.05,Math.min(0.95,by));
+      return{
+        id:r.id, team, robot:r,
+        prog:buildFlatProg(progs[r.id]||[]), progIdx:0,
+        // Physics position (pixel-space fraction 0–1)
+        x:bx, y:by,
+        vx:0, vy:0,
+        baseX:bx, baseY:by,
+        // AI state
+        chipTimer:40+Math.floor(Math.random()*60),
+        lastChip:null,
+        trail:[],
+      };
+    });
+  }
+
+  const homePlayers=buildPlayers(homeRobots,homeProgs,homeField,'home',false);
+  const awayPlayers=buildPlayers(away.robots,away.programs||{},away.field||{},'away',true);
+
+  const ticksPerPeriod=MS.duration*60;
 
   MG={
-    tick:0,maxTick:Math.floor(MS.duration*3.5),
-    homeScore:0,awayScore:0,possession:'home',
-    ball:{rx:.5,ry:.5,vx:.002,vy:.001,trail:[]},
-    players:[...mkP(homeRobots,homeProgs,homeField,'home',false),...mkP(away.robots,away.programs||{},away.field||{},'away',true)],
-    homeName,awayName:away.name,
-    particles:[],phase:'playing',pendingLog:[],logFlush:0,
-    period:1,periodScores:{home:0,away:0},
+    tick:0, maxTick:ticksPerPeriod,
+    homeScore:0, awayScore:0,
+    // Ball: normalised coords, with real velocity
+    ball:{x:0.5, y:0.5, vx:0, vy:0, trail:[]},
+    players:[...homePlayers,...awayPlayers],
+    homeName, awayName:away.name,
+    particles:[], phase:'playing',
+    pendingLog:[], logFlush:0,
+    period:1, maxPeriods:4,
+    isRain, isNight, scale:scale||1,
+    elapsedSec:0,
+    goalCooldown:0,  // prevent double-goals
+    possession:'home',
   };
+
+  // Rain drops
+  if(isRain){
+    rainCanvas.style.display='block';
+    rainDrops=[];
+    for(let i=0;i<220;i++){
+      rainDrops.push({x:Math.random()*baseW,y:Math.random()*baseH,
+        l:8+Math.random()*18,s:5+Math.random()*5,a:Math.random()*.5+.25});
+    }
+  }else{
+    rainCanvas.style.display='none';
+    rainDrops=[];
+  }
 
   MS.running=true;
   addLog('⚽ Kick off!','info');
   let lastT=0;
   function loop(ts){
     if(!MS.running)return;
-    const dt=Math.min(ts-lastT,50);lastT=ts;
+    if(lastT===0)lastT=ts;
+    lastT=ts;
     const steps=MS.speed===3?3:1;
     for(let s=0;s<steps;s++)tickMatch();
     drawMatch();
+    if(MG.isRain)drawRain();
     mRAF=requestAnimationFrame(loop);
   }
   mRAF=requestAnimationFrame(loop);
@@ -851,7 +1138,7 @@ function evalCond(cond,player){
     case 'winning': return myS>oppS;
     case 'losing':  return myS<oppS;
     case 'drawing': return myS===oppS;
-    case 'possession': return MG.possession===player.team;
+    case 'possession':return MG.possession===player.team;
     case 'no_poss': return MG.possession!==player.team;
     case 'early':   return pct<.5;
     case 'late':    return pct>=.5;
@@ -864,95 +1151,579 @@ function evalCond(cond,player){
   }
 }
 
+// ═══════════════════════════════════════════════
+//  PHYSICS CONSTANTS  (all in normalised 0–1 space)
+// ═══════════════════════════════════════════════
+const PLAYER_RADIUS = 0.030;   // collision radius
+const BALL_RADIUS   = 0.018;
+const PLAYER_SPEED  = 0.0045;  // base move speed per tick
+const BALL_FRICTION = 0.982;   // multiplied each tick
+const RAIN_FRICTION = 0.991;   // less friction in rain
+const BALL_BOUNCE   = 0.60;    // wall bounce damping
+const KICK_POWER    = 0.022;   // base kick velocity
+
 function tickMatch(){
   if(MG.phase==='ended')return;
   MG.tick++;
+  MG.elapsedSec=MG.tick/60;
+  if(MG.goalCooldown>0)MG.goalCooldown--;
 
-  // Execute chips
-  MG.players.forEach(p=>{
-    p.execTimer--;
-    if(p.execTimer<=0){
-      p.execTimer=Math.max(30,100-((p.robot.spd||5)*5))+Math.floor(Math.random()*25);
-      execChip(p);
-    }
-    // SMOOTH TWEEN — lerp toward target each tick
-    const lerpSpd=0.07+((p.robot.spd||5)/10)*0.07;
-    p.rx+=(p.tx-p.rx)*lerpSpd;
-    p.ry+=(p.ty-p.ry)*lerpSpd;
-    // Trail
-    p.trail.push({x:p.rx,y:p.ry});
-    if(p.trail.length>8)p.trail.shift();
+  const B=MG.ball;
+
+  // ── 1. Chip execution timer & role assignment ──
+  // Each player has a role derived from their BASE position:
+  //   Defender:   deepest 30% of their half (far from midline)
+  //   Midfielder: middle 40% of their half
+  //   Attacker:   closest 30% of their half to midline
+  // This role is FIXED by formation placement and doesn't change mid-match.
+  // Chips MODIFY BEHAVIOUR within that role rather than override it entirely.
+
+  // Pre-compute team context once per tick
+  const teamBall={};  // which team is closest to ball
+  ['home','away'].forEach(team=>{
+    const ps=MG.players.filter(p=>p.team===team);
+    let minD=999,closest=null;
+    ps.forEach(p=>{const d=Math.hypot(p.x-B.x,p.y-B.y);if(d<minD){minD=d;closest=p;}});
+    teamBall[team]={closest,minDist:minD};
   });
 
-  // Ball physics — smooth continuous movement
-  const B=MG.ball;
-  B.rx+=B.vx;B.ry+=B.vy;
-  B.vx*=.97;B.vy*=.975;
-  if(B.ry<.03||B.ry>.97){B.vy*=-.8;B.ry=B.ry<.03?.03:.97;}
-  B.rx=Math.max(.01,Math.min(.99,B.rx));
-  B.trail.push({x:B.rx,y:B.ry});if(B.trail.length>10)B.trail.shift();
+  MG.players.forEach(p=>{
+    // Chip timer — fires at a rate based on robot SPEED stat
+    p.chipTimer--;
+    if(p.chipTimer<=0){
+      p.chipTimer=Math.max(20,90-((p.robot.spd||5)*6))+Math.floor(Math.random()*30);
+      p.lastChip=resolveChip(p);
+    }
 
-  // Goal detection
-  if(B.rx<.022&&B.ry>.39&&B.ry<.61){MG.awayScore++;document.getElementById('hudSA').textContent=MG.awayScore;onGoal('away');}
-  else if(B.rx>.978&&B.ry>.39&&B.ry<.61){MG.homeScore++;document.getElementById('hudSH').textContent=MG.homeScore;onGoal('home');}
+    const chip=p.lastChip||CHIPS[0];
+    const isHome=p.team==='home';
 
-  // Particles
-  MG.particles=MG.particles.filter(p=>{p.life--;p.x+=p.vx;p.y+=p.vy;p.vy+=.0006;return p.life>0;});
+    // Directional constants
+    // Home: spawns right half, attacks LEFT goal (x=0)
+    // Away: spawns left half, attacks RIGHT goal (x=1)
+    const attackGoalX = isHome ? 0.02 : 0.98;
+    const defendGoalX = isHome ? 0.98 : 0.02;
+    const attackDir   = isHome ? -1 : 1;  // -1=leftward, +1=rightward
 
-  // HUD
+    // Role derived from base X position within team's half
+    // Home half is x>0.5: deepest defender is near x=0.98, attacker near x=0.55
+    // Away half is x<0.5: deepest defender is near x=0.02, attacker near x=0.45
+    let roleScore; // 0=deep defender, 1=attacker
+    if(isHome){
+      roleScore = 1 - ((p.baseX - 0.5) / 0.48); // x=0.98→0, x=0.52→~1
+    } else {
+      roleScore = (p.baseX - 0.02) / 0.48;       // x=0.02→0, x=0.48→~1
+    }
+    roleScore = Math.max(0, Math.min(1, roleScore));
+    const isDefender   = roleScore < 0.33;
+    const isMidfielder = roleScore >= 0.33 && roleScore < 0.67;
+    const isAttacker   = roleScore >= 0.67;
+
+    const distToBall = Math.hypot(p.x-B.x, p.y-B.y);
+    const ballInMyHalf = isHome ? (B.x > 0.5) : (B.x < 0.5);
+    const amClosest = (teamBall[p.team].closest === p);
+    const myTeamHasBall = (MG.possession === p.team);
+
+    // Chip stat bonuses — these are REAL modifiers on behaviour
+    const chipSpd  = chip.spd || 0;
+    const chipPow  = chip.pow || 0;
+    const chipDef  = chip.def || 0;
+    const robotSpd = p.robot.spd || 5;
+    const robotStr = p.robot.str || 5;
+    const robotInt = p.robot.int || 5;
+
+    // ── MOVEMENT TARGET LOGIC ──
+    // Each chip category produces genuinely different spatial behaviour.
+    let tx = p.baseX, ty = p.baseY;
+
+    if(chip.cat === 'defend'){
+      // DEFEND chips: Stay disciplined. Press hard if chip is aggressive (high chipDef+chipSpd).
+      // High-press chips (d04 High Press, d06 Interception) move toward ball actively.
+      // Holding chips (d09 Park Bus, d12 Shield) stay in a compact block near own goal.
+      const pressRadius = 0.1 + (chipSpd / 10) * 0.25;  // how far they press
+      const isHighPress = chip.id==='d04'||chip.id==='d06'||chip.id==='d11';
+      const isHolding   = chip.id==='d03'||chip.id==='d09'||chip.id==='d12'||chip.id==='d08';
+
+      if(isHolding){
+        // Compact block: hold deep near own goal
+        const blockX = isHome ? (0.72 + p.baseY*0.04) : (0.28 - p.baseY*0.04);
+        tx = blockX + rnd(0.03);
+        ty = p.baseY + rnd(0.03);
+      } else if(isHighPress || (!myTeamHasBall && distToBall < pressRadius + 0.15)){
+        // Press the ball carrier
+        tx = B.x + rnd(0.03);
+        ty = B.y + rnd(0.03);
+      } else if(ballInMyHalf){
+        // Ball is in our half: close down but don't overcommit
+        const t = 0.4 + (chipDef/10)*0.3;
+        tx = p.baseX + (B.x - p.baseX)*t + rnd(0.04);
+        ty = p.baseY + (B.y - p.baseY)*t + rnd(0.04);
+      } else {
+        // Hold position
+        tx = p.baseX + rnd(0.04);
+        ty = p.baseY + rnd(0.04);
+      }
+
+    } else if(chip.cat === 'attack'){
+      // ATTACK chips: Move toward goal or into shooting positions.
+      // Power shots (a01, a05, a12) position for a shot — close to goal.
+      // Dribble chips (a02, a09) stay glued to ball.
+      // Cross chips (a06) move wide and toward byline.
+      // Header chips (a04) move to penalty box area.
+      const shotChips   = ['a01','a05','a10','a11','a12','a14','s01','s09'];
+      const dribbleChips= ['a02','a09','t05','t01','t02'];
+      const crossChips  = ['a06','m02'];
+      const headerChips = ['a04','s10'];
+
+      if(dribbleChips.includes(chip.id)){
+        // Stay on ball, weave with jitter
+        if(amClosest||distToBall<0.15){
+          tx = B.x + attackDir*0.04 + rnd(0.03);
+          ty = B.y + rnd(0.05);
+        } else {
+          tx = B.x + rnd(0.06);
+          ty = B.y + rnd(0.08);
+        }
+      } else if(crossChips.includes(chip.id)){
+        // Wide wing position, push toward byline
+        const wingY = p.baseY < 0.5 ? 0.15 : 0.85;  // keep to their wing
+        tx = isHome ? 0.12 + rnd(0.05) : 0.88 - rnd(0.05);
+        ty = wingY + rnd(0.06);
+      } else if(headerChips.includes(chip.id)){
+        // Move into penalty box for aerial ball
+        tx = isHome ? 0.08 + rnd(0.06) : 0.92 - rnd(0.06);
+        ty = 0.5 + rnd(0.2);
+      } else if(shotChips.includes(chip.id)){
+        // Position for shot: get in front of goal
+        if(amClosest || distToBall < 0.2){
+          tx = attackGoalX + (isHome ? 0.1 : -0.1) + rnd(0.05);
+          ty = 0.5 + rnd(0.15);
+        } else {
+          tx = B.x + attackDir*0.05 + rnd(0.05);
+          ty = B.y + rnd(0.08);
+        }
+      } else {
+        // Generic attack: pressure ball or support
+        if(amClosest || distToBall < 0.15){
+          tx = B.x + rnd(0.03);
+          ty = B.y + rnd(0.04);
+        } else if(myTeamHasBall){
+          // Support run: get ahead of ball toward goal
+          tx = B.x + attackDir*(0.06 + (chipPow/10)*0.08) + rnd(0.06);
+          ty = B.y + rnd(0.1);
+        } else {
+          // Recover back
+          tx = p.baseX + rnd(0.06);
+          ty = p.baseY + rnd(0.06);
+        }
+      }
+
+    } else if(chip.cat === 'move'){
+      // MOVE chips: Positional/passing play. Based on chip type:
+      // Sprint/Counter (m01, m08): charge forward if we have ball
+      // Short Pass (m06): stay safe, don't overextend
+      // Through Ball (m03): run in behind
+      // Wide run (m02): spread to wings
+      // Overlap (m05): fullback runs forward when team has ball
+      const sprintChips  = ['m01','m08'];
+      const safeChips    = ['m06','m10','m12'];
+      const throughChips = ['m03','m07'];
+      const wideChips    = ['m02','m05'];
+
+      if(sprintChips.includes(chip.id) && myTeamHasBall){
+        // Charge forward to create overload
+        tx = B.x + attackDir*(0.08+(chipSpd/10)*0.1) + rnd(0.04);
+        ty = B.y + rnd(0.08);
+      } else if(safeChips.includes(chip.id)){
+        // Hold shape, don't advance
+        tx = p.baseX + rnd(0.05);
+        ty = p.baseY + rnd(0.05);
+      } else if(throughChips.includes(chip.id) && myTeamHasBall){
+        // Run in behind: dash to the space behind the defensive line
+        tx = attackGoalX + (isHome ? 0.18 : -0.18) + rnd(0.06);
+        ty = 0.3 + Math.random()*0.4;
+      } else if(wideChips.includes(chip.id)){
+        // Spread play wide
+        const wingY = p.baseY < 0.5 ? 0.15 : 0.85;
+        tx = B.x + attackDir*(0.03) + rnd(0.04);
+        ty = wingY + rnd(0.08);
+      } else {
+        // Default: track ball loosely based on role
+        if(isAttacker){
+          tx = B.x + attackDir*(0.04) + rnd(0.06);
+          ty = B.y + rnd(0.1);
+        } else if(isMidfielder){
+          // Midfielders: stay between ball and their base position
+          const t = myTeamHasBall ? 0.5 : 0.25;
+          tx = p.baseX + (B.x - p.baseX)*t + rnd(0.05);
+          ty = p.baseY + (B.y - p.baseY)*t + rnd(0.05);
+        } else {
+          // Defenders: hold shape, only advance if ball is far away
+          tx = p.baseX + rnd(0.05);
+          ty = p.baseY + rnd(0.05);
+        }
+      }
+
+    } else if(chip.cat === 'special'){
+      // SPECIAL chips: dramatic committed actions
+      // Turbo Burst (s04): pure speed dash at ball
+      // Berserk (s05): charge regardless of position
+      // Super Shot / Dragon Shot: get into shooting lane NOW
+      const turboChips = ['s04','s02','s06'];
+      const shotChips  = ['s01','s09','s10'];
+
+      if(turboChips.includes(chip.id)){
+        // Raw speed dash toward ball
+        tx = B.x + rnd(0.02);
+        ty = B.y + rnd(0.02);
+      } else if(shotChips.includes(chip.id)){
+        // Get into prime shooting position
+        tx = attackGoalX + (isHome ? 0.12 : -0.12) + rnd(0.04);
+        ty = 0.5 + rnd(0.12);
+      } else {
+        // Default special: aggressive forward run
+        tx = B.x + attackDir*(0.05) + rnd(0.04);
+        ty = B.y + rnd(0.06);
+      }
+
+    } else if(chip.cat === 'support'){
+      // SUPPORT chips: team tactical positioning
+      // Team Press (p01): whole team closes in
+      // Long Ball (p05): players run long to receive
+      // False Nine (p04): striker drops to midfield to confuse
+      // Tempo/Possession chips: hold position, don't rush
+      const pressChips  = ['p01'];
+      const longChips   = ['p05'];
+      const holdChips   = ['p03','p07','p09','p10'];
+      const falseNineId = 'p04';
+
+      if(pressChips.includes(chip.id)){
+        // Every player presses toward ball
+        tx = B.x + rnd(0.05);
+        ty = B.y + rnd(0.05);
+      } else if(holdChips.includes(chip.id)){
+        tx = p.baseX + rnd(0.04);
+        ty = p.baseY + rnd(0.04);
+      } else if(chip.id===falseNineId && isAttacker){
+        // Attacker drops into midfield to create space
+        const dropX = isHome ? (p.baseX + 0.12) : (p.baseX - 0.12);
+        tx = dropX + rnd(0.05);
+        ty = 0.5 + rnd(0.15);
+      } else if(longChips.includes(chip.id) && myTeamHasBall){
+        // Run long ball channel
+        tx = attackGoalX + (isHome ? 0.2 : -0.2) + rnd(0.05);
+        ty = 0.2 + Math.random()*0.6;
+      } else {
+        // Default support: stay in shape, slight ball awareness
+        const t = isMidfielder ? 0.3 : 0.15;
+        tx = p.baseX + (B.x - p.baseX)*t + rnd(0.05);
+        ty = p.baseY + (B.y - p.baseY)*t + rnd(0.05);
+      }
+
+    } else if(chip.cat === 'trick'){
+      // TRICK chips: unpredictable, random-ish movement
+      // This is intentionally somewhat chaotic
+      if(amClosest || distToBall < 0.12){
+        // Near ball: erratic weave
+        tx = B.x + rnd(0.10);
+        ty = B.y + rnd(0.10);
+      } else {
+        // Create space: move to unexpected position
+        tx = B.x + attackDir*(0.04+Math.random()*0.12) + rnd(0.08);
+        ty = 0.1 + Math.random()*0.8;
+      }
+    } else {
+      // Fallback
+      tx = p.baseX + rnd(0.05);
+      ty = p.baseY + rnd(0.05);
+    }
+
+    // ── SPEED: robot SPD stat + chip SPD modifier are REAL ──
+    // Base speed × robot stat scaling × chip bonus
+    const moveSpd = PLAYER_SPEED *
+      (0.5 + (robotSpd/10)*1.0) *          // robot SPD: 50%–150% speed
+      (1.0 + (chipSpd/10)*0.6) *            // chip SPD: up to +60%
+      (MG.isRain ? 0.82 : 1.0);
+
+    const dx = tx - p.x, dy = ty - p.y;
+    const dist = Math.hypot(dx, dy);
+    if(dist > 0.002){
+      p.vx = (dx/dist) * moveSpd;
+      p.vy = (dy/dist) * moveSpd;
+    } else {
+      p.vx *= 0.6;
+      p.vy *= 0.6;
+    }
+
+    // Apply velocity
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Half-clamp: players stay in their half UNLESS actively pursuing ball nearby
+    const canCross = distToBall < 0.18 && (amClosest || isAttacker);
+    if(isHome){
+      if(!canCross) p.x = Math.max(0.50, p.x);
+      p.x = Math.max(0.02, Math.min(0.98, p.x));
+    } else {
+      if(!canCross) p.x = Math.min(0.50, p.x);
+      p.x = Math.max(0.02, Math.min(0.98, p.x));
+    }
+    p.y = Math.max(0.03, Math.min(0.97, p.y));
+
+    // Trail
+    p.trail.push({x:p.x, y:p.y});
+    if(p.trail.length > 10) p.trail.shift();
+  });
+
+  // ── 2. Player↔Player collision ──
+  for(let i=0;i<MG.players.length;i++){
+    for(let j=i+1;j<MG.players.length;j++){
+      const a=MG.players[i],b=MG.players[j];
+      const dx=a.x-b.x, dy=a.y-b.y;
+      const dist=Math.hypot(dx,dy);
+      const minD=PLAYER_RADIUS*2;
+      if(dist<minD&&dist>0.0001){
+        const overlap=(minD-dist)/2;
+        const nx=dx/dist, ny=dy/dist;
+        a.x+=nx*overlap; a.y+=ny*overlap;
+        b.x-=nx*overlap; b.y-=ny*overlap;
+      }
+    }
+  }
+
+  // ── 3. Player↔Ball collision — chips and stats drive REAL kick physics ──
+  MG.players.forEach(p=>{
+    const dx=B.x-p.x, dy=B.y-p.y;
+    const dist=Math.hypot(dx,dy);
+    const minD=PLAYER_RADIUS+BALL_RADIUS;
+    if(dist<minD&&dist>0.0001){
+      // Positional separation
+      const overlap=minD-dist;
+      const nx=dx/dist, ny=dy/dist;
+      B.x+=nx*overlap*0.8;
+      B.y+=ny*overlap*0.8;
+      p.x-=nx*overlap*0.2;
+      p.y-=ny*overlap*0.2;
+
+      const chip    = p.lastChip||CHIPS[0];
+      const isHome  = p.team==='home';
+      const attackGoalX = isHome ? 0.0 : 1.0;
+      const attackDir   = isHome ? -1 : 1;
+
+      // Robot stats as 0–1 scalars
+      const str = (p.robot.str||5)/10;  // affects kick power
+      const spd = (p.robot.spd||5)/10;  // affects reaction speed (already in movement)
+      const intl= (p.robot.int||5)/10;  // affects aim precision
+
+      // Chip power and category determine kick force and direction quality
+      const chipPow  = (chip.pow||0)/10;
+      const chipSpd  = (chip.spd||0)/10;
+      const chipDef  = (chip.def||0)/10;
+
+      // ── KICK FORCE: STR + chip.pow ──
+      const basePower = KICK_POWER * (0.4 + str*0.9 + chipPow*0.7);
+      const rainPenalty = MG.isRain ? 0.78 : 1.0;
+      const kickPow = basePower * rainPenalty;
+
+      // ── AIM: INT + chip type determines how precisely we aim ──
+      // High int / special chips → aimed shot at goal center
+      // Low int / trick chips → more random
+      const aimQuality = Math.min(1, intl*0.7 + chipPow*0.3 + (chip.cat==='attack'?0.2:0) + (chip.cat==='special'?0.25:0));
+      const scatter = (1-aimQuality) * kickPow * 1.8;  // noise on kick direction
+
+      // ── DIRECTION: depends on chip category ──
+      let kickVx, kickVy;
+
+      if(chip.cat==='defend'){
+        // Defend chips: clear the ball AWAY from own goal (kick toward midfield/forward)
+        // Clearance chips kick harder but less aimed; Interception chips are precise
+        const clearDir = attackDir;  // clear toward opponent's side
+        const clearPow = kickPow * (0.8 + chipDef*0.4);
+        kickVx = clearDir * clearPow + rnd(scatter * 0.8);
+        kickVy = (0.5 - B.y) * clearPow * 0.3 + rnd(scatter);
+        // Park-the-bus chips: just kick it out wide, not toward goal
+        if(chip.id==='d09'||chip.id==='d12'||chip.id==='d08'){
+          kickVx = clearDir * clearPow * 1.2 + rnd(scatter);
+          kickVy = (Math.random() > 0.5 ? 1 : -1) * clearPow * 0.5 + rnd(scatter*0.5);
+        }
+
+      } else if(chip.cat==='attack'){
+        // Attack chips: aimed at goal, power from chip.pow + str
+        const toGoalX = attackGoalX - B.x;
+        const toGoalY = 0.5 - B.y;
+        const goalDist = Math.hypot(toGoalX, toGoalY*0.4) || 0.001;
+
+        // Shot chips hit hard toward goal
+        const isShotChip = ['a01','a05','a10','a12','a14'].includes(chip.id);
+        const isDribble  = ['a02','a09'].includes(chip.id);
+
+        if(isShotChip){
+          // Powerful direct shot at goal mouth
+          kickVx = (toGoalX/goalDist)*kickPow*1.3 + rnd(scatter*0.5);
+          kickVy = (toGoalY*0.4/goalDist)*kickPow + rnd(scatter*0.6);
+        } else if(isDribble){
+          // Dribble: gentle directional tap, keep ball close
+          kickVx = attackDir * kickPow * 0.4 + nx*kickPow*0.3 + rnd(scatter*0.4);
+          kickVy = ny*kickPow*0.3 + rnd(scatter*0.5);
+        } else if(chip.id==='a06'){
+          // Low cross: lateral ball into box
+          kickVx = (toGoalX/goalDist)*kickPow*0.9 + rnd(scatter*0.4);
+          kickVy = (p.baseY<0.5?1:-1)*kickPow*0.7 + rnd(scatter*0.3);
+        } else if(chip.id==='a04'){
+          // Header: angled downward into goal
+          kickVx = (toGoalX/goalDist)*kickPow*1.1 + rnd(scatter*0.5);
+          kickVy = (toGoalY/Math.max(0.1,Math.abs(toGoalY)))*kickPow*0.4 + rnd(scatter*0.4);
+        } else {
+          // Generic attack: toward goal with moderate scatter
+          kickVx = (toGoalX/goalDist)*kickPow + nx*kickPow*0.3 + rnd(scatter*0.6);
+          kickVy = (toGoalY*0.3/goalDist)*kickPow + ny*kickPow*0.2 + rnd(scatter*0.7);
+        }
+
+      } else if(chip.cat==='move'){
+        // Move chips: directional passes and runs
+        const isSprint  = ['m01','m08'].includes(chip.id);
+        const isLofted  = chip.id==='m04';
+        const isRecycle = ['m06','m10','m12'].includes(chip.id);
+
+        if(isSprint){
+          // Sprint/counter: powerful forward ball
+          kickVx = attackDir * kickPow * (1.0 + chipSpd*0.5) + rnd(scatter*0.4);
+          kickVy = (0.5-B.y)*kickPow*0.2 + rnd(scatter*0.5);
+        } else if(isLofted){
+          // Lofted pass: high kick, moderate power
+          kickVx = attackDir * kickPow * 0.9 + rnd(scatter*0.5);
+          kickVy = rnd(kickPow*0.4);
+        } else if(isRecycle){
+          // Short pass: gentle touch, controlled
+          kickVx = attackDir * kickPow * 0.35 + rnd(scatter*0.3);
+          kickVy = rnd(scatter*0.4);
+        } else {
+          // General move: forward-biased kick
+          kickVx = attackDir * kickPow * 0.75 + nx*kickPow*0.2 + rnd(scatter*0.6);
+          kickVy = ny*kickPow*0.2 + rnd(scatter*0.6);
+        }
+
+      } else if(chip.cat==='special'){
+        // Special chips: maximum power or special effects
+        const toGoalX = attackGoalX - B.x;
+        const toGoalY = 0.5 - B.y;
+        const goalDist = Math.hypot(toGoalX, toGoalY*0.4) || 0.001;
+        const specialPow = kickPow * (1.4 + chipPow*0.4);  // extra power
+
+        if(chip.id==='s04'||chip.id==='s02'){
+          // Turbo burst: just blast it forward with speed
+          kickVx = attackDir * specialPow * 1.2 + rnd(scatter*0.3);
+          kickVy = rnd(scatter*0.5);
+        } else if(chip.id==='s06'){
+          // Curveball: veering shot
+          kickVx = (toGoalX/goalDist)*specialPow + rnd(scatter*0.4);
+          kickVy = (toGoalY*0.4/goalDist)*specialPow + (p.baseY<0.5?1:-1)*specialPow*0.3;
+        } else {
+          // Super shot, dragon shot, etc: aimed blast at goal
+          kickVx = (toGoalX/goalDist)*specialPow*1.1 + rnd(scatter*0.25);
+          kickVy = (toGoalY*0.4/goalDist)*specialPow + rnd(scatter*0.3);
+        }
+
+      } else if(chip.cat==='trick'){
+        // Trick chips: unpredictable kicks, sometimes brilliant, sometimes wild
+        const coinFlip = Math.random();
+        const toGoalX  = attackGoalX - B.x;
+        const toGoalY  = 0.5 - B.y;
+        const goalDist = Math.hypot(toGoalX,toGoalY)||0.001;
+        if(coinFlip > 0.55){
+          // Lucky strike: aimed at goal
+          kickVx = (toGoalX/goalDist)*kickPow*(1.0+coinFlip*0.5) + rnd(scatter*0.8);
+          kickVy = (toGoalY/goalDist)*kickPow*0.4 + rnd(scatter);
+        } else {
+          // Wild: completely random direction with full power
+          const a = Math.random()*Math.PI*2;
+          kickVx = Math.cos(a)*kickPow + rnd(scatter);
+          kickVy = Math.sin(a)*kickPow + rnd(scatter);
+        }
+
+      } else if(chip.cat==='support'){
+        // Support chips: positional passes, generally safe
+        kickVx = attackDir * kickPow * 0.6 + nx*kickPow*0.2 + rnd(scatter*0.5);
+        kickVy = ny*kickPow*0.2 + rnd(scatter*0.5);
+
+      } else {
+        // Fallback
+        kickVx = nx * kickPow + rnd(scatter*0.5);
+        kickVy = ny * kickPow + rnd(scatter*0.5);
+      }
+
+      // Blend with existing ball velocity (80% kick, 20% existing momentum)
+      B.vx = B.vx*0.2 + kickVx*0.8;
+      B.vy = B.vy*0.2 + kickVy*0.8;
+
+      // Possession: player touching ball = their team
+      if(Math.random() > 0.12) MG.possession = p.team;
+
+      // Log interesting kicks
+      if((Math.abs(B.vx)>0.018||chipPow>0.5) && Math.random()<0.15){
+        addLog(`${chip.icon} ${p.robot.emoji} ${chip.name}!`, 'action');
+      }
+    }
+  });
+
+  // ── 4. Ball physics ──
+  const friction=MG.isRain?RAIN_FRICTION:BALL_FRICTION;
+  B.x+=B.vx;
+  B.y+=B.vy;
+  B.vx*=friction;
+  B.vy*=friction;
+
+  // Top/bottom wall bounce
+  if(B.y-BALL_RADIUS<0.03){B.y=0.03+BALL_RADIUS;B.vy=Math.abs(B.vy)*BALL_BOUNCE;}
+  if(B.y+BALL_RADIUS>0.97){B.y=0.97-BALL_RADIUS;B.vy=-Math.abs(B.vy)*BALL_BOUNCE;}
+
+  // Left/right wall (excluding goal mouth)
+  // HOME spawns RIGHT, attacks LEFT goal (x=0) → home scores when ball enters left goal
+  // AWAY spawns LEFT, attacks RIGHT goal (x=1) → away scores when ball enters right goal
+  const goalTop=0.38, goalBot=0.62;
+  if(B.x-BALL_RADIUS<0.02){
+    if(B.y>goalTop&&B.y<goalBot){
+      // Ball in LEFT goal → HOME scores (home attacked this goal)
+      if(MG.goalCooldown===0){MG.homeScore++;document.getElementById('hudSH').textContent=MG.homeScore;onGoal('home');}
+    } else {
+      B.x=0.02+BALL_RADIUS;B.vx=Math.abs(B.vx)*BALL_BOUNCE;
+    }
+  }
+  if(B.x+BALL_RADIUS>0.98){
+    if(B.y>goalTop&&B.y<goalBot){
+      // Ball in RIGHT goal → AWAY scores (away attacked this goal)
+      if(MG.goalCooldown===0){MG.awayScore++;document.getElementById('hudSA').textContent=MG.awayScore;onGoal('away');}
+    } else {
+      B.x=0.98-BALL_RADIUS;B.vx=-Math.abs(B.vx)*BALL_BOUNCE;
+    }
+  }
+
+  // Ball trail
+  B.trail.push({x:B.x,y:B.y});
+  if(B.trail.length>14)B.trail.shift();
+
+  // ── 5. Particles ──
+  MG.particles=MG.particles.filter(p=>{p.life--;p.x+=p.vx;p.y+=p.vy;p.vy+=.00055;return p.life>0;});
+
+  // ── 6. HUD ──
   document.getElementById('hudPH').textContent=MG.possession==='home'?'● possession':'';
   document.getElementById('hudPA').textContent=MG.possession==='away'?'possession ●':'';
-  const periodMin=Math.round((MG.tick/MG.maxTick)*90);
-  document.getElementById('hudTime').innerHTML=`${periodMin}' &nbsp;P${MG.period} &nbsp;<span class="live-dot">🔴</span> LIVE`;
+  const secLeft=Math.max(0,MS.duration-Math.floor(MG.elapsedSec));
+  document.getElementById('hudTime').innerHTML=`${secLeft}s <span class="live-dot">🔴</span>`;
+  document.getElementById('hudPeriodBadge').textContent=`P${MG.period}/${MG.maxPeriods}`;
 
-  // Flush log
+  // ── 7. Log flush ──
   MG.logFlush++;
-  if(MG.logFlush%3===0&&MG.pendingLog.length){
+  if(MG.logFlush%4===0&&MG.pendingLog.length){
     const el=document.getElementById('matchLog');
-    MG.pendingLog.splice(0,5).forEach(({msg,type})=>{
+    MG.pendingLog.splice(0,4).forEach(({msg,type})=>{
       const d=document.createElement('div');d.className=`le le-${type}`;d.textContent=msg;
-      el.insertBefore(d,el.firstChild);if(el.children.length>100)el.removeChild(el.lastChild);
+      el.insertBefore(d,el.firstChild);if(el.children.length>80)el.removeChild(el.lastChild);
     });
     MG.pendingLog=[];
   }
 
   if(MG.tick>=MG.maxTick)endPeriod();
-}
-
-function execChip(player){
-  const chip=resolveChip(player);
-  const isBall=MG.possession===player.team;
-  const B=MG.ball,r=player.robot;
-  const pow=(chip.pow||0)+(chip.spd||0)+(chip.def||0);
-  const stat=(r.spd+r.str+r.int)/30;
-  const roll=Math.random();
-  const successP=.22+stat*.28+(pow/50)*.25;
-
-  if(chip.cat==='move'){
-    if(isBall){
-      const dir=player.team==='home'?-1:1;
-      B.vx+=dir*(.003+chip.spd*.0008)*(roll+.3);B.vy+=rnd(.004);
-      player.tx=Math.max(.02,Math.min(.98,B.rx+dir*.08+rnd(.06)));player.ty=Math.max(.02,Math.min(.98,B.ry+rnd(.07)));
-    }else{player.tx=player.baseX+rnd(.06);player.ty=player.baseY+rnd(.06);}
-    if(roll<.12)addLog(`${chip.icon} ${r.emoji} ${chip.name}`,'chip');
-  }else if(chip.cat==='attack'){
-    if(isBall&&roll<successP){
-      const dir=player.team==='home'?-1:1;
-      B.vx+=dir*(.006+chip.pow*.0018);B.vy=(.5+rnd(.06)-B.ry)*.06;
-      player.tx=Math.max(.02,Math.min(.98,B.rx+dir*.05));player.ty=Math.max(.02,Math.min(.98,B.ry+rnd(.04)));
-      if(roll<.3)addLog(`${chip.icon} ${r.emoji} ${chip.name}!`,'action');
-    }else if(!isBall&&roll<.09){MG.possession=player.team;B.vx*=-.4;B.vy*=-.3;addLog(`${chip.icon} ${r.emoji} wins it back!`,'action');}
-  }else if(chip.cat==='defend'){
-    const dist=Math.hypot(player.rx-B.rx,player.ry-B.ry);
-    if(!isBall&&roll<successP*.9&&dist<.2){MG.possession=player.team;B.vx*=-.5;B.vy+=rnd(.003);addLog(`${chip.icon} ${r.emoji} ${chip.name} — STEAL!`,'action');}
-    else{player.tx=B.rx+rnd(.1);player.ty=B.ry+rnd(.08);}
-  }else if(chip.cat==='special'){
-    if(isBall&&roll<successP*.9){const dir=player.team==='home'?-1:1;B.vx+=dir*(.01+chip.pow*.0022);B.vy=(.5+rnd(.04)-B.ry)*.08;if(roll<.4)addLog(`${chip.icon} ${r.emoji} ${chip.name}!!`,'action');}
-  }else{
-    if(isBall&&roll<successP*.7){B.vx+=(player.team==='home'?-1:1)*chip.spd*.0008;B.vy+=rnd(.002);}
-    player.tx=player.baseX+rnd(.08);player.ty=player.baseY+rnd(.08);
-  }
-  if(Math.random()<.05)MG.possession=MG.possession==='home'?'away':'home';
 }
 
 function addLog(msg,type){
@@ -961,136 +1732,491 @@ function addLog(msg,type){
     const d=document.createElement('div');d.className=`le le-${type}`;d.textContent=msg;
     el.insertBefore(d,el.firstChild);return;
   }
-  if(!MG.pendingLog)MG.pendingLog=[];MG.pendingLog.push({msg,type});
+  if(!MG.pendingLog)MG.pendingLog=[];
+  MG.pendingLog.push({msg,type});
 }
 
 function onGoal(team){
-  const scorer=MG.players.filter(p=>p.team===team).sort((a,b)=>Math.hypot(a.rx-MG.ball.rx,a.ry-MG.ball.ry)-Math.hypot(b.rx-MG.ball.rx,b.ry-MG.ball.ry))[0];
-  const sn=scorer?scorer.robot.emoji+' '+scorer.robot.name:'';
+  MG.goalCooldown=90; // ~1.5s cooldown
+  const scorer=MG.players.filter(p=>p.team===team)
+    .sort((a,b)=>Math.hypot(a.x-MG.ball.x,a.y-MG.ball.y)-Math.hypot(b.x-MG.ball.x,b.y-MG.ball.y))[0];
+  const sn=scorer?`${scorer.robot.emoji} ${scorer.robot.name}`:'';
   addLog(`⚽ GOAL! ${sn} — ${team==='home'?MG.homeName:MG.awayName} scores!`,'goal');
-  if(team==='home')MG.periodScores.home++;else MG.periodScores.away++;
-  spawnParticles();
-  MG.ball={rx:.5,ry:.5,vx:rnd(.003),vy:rnd(.002),trail:[]};
-  MG.players.forEach(p=>{p.rx=p.baseX+rnd(.04);p.ry=p.baseY+rnd(.04);p.tx=p.rx;p.ty=p.ry;p.trail=[];});
+  spawnParticles(team);
+  // Reset ball to centre
+  MG.ball={x:0.5,y:0.5,vx:rnd(0.004),vy:rnd(0.003),trail:[]};
+  // Reset players to base positions
+  MG.players.forEach(p=>{
+    p.x=p.baseX+rnd(0.03); p.y=p.baseY+rnd(0.03);
+    p.vx=0; p.vy=0; p.trail=[];
+  });
   MG.possession=team==='home'?'away':'home';
 }
-function spawnParticles(){
-  for(let i=0;i<55;i++){const a=Math.random()*Math.PI*2,s=.003+Math.random()*.012;MG.particles.push({x:.5,y:.5,vx:Math.cos(a)*s,vy:Math.sin(a)*s-.004,life:60+Math.random()*40,maxLife:100,color:`hsl(${Math.random()*60+20},100%,60%)`});}
-}
-function endPeriod(){
-  const h=MG.homeScore,a=MG.awayScore;
-  const pLabel=['','1ST','2ND','3RD','4TH','5TH','6TH','7TH','8TH'];
-  addLog(`⏸ END OF PERIOD ${MG.period} — ${MG.homeName} ${h} : ${a} ${MG.awayName}`,'info');
 
-  // Update record every 2 periods (= 1 full match)
-  if(MG.period%2===0){
-    const rh=MG.periodScores.home,ra=MG.periodScores.away;
-    let res,type;
-    if(rh>ra){res=`🏆 ${MG.homeName} WIN period pair! ${rh}–${ra}`;type='goal';acct().record.w++;}
-    else if(ra>rh){res=`${MG.awayName} WIN period pair! ${ra}–${rh}`;type='action';acct().record.l++;}
-    else{res=`DRAW ${rh}–${ra}`;type='info';acct().record.d++;}
-    addLog(res,type);updateRec();save();
-    MG.periodScores={home:0,away:0};
+function spawnParticles(team){
+  // Home scores in LEFT goal (x=0.02), away scores in RIGHT goal (x=0.98)
+  const cx=team==='home'?0.02:0.98;
+  for(let i=0;i<70;i++){
+    const a=Math.random()*Math.PI*2, s=0.004+Math.random()*0.014;
+    MG.particles.push({x:cx,y:0.5,vx:Math.cos(a)*s,vy:Math.sin(a)*s-0.003,
+      life:55+Math.random()*45, maxLife:100,
+      color:`hsl(${Math.random()*60+20},100%,60%)`});
   }
+}
 
-  // Kick off next period — match NEVER stops
-  MG.period++;
-  MG.tick=0;
-  // Reset ball and positions for new period kickoff
-  MG.ball={rx:.5,ry:.5,vx:rnd(.003),vy:rnd(.002),trail:[]};
+function endPeriod(){
+  addLog(`⏸ END P${MG.period} — ${MG.homeName} ${MG.homeScore}:${MG.awayScore} ${MG.awayName}`,'info');
+  if(MG.period>=MG.maxPeriods){finalizeMatch();return;}
+  MG.period++;MG.tick=0;
+  MG.ball={x:0.5,y:0.5,vx:rnd(0.003),vy:rnd(0.002),trail:[]};
   MG.players.forEach(p=>{
-    p.rx=p.baseX+rnd(.05);p.ry=p.baseY+rnd(.05);
-    p.tx=p.rx;p.ty=p.ry;p.trail=[];
-    p.execTimer=Math.floor(Math.random()*60);
+    p.x=p.baseX+rnd(0.04);p.y=p.baseY+rnd(0.04);
+    p.vx=0;p.vy=0;p.trail=[];
+    p.chipTimer=30+Math.floor(Math.random()*50);
   });
   MG.possession=MG.period%2===0?'away':'home';
-  addLog(`▶ PERIOD ${MG.period} KICKS OFF — ${pLabel[Math.min(MG.period,8)] || MG.period+'TH'} PERIOD`,'info');
-  document.getElementById('hudSH').textContent=MG.homeScore;
-  document.getElementById('hudSA').textContent=MG.awayScore;
+  addLog(`▶ PERIOD ${MG.period} KICKS OFF`,'info');
 }
 
-function endMatch(){
-  // Only called by manual stop button
+function finalizeMatch(){
   MS.running=false;MG.phase='ended';
   const h=MG.homeScore,a=MG.awayScore;
-  let res,type;
-  if(h>a){res=`🏆 ${MG.homeName} WIN! ${h}–${a}`;type='goal';acct().record.w++;}
-  else if(a>h){res=`${MG.awayName} WIN ${a}–${h}`;type='action';acct().record.l++;}
-  else{res=`DRAW ${h}–${h}`;type='info';acct().record.d++;}
-  addLog(`STOPPED — ${res}`,type);document.getElementById('hudTime').textContent=`STOPPED · ${h}:${a}`;
-  updateRec();save();
+  let rpChange=0,resultStr='';
+  if(h>a){resultStr=`🏆 ${MG.homeName} WIN! ${h}–${a}`;acct().record.w++;rpChange=+25;}
+  else if(a>h){resultStr=`${MG.awayName} WIN ${a}–${h}`;acct().record.l++;rpChange=-15;}
+  else{resultStr=`DRAW ${h}–${a}`;acct().record.d++;rpChange=+5;}
+  addLog(resultStr,'goal');
+  acct().rp=Math.max(0,(acct().rp||0)+rpChange);
+  updateRec();updateRankBadge();save();
+  stopRain();
+  updateLeagueStandings(h>a?'win':a>h?'loss':'draw',h,a);
+  document.getElementById('endTitle').textContent=h>a?'🏆 VICTORY!':(a>h?'😤 DEFEAT':'🤝 DRAW');
+  document.getElementById('endTitle').style.color=h>a?'var(--gr)':(a>h?'var(--re)':'var(--ye)');
+  document.getElementById('endScore').textContent=`${h} : ${a}`;
+  const tier=getTier(acct().rp);
+  document.getElementById('endRankInfo').innerHTML=`RP: ${rpChange>=0?'+':''}${rpChange} → ${acct().rp} &nbsp;${tier.icon} ${tier.name}`;
+  document.getElementById('endOverlay').style.display='flex';
+}
+
+function stopRain(){
+  if(rainCanvas)rainCanvas.style.display='none';
+  rainDrops=[];
+}
+
+function drawRain(){
+  if(!rainCtx||!rainDrops.length)return;
+  const W=rainCanvas.width,H=rainCanvas.height;
+  rainCtx.clearRect(0,0,W,H);
+  rainDrops.forEach(d=>{
+    rainCtx.beginPath();
+    rainCtx.moveTo(d.x,d.y);
+    rainCtx.lineTo(d.x+d.l*0.28,d.y+d.l);
+    rainCtx.strokeStyle=`rgba(174,214,255,${d.a})`;
+    rainCtx.lineWidth=1;rainCtx.stroke();
+    d.y+=d.s;d.x+=d.s*0.28;
+    if(d.y>H){d.y=-20;d.x=Math.random()*W;}
+    if(d.x>W)d.x=0;
+  });
 }
 
 function drawMatch(){
   if(!mCanvas||!mCtx)return;
   const W=mCanvas.width,H=mCanvas.height,ctx=mCtx;
-  const tx=v=>v*W,ty=v=>v*H;
-  const g=ctx.createLinearGradient(0,0,W,0);g.addColorStop(0,'#152a1c');g.addColorStop(.5,'#1a3823');g.addColorStop(1,'#152a1c');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  for(let i=0;i<10;i++){ctx.fillStyle=i%2?'rgba(255,255,255,.025)':'rgba(0,0,0,.04)';ctx.fillRect(i*W/10,0,W/10,H);}
-  ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;const p=12;
-  ctx.strokeRect(p,p,W-p*2,H-p*2);
-  ctx.beginPath();ctx.moveTo(W/2,p);ctx.lineTo(W/2,H-p);ctx.stroke();
-  ctx.beginPath();ctx.arc(W/2,H/2,H*.18,0,Math.PI*2);ctx.stroke();
-  ctx.beginPath();ctx.arc(W/2,H/2,3,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.4)';ctx.fill();
-  const gw=10,gh=H*.24;
-  ctx.fillStyle='rgba(0,229,122,.1)';ctx.fillRect(p-gw,(H-gh)/2,gw,gh);ctx.strokeStyle='rgba(0,229,122,.4)';ctx.strokeRect(p-gw,(H-gh)/2,gw,gh);
-  ctx.fillStyle='rgba(255,61,90,.1)';ctx.fillRect(W-p,(H-gh)/2,gw,gh);ctx.strokeStyle='rgba(255,61,90,.4)';ctx.strokeRect(W-p,(H-gh)/2,gw,gh);
-  const paw=W*.13,pah=H*.5;ctx.strokeStyle='rgba(255,255,255,.3)';ctx.strokeRect(p,(H-pah)/2,paw,pah);ctx.strokeRect(W-p-paw,(H-pah)/2,paw,pah);
+  const sc=MG.scale||1;
 
-  // Ball trail
-  MG.ball.trail.forEach((pt,i)=>{const a=i/MG.ball.trail.length;ctx.beginPath();ctx.arc(tx(pt.x),ty(pt.y),4*a,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${a*.22})`;ctx.fill();});
+  // Field boundaries in canvas pixels
+  const pad=Math.min(W,H)*0.04*(2-sc);
+  const FL=pad, FR=W-pad, FT=pad*1.5, FB=H-pad*1.5;
+  const FW=FR-FL, FH=FB-FT;
 
-  // Player trails (motion blur effect)
-  MG.players.forEach(pl=>{
-    if(pl.trail.length<2)return;
-    ctx.beginPath();ctx.moveTo(tx(pl.trail[0].x),ty(pl.trail[0].y));
-    pl.trail.forEach(t=>ctx.lineTo(tx(t.x),ty(t.y)));
-    ctx.strokeStyle=pl.robot.color+'28';ctx.lineWidth=3;ctx.stroke();
+  // Normalised → pixel
+  const px=v=>FL+v*FW;
+  const py=v=>FT+v*FH;
+
+  // ── Background ──
+  ctx.fillStyle=MG.isNight?'#07090f':'#0a0a0a';
+  ctx.fillRect(0,0,W,H);
+
+  // Stands / crowd area
+  if(MG.isNight){
+    ctx.fillStyle='#0c0e1a';
+    ctx.fillRect(0,0,W,H);
+    // crowd silhouette
+    for(let i=0;i<6;i++){
+      ctx.fillStyle=`rgba(${20+i*4},${15+i*3},${40+i*5},0.9)`;
+      ctx.fillRect(0,i*(FT/6),W,FT/6+2);
+      ctx.fillRect(0,FB+i*(H-FB)/6,W,(H-FB)/6+2);
+    }
+  } else {
+    // Day: tiled grass
+    ctx.fillStyle='#121a10';ctx.fillRect(0,0,W,H);
+    // checkerboard grass stripes
+    const stripeW=FW/10;
+    for(let i=0;i<10;i++){
+      ctx.fillStyle=i%2===0?'#162014':'#19271a';
+      ctx.fillRect(FL+i*stripeW,FT,stripeW,FH);
+    }
+  }
+
+  // ── Night floodlights ──
+  if(MG.isNight){
+    [[0,0],[1,0],[0,1],[1,1]].forEach(([lx,ly])=>{
+      const lg=ctx.createRadialGradient(px(lx),py(ly),5,px(lx),py(ly),Math.max(FW,FH)*0.7);
+      lg.addColorStop(0,'rgba(255,245,200,.06)');
+      lg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=lg;ctx.fillRect(0,0,W,H);
+    });
+  }
+
+  // ── Field outline ──
+  ctx.strokeStyle=MG.isNight?'rgba(255,255,255,.55)':'rgba(255,255,255,.75)';
+  ctx.lineWidth=2;
+  ctx.strokeRect(FL,FT,FW,FH);
+
+  // Halfway line
+  ctx.beginPath();ctx.moveTo(px(0.5),FT);ctx.lineTo(px(0.5),FB);ctx.stroke();
+
+  // Centre circle
+  ctx.beginPath();
+  ctx.arc(px(0.5),py(0.5),FH*0.16,0,Math.PI*2);
+  ctx.stroke();
+  // Centre dot
+  ctx.beginPath();ctx.arc(px(0.5),py(0.5),4,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,.6)';ctx.fill();
+
+  // Penalty areas
+  const paW=FW*0.14, paH=FH*0.48;
+  ctx.strokeStyle=MG.isNight?'rgba(255,255,255,.4)':'rgba(255,255,255,.55)';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(FL, py(0.5)-paH/2, paW, paH);             // left pen area
+  ctx.strokeRect(FR-paW, py(0.5)-paH/2, paW, paH);         // right pen area
+
+  // Penalty spots
+  ctx.fillStyle='rgba(255,255,255,.4)';
+  ctx.beginPath();ctx.arc(FL+paW*0.65,py(0.5),3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(FR-paW*0.65,py(0.5),3,0,Math.PI*2);ctx.fill();
+
+  // Corner arcs
+  [[0,0],[1,0],[0,1],[1,1]].forEach(([cx2,cy2])=>{
+    ctx.beginPath();
+    ctx.arc(px(cx2),py(cy2),FH*0.04,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.2;ctx.stroke();
   });
 
-  // Players
+  // ── GOALS ──
+  const goalDepth=FW*0.028, goalH=FH*0.22;
+  const goalTop=py(0.5)-goalH/2, goalBot=py(0.5)+goalH/2;
+
+  // LEFT goal — HOME scores here (home attacks left from right half)
+  ctx.fillStyle='rgba(0,229,122,.15)';
+  ctx.fillRect(FL-goalDepth, goalTop, goalDepth, goalH);
+  ctx.strokeStyle='rgba(0,229,122,.7)';ctx.lineWidth=2;
+  ctx.strokeRect(FL-goalDepth, goalTop, goalDepth, goalH);
+  ctx.strokeStyle='rgba(0,229,122,.25)';ctx.lineWidth=0.8;
+  for(let g=0;g<4;g++){
+    ctx.beginPath();ctx.moveTo(FL-goalDepth,goalTop+g*(goalH/4));ctx.lineTo(FL,goalTop+g*(goalH/4));ctx.stroke();
+  }
+
+  // RIGHT goal — AWAY scores here (away attacks right from left half)
+  ctx.fillStyle='rgba(255,61,90,.15)';
+  ctx.fillRect(FR, goalTop, goalDepth, goalH);
+  ctx.strokeStyle='rgba(255,61,90,.7)';ctx.lineWidth=2;
+  ctx.strokeRect(FR, goalTop, goalDepth, goalH);
+  ctx.strokeStyle='rgba(255,61,90,.25)';ctx.lineWidth=0.8;
+  for(let g=0;g<4;g++){
+    ctx.beginPath();ctx.moveTo(FR,goalTop+g*(goalH/4));ctx.lineTo(FR+goalDepth,goalTop+g*(goalH/4));ctx.stroke();
+  }
+
+  // Goal labels
+  ctx.textAlign='center';ctx.textBaseline='bottom';ctx.font='bold 9px Syne';
+  ctx.fillStyle='rgba(0,229,122,.85)';ctx.fillText('◄ HOME GOAL',px(0.08),FT-3);
+  ctx.fillStyle='rgba(255,61,90,.85)';ctx.fillText('AWAY GOAL ►',px(0.92),FT-3);
+
+  // Rain puddles (static shimmer)
+  if(MG.isRain){
+    ctx.globalAlpha=0.07;
+    for(let i=0;i<6;i++){
+      const pux=FL+Math.sin(i*1.7+MG.tick*0.01)*FW*0.3+FW*0.5;
+      const puy=FT+Math.cos(i*2.3+MG.tick*0.008)*FH*0.3+FH*0.5;
+      ctx.beginPath();ctx.ellipse(pux,puy,30+i*10,8+i*3,0,0,Math.PI*2);
+      ctx.fillStyle='rgba(120,180,255,1)';ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  // ── Ball trail ──
+  MG.ball.trail.forEach((pt,i)=>{
+    const a=(i/MG.ball.trail.length)*0.35;
+    const r=(i/MG.ball.trail.length)*5;
+    ctx.beginPath();ctx.arc(px(pt.x),py(pt.y),r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fill();
+  });
+
+  // ── Player trails ──
   MG.players.forEach(pl=>{
-    const px=tx(pl.rx),py=ty(pl.ry);
-    const hasBall=Math.hypot(pl.rx-MG.ball.rx,pl.ry-MG.ball.ry)<.07;
+    if(pl.trail.length<2)return;
+    ctx.beginPath();
+    ctx.moveTo(px(pl.trail[0].x),py(pl.trail[0].y));
+    for(let i=1;i<pl.trail.length;i++) ctx.lineTo(px(pl.trail[i].x),py(pl.trail[i].y));
+    ctx.strokeStyle=pl.robot.color+'30';ctx.lineWidth=3;ctx.stroke();
+  });
+
+  // ── Players ──
+  MG.players.forEach(pl=>{
+    const ppx=px(pl.x), ppy=py(pl.y);
+    const R=Math.max(10,FH*PLAYER_RADIUS);
+    const distToBall=Math.hypot(pl.x-MG.ball.x,pl.y-MG.ball.y);
+    const hasBall=distToBall<(PLAYER_RADIUS+BALL_RADIUS+0.02);
+
     // Shadow
-    ctx.beginPath();ctx.ellipse(px,py+12,11,5,0,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,.3)';ctx.fill();
+    ctx.beginPath();ctx.ellipse(ppx,ppy+R*0.9,R*0.85,R*0.3,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.fill();
+
     // Glow if has ball
-    if(hasBall){ctx.beginPath();ctx.arc(px,py,19,0,Math.PI*2);ctx.fillStyle=pl.robot.color+'18';ctx.fill();}
-    // Body
-    ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);ctx.fillStyle=pl.robot.color+'ee';ctx.fill();
-    ctx.strokeStyle=hasBall?'#f5c400':'rgba(255,255,255,.35)';ctx.lineWidth=hasBall?2.5:1;ctx.stroke();
-    // Emoji
-    ctx.font='11px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(pl.robot.emoji,px,py);
-    // Name tag
     if(hasBall){
-      const nw=pl.robot.name.length*5.5+10;
-      ctx.fillStyle='rgba(0,0,0,.7)';ctx.beginPath();
-      if(ctx.roundRect)ctx.roundRect(px-nw/2,py-28,nw,14,4);else ctx.rect(px-nw/2,py-28,nw,14);
+      ctx.beginPath();ctx.arc(ppx,ppy,R*1.7,0,Math.PI*2);
+      ctx.fillStyle=pl.robot.color+'22';ctx.fill();
+    }
+
+    // Body circle
+    ctx.beginPath();ctx.arc(ppx,ppy,R,0,Math.PI*2);
+    ctx.fillStyle=pl.robot.color+'ee';ctx.fill();
+    ctx.strokeStyle=hasBall?'#f5c400':'rgba(255,255,255,.3)';
+    ctx.lineWidth=hasBall?2.5:1.2;ctx.stroke();
+
+    // Emoji
+    ctx.font=`${R*1.1}px serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(pl.robot.emoji,ppx,ppy);
+
+    // Team dot
+    ctx.beginPath();ctx.arc(ppx,ppy+R+3,3.5,0,Math.PI*2);
+    ctx.fillStyle=pl.team==='home'?'#00e57a':'#ff3d5a';ctx.fill();
+
+    // Ball-carrier name tag
+    if(hasBall){
+      const nw=pl.robot.name.length*5.8+12;
+      ctx.fillStyle='rgba(0,0,0,.8)';
+      ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(ppx-nw/2,ppy-R-18,nw,14,4);
+      else ctx.rect(ppx-nw/2,ppy-R-18,nw,14);
       ctx.fill();
-      ctx.font='bold 8.5px Syne';ctx.fillStyle='#f5c400';ctx.textBaseline='top';ctx.fillText(pl.robot.name,px,py-26);
+      ctx.font='bold 8px Syne';ctx.fillStyle='#f5c400';
+      ctx.textBaseline='top';ctx.fillText(pl.robot.name,ppx,ppy-R-17);
     }
   });
 
-  // Ball
-  const bx=tx(MG.ball.rx),by=ty(MG.ball.ry);
-  const bg=ctx.createRadialGradient(bx-2,by-2,1,bx,by,7);bg.addColorStop(0,'#fff');bg.addColorStop(1,'#ddd');
-  ctx.beginPath();ctx.arc(bx,by,7,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.stroke();
-  [[0,-.45],[.38,.22],[-.38,.22]].forEach(([dx,dy])=>{ctx.beginPath();ctx.arc(bx+dx*6.5,by+dy*6.5,2,0,Math.PI*2);ctx.fillStyle='#444';ctx.fill();});
-
-  // Goal particles
-  MG.particles.forEach(pp=>{
-    const a=pp.life/pp.maxLife;
-    ctx.beginPath();ctx.arc(tx(pp.x),ty(pp.y),3.5*a,0,Math.PI*2);
-    ctx.fillStyle=pp.color.replace('hsl','hsla').replace(')',`,${a})`);ctx.fill();
+  // ── Ball ──
+  const BR=Math.max(7,FH*BALL_RADIUS);
+  const bpx=px(MG.ball.x),bpy=py(MG.ball.y);
+  // Shadow
+  ctx.beginPath();ctx.ellipse(bpx,bpy+BR*0.7,BR*0.75,BR*0.25,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,.4)';ctx.fill();
+  // Ball gradient
+  const bg=ctx.createRadialGradient(bpx-BR*0.3,bpy-BR*0.3,BR*0.1,bpx,bpy,BR);
+  bg.addColorStop(0,'#ffffff');bg.addColorStop(0.6,'#e0e0e0');bg.addColorStop(1,'#aaaaaa');
+  ctx.beginPath();ctx.arc(bpx,bpy,BR,0,Math.PI*2);
+  ctx.fillStyle=bg;ctx.fill();
+  ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.stroke();
+  // Seam patches
+  [[0,-0.45],[0.38,0.22],[-0.38,0.22]].forEach(([dx,dy])=>{
+    ctx.beginPath();ctx.arc(bpx+dx*BR,bpy+dy*BR,BR*0.28,0,Math.PI*2);
+    ctx.fillStyle='rgba(40,40,40,.5)';ctx.fill();
   });
 
-  // Possession bar
-  ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(W/2-55,H-18,110,7);
-  const pct=MG.possession==='home'?62:48;
-  ctx.fillStyle='rgba(0,229,122,.65)';ctx.fillRect(W/2-55,H-18,pct,7);
-  ctx.fillStyle='rgba(255,61,90,.65)';ctx.fillRect(W/2-55+pct,H-18,110-pct,7);
+  // ── Particles ──
+  MG.particles.forEach(pt=>{
+    const a=pt.life/pt.maxLife;
+    ctx.beginPath();ctx.arc(px(pt.x),py(pt.y),3.5*a,0,Math.PI*2);
+    ctx.fillStyle=pt.color.replace('hsl','hsla').replace(')',`,${a})`);ctx.fill();
+  });
+
+  // ── Possession bar ──
+  const barW=120, barH=7, barX=W/2-barW/2, barY=H-14;
+  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(barX,barY,barW,barH);
+  const homePct=MG.possession==='home'?65:45;
+  ctx.fillStyle='rgba(0,229,122,.7)';ctx.fillRect(barX,barY,homePct/100*barW,barH);
+  ctx.fillStyle='rgba(255,61,90,.7)';ctx.fillRect(barX+homePct/100*barW,barY,(100-homePct)/100*barW,barH);
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.strokeRect(barX,barY,barW,barH);
 }
+
+// ==================== RANKED ====================
+function renderRanked(){
+  if(!CUR)return;
+  const rp=acct().rp||0;
+  const tier=getTier(rp);
+  const el=document.getElementById('rankedTiers');
+  el.innerHTML=RANK_TIERS.map(t=>{
+    const isCur=tier.name===t.name;
+    const progress=t.max===999999?100:Math.min(100,Math.max(0,(rp-t.min)/(t.max-t.min)*100));
+    return `<div class="rank-tier" style="${isCur?`border-color:${t.color};background:${t.color}11`:''};margin-bottom:6px;">
+      <div class="rank-ico">${t.icon}</div>
+      <div style="flex:1">
+        <div class="rank-name" style="color:${t.color}">${t.name}${isCur?' ← YOU':''}</div>
+        <div class="rank-pts">${t.min}–${t.max===999999?'∞':t.max} RP</div>
+        ${isCur?`<div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:${progress}%;background:${t.color}"></div></div>`:''}
+      </div>
+      ${isCur?`<div style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:${t.color}">${rp} RP</div>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('rankedStats').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div class="rec-box"><div class="rec-num" style="color:var(--gr)">${acct().record.w||0}</div><div class="rec-lbl">Wins</div></div>
+      <div class="rec-box"><div class="rec-num" style="color:var(--muted)">${acct().record.d||0}</div><div class="rec-lbl">Draws</div></div>
+      <div class="rec-box"><div class="rec-num" style="color:var(--re)">${acct().record.l||0}</div><div class="rec-lbl">Losses</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Win: +25 RP &nbsp;|&nbsp; Draw: +5 RP &nbsp;|&nbsp; Loss: -15 RP</div>`;
+}
+
+function startRankedMatch(){
+  goScreen('match',null);
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
+  toast('Ranked match — win to earn RP!');
+}
+
+// ==================== LEAGUES ====================
+function getLeagues(){
+  try{return JSON.parse(localStorage.getItem('bf5_leagues')||'[]');}catch(e){return[];}
+}
+function saveLeagues(l){localStorage.setItem('bf5_leagues',JSON.stringify(l));}
+
+function joinLeague(){
+  const leagues=getLeagues();
+  // Find open league or create one
+  let league=leagues.find(l=>l.teams.length<8&&!l.teams.some(t=>t.player===CUR));
+  if(!league){
+    league={id:'lg'+Date.now(),season:1,teams:[],matches:[]};
+    leagues.push(league);
+  }
+  if(league.teams.some(t=>t.player===CUR)){toast('Already in a league!','err');renderLeagues();return;}
+  league.teams.push({player:CUR,name:acct().teamName||CUR,w:0,d:0,l:0,gf:0,ga:0,pts:0});
+  // Fill with AI bots if league not full
+  const aiNames=['Bot United','Robo City','Circuit FC','Byte Athletic','RAM Rovers','Pixel XI','Logic Legends'];
+  while(league.teams.length<8){
+    const ai=aiNames.shift()||'AI Team';
+    league.teams.push({player:null,name:ai,w:Math.floor(Math.random()*5),d:Math.floor(Math.random()*3),l:Math.floor(Math.random()*5),gf:Math.floor(Math.random()*15),ga:Math.floor(Math.random()*12),pts:0});
+    const t=league.teams[league.teams.length-1];
+    t.pts=t.w*3+t.d;
+  }
+  saveLeagues(leagues);acct().leagueId=league.id;save();
+  toast('Joined league!');renderLeagues();
+}
+
+function updateLeagueStandings(result,gf,ga){
+  if(!acct().leagueId)return;
+  const leagues=getLeagues();
+  const league=leagues.find(l=>l.id===acct().leagueId);
+  if(!league)return;
+  const team=league.teams.find(t=>t.player===CUR);
+  if(!team)return;
+  if(result==='win'){team.w++;team.pts+=3;}
+  else if(result==='draw'){team.d++;team.pts+=1;}
+  else{team.l++;}
+  team.gf+=gf;team.ga+=ga;
+  saveLeagues(leagues);
+}
+
+function renderLeagues(){
+  const el=document.getElementById('leagueContent');
+  if(!acct().leagueId){
+    el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">Not in a league yet</div></div>`;return;
+  }
+  const leagues=getLeagues();
+  const league=leagues.find(l=>l.id===acct().leagueId);
+  if(!league){el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">League not found</div></div>`;return;}
+  const sorted=[...league.teams].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga));
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="font-size:.72rem;color:var(--muted);">Season ${league.season} · ${league.teams.length} Teams</div>
+      <button class="btn btn-s3 btn-xs" onclick="leaveLeague()">Leave League</button>
+    </div>
+    <table class="league-table">
+      <thead><tr><th>#</th><th>Team</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>PTS</th></tr></thead>
+      <tbody>${sorted.map((t,i)=>`<tr style="${t.player===CUR?'background:rgba(0,229,122,.06);':''}">
+        <td class="lt-pos">${i+1}</td>
+        <td style="font-weight:700;font-size:.75rem;">${t.name}${t.player===CUR?' 👤':''}</td>
+        <td style="color:var(--gr)">${t.w}</td><td style="color:var(--muted)">${t.d}</td><td style="color:var(--re)">${t.l}</td>
+        <td>${t.gf}</td><td>${t.ga}</td><td class="lt-pts">${t.pts}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+    <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Your league record updates automatically after each match.</div>`;
+}
+
+function leaveLeague(){
+  acct().leagueId=null;save();renderLeagues();}
+
+// ==================== CLANS ====================
+function getClans(){try{return JSON.parse(localStorage.getItem('bf5_clans')||'[]');}catch(e){return[];}}
+function saveClans(c){localStorage.setItem('bf5_clans',JSON.stringify(c));}
+
+function renderClans(){
+  const clans=getClans();
+  const el=document.getElementById('clanContent');
+  const myClan=acct().clan?clans.find(c=>c.id===acct().clan):null;
+  if(myClan){
+    const members=Object.keys(ACCOUNTS).filter(u=>ACCOUNTS[u].clan===myClan.id);
+    el.innerHTML=`<div class="clan-card" style="border-color:${myClan.color}44">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="font-size:2rem">${myClan.icon}</div>
+        <div><div style="font-size:1rem;font-weight:800;">${myClan.name}</div>
+        <span class="clan-tag" style="background:${myClan.color}22;color:${myClan.color};">[${myClan.tag}]</span>
+        <span style="font-size:.65rem;color:var(--muted);">${members.length} members</span></div>
+        <button class="btn btn-re btn-xs" style="margin-left:auto;" onclick="leaveClan()">Leave</button>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">MEMBERS</div>
+      ${members.map(u=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);">
+        <span>${ACCOUNTS[u].avatar||'🤖'}</span>
+        <span style="font-size:.78rem;font-weight:700;">${u}${u===CUR?' (you)':''}</span>
+        <span style="margin-left:auto;font-size:.65rem;color:${getTier(ACCOUNTS[u].rp||0).color};">${getTier(ACCOUNTS[u].rp||0).icon} ${getTier(ACCOUNTS[u].rp||0).name}</span>
+      </div>`).join('')}
+    </div>`;
+  } else {
+    el.innerHTML=`<div class="empty-hint"><div class="big">🛡</div><div class="txt">Not in a clan</div></div>`;
+  }
+  if(!myClan&&clans.length>0){
+    el.innerHTML+='<div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;margin:14px 0 8px;text-transform:uppercase;">All Clans</div>'+
+      clans.map(c=>{
+        const count=Object.keys(ACCOUNTS).filter(u=>ACCOUNTS[u].clan===c.id).length;
+        return `<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-size:1.5rem">${c.icon}</div>
+          <div><div style="font-size:.9rem;font-weight:800;">${c.name}</div>
+          <span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span>
+          <span style="font-size:.65rem;color:var(--muted)">${count} members</span></div>
+          <button class="btn btn-gr btn-xs" style="margin-left:auto;" onclick="joinClanById('${c.id}')">Join</button>
+        </div></div>`;
+      }).join('');
+  }
+}
+
+function openCreateClanModal(){
+  _clanEmoji='🛡️';_clanColor=COLORS[0];
+  document.getElementById('clanName').value='';document.getElementById('clanTag').value='';
+  document.getElementById('clanColors').innerHTML=COLORS.map(c=>`<div class="csw${c===_clanColor?' on':''}" style="background:${c}" onclick="_clanColor='${c}';document.querySelectorAll('#clanColors .csw').forEach(s=>s.classList.remove('on'));this.classList.add('on');"></div>`).join('');
+  document.getElementById('clanEmojis').innerHTML=EMOJIS.map(e=>`<div class="emo-opt" style="font-size:1rem;" onclick="_clanEmoji='${e}';document.querySelectorAll('#clanEmojis .emo-opt').forEach(s=>s.style.background='');this.style.background='var(--s4)';">${e}</div>`).join('');
+  openModal('createClanModal');
+}
+function saveClan(){
+  const name=document.getElementById('clanName').value.trim(),tag=document.getElementById('clanTag').value.trim();
+  if(!name||!tag){toast('Fill in name and tag','err');return;}
+  if(acct().clan){toast('Leave current clan first','err');return;}
+  const clans=getClans();
+  if(clans.some(c=>c.tag===tag)){toast('Tag taken','err');return;}
+  const clan={id:'cl'+Date.now(),name,tag,icon:_clanEmoji,color:_clanColor};
+  clans.push(clan);saveClans(clans);
+  acct().clan=clan.id;save();
+  closeModal('createClanModal');renderClans();toast('Clan created!');
+}
+function openJoinClanModal(){
+  const clans=getClans().filter(c=>c.id!==acct().clan);
+  document.getElementById('joinClanList').innerHTML=clans.length?clans.map(c=>`<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.5rem">${c.icon}</span><div><div style="font-size:.85rem;font-weight:800;">${c.name}</div><span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span></div><button class="btn btn-gr btn-xs" style="margin-left:auto" onclick="joinClanById('${c.id}');closeModal('joinClanModal')">Join</button></div></div>`).join(''):`<div style="text-align:center;color:var(--muted);padding:20px;">No clans yet. Create one!</div>`;
+  openModal('joinClanModal');
+}
+function joinClanById(id){
+  if(acct().clan){toast('Leave current clan first','err');return;}
+  acct().clan=id;save();renderClans();toast('Joined clan!');
+}
+function leaveClan(){
+  if(!confirm('Leave clan?'))return;acct().clan=null;save();renderClans();}
 
 // ONLINE
 function renderOnline(){
@@ -1103,21 +2229,21 @@ function renderOnline(){
 function genCode(){
   const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<4;i++)code+=c[Math.floor(Math.random()*c.length)];
   acct().code=code;
-  localStorage.setItem('bf3_team_'+code,JSON.stringify({name:acct().teamName||CUR,robots:acct().robots,programs:acct().programs,field:acct().field}));
+  localStorage.setItem('bf5_team_'+code,JSON.stringify({name:acct().teamName||CUR,robots:acct().robots,programs:acct().programs,field:acct().field}));
   save();renderOnline();toast('Code generated!');
 }
-function copyCode(){const code=acct().code;if(!code){toast('Generate a code first','err');return;}navigator.clipboard.writeText(code).then(()=>toast('Copied!'));}
+function copyCode(){const code=acct().code;if(!code){toast('Generate a code first','err');return;}navigator.clipboard.writeText(code).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','err'));}
 function loadChallenge(){
   const code=document.getElementById('challengeInp').value.trim();
   if(code.length<4){toast('Enter a 4-char code','err');return;}
-  const saved=localStorage.getItem('bf3_team_'+code);
+  const saved=localStorage.getItem('bf5_team_'+code)||localStorage.getItem('bf3_team_'+code);
   if(!saved){toast('No team found for that code','err');return;}
   document.getElementById('friendCodeInp').value=code;pickVs('friend');
-  goScreen('match');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
+  goScreen('match',null);
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
   toast('Code loaded — hit Kick Off!');
 }
 
-// RECORD
 function updateRec(){
   if(!CUR)return;const r=acct().record||{w:0,d:0,l:0};
   document.getElementById('recW').textContent='W '+r.w;document.getElementById('recD').textContent='D '+r.d;document.getElementById('recL').textContent='L '+r.l;
