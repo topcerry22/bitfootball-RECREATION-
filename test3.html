@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIT FOOTBALL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+:root{  --bg:#07080e;--s1:#0d0f18;--s2:#131620;--s3:#1a1d2c;--s4:#222537;--s5:#2a2e45;  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);--bd3:rgba(255,255,255,.2);  --txt:#dde4f0;--muted:#5a6480;--dim:#8896b0;  --gr:#00e57a;--gr2:#00c065;  --bl:#3d7eff;--or:#ff7a2f;--re:#ff3d5a;--pu:#9f6fff;--cy:#00d4e8;--ye:#f5c400;--pi:#ff4fa3;--te:#00d4a8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--bd2);border-radius:10px;padding:9px 20px;font-size:.8rem;font-weight:700;z-index:9999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.ok{border-color:var(--gr);color:var(--gr);}
+#toast.err{border-color:var(--re);color:var(--re);}
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-wrap.open{opacity:1;pointer-events:all;}
+.modal{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:24px;width:360px;max-width:95vw;max-height:85vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;}
+.modal-wrap.open .modal{transform:translateY(0);}
+.modal-title{font-size:.85rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+/* AUTH */
+#authScreen{position:fixed;inset:0;z-index:9000;background:radial-gradient(ellipse at 35% 55%,#0a1f35 0%,var(--bg) 65%);display:flex;align-items:center;justify-content:center;}
+.auth-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,122,.05) 0%,transparent 70%);pointer-events:none;top:50%;left:35%;transform:translate(-50%,-50%);}
+.auth-box{background:var(--s1);border:1px solid var(--bd2);border-radius:20px;padding:36px;width:380px;max-width:95vw;box-shadow:0 40px 80px rgba(0,0,0,.7);position:relative;}
+.auth-logo{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--gr);letter-spacing:5px;text-align:center;margin-bottom:3px;}
+.auth-tagline{text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:3px;margin-bottom:28px;}
+.auth-tabs{display:flex;gap:3px;background:var(--s2);border-radius:9px;padding:3px;margin-bottom:18px;}
+.auth-tab{flex:1;padding:8px;border:none;border-radius:7px;cursor:pointer;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;background:transparent;color:var(--muted);transition:all .15s;}
+.auth-tab.active{background:var(--s4);color:var(--txt);}
+.af-field{margin-bottom:10px;}
+.af-label{font-size:.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block;}
+.af-input{width:100%;background:var(--s2);border:1px solid var(--bd2);border-radius:8px;color:var(--txt);font-family:'Syne',sans-serif;font-size:.88rem;padding:9px 12px;outline:none;transition:border-color .15s;}
+.af-input:focus{border-color:var(--gr);}
+.af-btn{width:100%;padding:11px;border:none;border-radius:9px;cursor:pointer;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;background:var(--gr);color:#07080e;margin-top:8px;letter-spacing:.5px;transition:all .15s;}
+.af-btn:hover{background:var(--gr2);}
+.auth-err{font-size:.73rem;color:var(--re);text-align:center;min-height:18px;margin-top:4px;}
+.auth-existing{margin-top:16px;border-top:1px solid var(--bd);padding-top:14px;}
+.ae-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.ae-pill{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);cursor:pointer;margin-bottom:5px;transition:all .15s;font-size:.8rem;font-weight:600;}
+.ae-pill:hover{border-color:var(--gr);}
+.ae-ava{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.ae-del{margin-left:auto;font-size:.65rem;color:var(--muted);padding:2px 6px;border-radius:4px;background:transparent;border:none;cursor:pointer;}
+.ae-del:hover{color:var(--re);background:rgba(255,61,90,.15);}
+/* APP */
+#app{display:none;flex-direction:column;height:100%;}
+#app.on{display:flex;}
+.topbar{display:flex;align-items:center;height:46px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.topbar-logo{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--gr);letter-spacing:4px;padding:0 18px;border-right:1px solid var(--bd);height:100%;display:flex;align-items:center;}
+.nav-list{display:flex;height:100%;}
+.nav-btn{display:flex;align-items:center;gap:5px;padding:0 14px;border:none;background:none;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid transparent;height:100%;transition:all .15s;}
+.nav-btn:hover{color:var(--txt);}
+.nav-btn.active{color:var(--gr);border-bottom-color:var(--gr);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:14px;}
+.user-pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:4px 10px;font-size:.75rem;font-weight:700;cursor:pointer;transition:border-color .15s;}
+.user-pill:hover{border-color:var(--bd2);}
+.rec-row{display:flex;gap:3px;}
+.rb{font-size:.65rem;font-weight:800;padding:2px 6px;border-radius:4px;}
+.rb-w{background:rgba(0,229,122,.12);color:var(--gr);}
+.rb-d{background:rgba(90,99,128,.12);color:var(--muted);}
+.rb-l{background:rgba(255,61,90,.12);color:var(--re);}
+.main{flex:1;overflow:hidden;position:relative;}
+.screen{display:none;width:100%;height:100%;}
+.screen.active{display:flex;flex-direction:column;}
+/* SHARED PANELS */
+.two-col{display:flex;flex:1;overflow:hidden;}
+.col-left{width:250px;flex-shrink:0;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:var(--s1);}
+.col-right{flex:1;overflow-y:auto;padding:16px;}
+.col-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.col-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.col-body{flex:1;overflow-y:auto;padding:8px;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--s4);border-radius:2px;}
+/* BUTTONS */
+.btn{font-family:'Syne',sans-serif;font-size:.76rem;font-weight:700;padding:7px 14px;border:none;border-radius:7px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;letter-spacing:.2px;}
+.btn:active{transform:scale(.97);}
+.btn-gr{background:var(--gr);color:#07080e;} .btn-gr:hover{background:var(--gr2);}
+.btn-s3{background:var(--s4);color:var(--txt);border:1px solid var(--bd2);} .btn-s3:hover{background:var(--s5);}
+.btn-re{background:rgba(255,61,90,.12);color:var(--re);border:1px solid rgba(255,61,90,.2);} .btn-re:hover{background:rgba(255,61,90,.2);}
+.btn-bl{background:var(--bl);color:#fff;}
+.btn-sm{font-size:.68rem;padding:5px 10px;} .btn-xs{font-size:.62rem;padding:3px 7px;}
+.inp{font-family:'Syne',sans-serif;font-size:.82rem;background:var(--s3);border:1px solid var(--bd2);border-radius:7px;color:var(--txt);padding:7px 10px;outline:none;transition:border-color .15s;width:100%;}
+.inp:focus{border-color:var(--gr);}
+.inp::placeholder{color:var(--muted);}
+/* ROBOT SCREEN */
+.rli{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;transition:all .12s;margin-bottom:5px;}
+.rli:hover{border-color:var(--bd2);}
+.rli.sel{border-color:var(--gr);background:rgba(0,229,122,.05);}
+.rli-ava{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.rli-name{font-size:.82rem;font-weight:700;}
+.rli-sub{font-size:.65rem;color:var(--muted);margin-top:1px;}
+.rli-ct{font-size:.62rem;font-weight:800;color:var(--cy);background:rgba(0,212,232,.1);padding:2px 6px;border-radius:4px;}
+.re-section{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px;}
+.re-stitle{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.stat3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+.stat-c{background:var(--s3);border:1px solid var(--bd);border-radius:8px;padding:8px;text-align:center;}
+.stat-c .lbl{font-size:.58rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.stat-c .val{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;margin:3px 0;}
+.stat-c .bar{height:3px;background:var(--s4);border-radius:2px;overflow:hidden;}
+.stat-c .bar-fill{height:100%;border-radius:2px;}
+.stat-c .adj{display:flex;gap:3px;justify-content:center;margin-top:4px;}
+.cpal{display:flex;flex-wrap:wrap;gap:5px;}
+.csw{width:20px;height:20px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:transform .1s;}
+.csw:hover{transform:scale(1.2);}
+.csw.on{border-color:rgba(255,255,255,.8);}
+.emo-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.emo-opt{font-size:1.2rem;text-align:center;cursor:pointer;padding:4px;border-radius:6px;transition:background .1s;}
+.emo-opt:hover{background:var(--s4);}
+.empty-hint{text-align:center;padding:40px 16px;color:var(--muted);}
+.empty-hint .big{font-size:2.5rem;margin-bottom:8px;}
+.empty-hint .txt{font-size:.83rem;font-weight:600;margin-bottom:14px;}
+/* ── SCRATCH ── */
+.scratch-wrap{display:flex;flex:1;overflow:hidden;}
+.palette{width:230px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;}
+.pal-cats{display:flex;flex-wrap:wrap;gap:3px;padding:8px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.pc-btn{font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:5px;border:none;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;opacity:.5;transition:all .12s;}
+.pc-btn.on{opacity:1;box-shadow:0 0 8px rgba(0,0,0,.4);}
+.pal-list{flex:1;overflow-y:auto;padding:6px;}
+.pal-search{padding:6px 8px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.blk{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:3px;cursor:grab;border:none;width:100%;text-align:left;transition:filter .12s,transform .1s;border-left:3px solid transparent;user-select:none;}
+.blk:active{cursor:grabbing;transform:scale(.96);}
+.blk:hover{filter:brightness(1.2);}
+.blk-icon{font-size:.95rem;flex-shrink:0;}
+.blk-name{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.95);}
+.blk-sub{font-size:.6rem;color:rgba(255,255,255,.45);margin-top:1px;}
+/* program area */
+.prog-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.prog-tabs-row{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--bd);background:var(--s1);flex-shrink:0;overflow-x:auto;}
+.prog-tabs-row::-webkit-scrollbar{height:0;}
+.robot-prog-tab{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;background:var(--s2);border:1px solid var(--bd);cursor:pointer;font-size:.72rem;font-weight:700;transition:all .12s;white-space:nowrap;flex-shrink:0;}
+.robot-prog-tab.on{border-color:var(--gr);background:rgba(0,229,122,.08);color:var(--gr);}
+.prog-canvas{flex:1;overflow-y:auto;padding:14px;background:var(--bg);}
+/* program blocks */
+.prog-seq{display:flex;flex-direction:column;gap:2px;}
+.start-blk{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:9px 9px 0 0;background:#153a20;border:1.5px solid #2a7040;font-size:.78rem;font-weight:800;color:#00ff88;letter-spacing:.5px;}
+.end-blk{padding:7px 14px;border-radius:0 0 9px 9px;background:#0d1f12;border:1.5px solid #1a4028;border-top:none;font-size:.68rem;font-weight:800;color:rgba(0,255,136,.3);letter-spacing:.5px;}
+.prog-blk{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:4px;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.92);border-left:3px solid transparent;position:relative;}
+.pb-num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.25);width:16px;flex-shrink:0;}
+.pb-icon{font-size:.9rem;flex-shrink:0;}
+.pb-label{flex:1;}
+.pb-cat{font-size:.58rem;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;margin-left:auto;}
+.pb-del{background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:.75rem;padding:2px 5px;border-radius:4px;margin-left:4px;transition:all .1s;flex-shrink:0;}
+.pb-del:hover{color:var(--re);background:rgba(255,61,90,.15);}
+/* IF block */
+.if-wrap{border-radius:6px;overflow:hidden;margin:2px 0;}
+.if-head{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:.76rem;font-weight:700;background:#2a1650;border-left:3px solid var(--pu);cursor:default;}
+.if-cond-sel{background:rgba(159,111,255,.2);border:1px solid rgba(159,111,255,.3);border-radius:5px;color:var(--pu);font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;padding:3px 7px;cursor:pointer;outline:none;max-width:220px;}
+.if-body{padding:3px 3px 3px 18px;background:#180d36;border-left:3px solid rgba(159,111,255,.25);}
+.else-head{display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:.7rem;font-weight:800;color:var(--or);background:#201000;border-left:3px solid var(--or);}
+.else-body{padding:3px 3px 3px 18px;background:#110900;border-left:3px solid rgba(255,122,47,.25);}
+.if-end{padding:4px 12px;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.2);background:var(--s2);letter-spacing:1px;}
+/* drop zone */
+.dz{min-height:36px;border:2px dashed var(--s5);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.68rem;color:var(--muted);transition:all .15s;margin:3px 0;}
+.dz.over{border-color:var(--gr);background:rgba(0,229,122,.05);color:var(--gr);}
+/* action row */
+.prog-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.add-if-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1.5px dashed rgba(159,111,255,.35);background:transparent;color:var(--pu);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s;justify-content:center;}
+.add-if-btn:hover{border-color:var(--pu);background:rgba(159,111,255,.08);}
+/* FIELD */
+.field-wrap{display:flex;flex:1;overflow:hidden;}
+.field-side{width:180px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:10px;}
+.field-side-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.frd{display:flex;align-items:center;gap:7px;padding:7px 9px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);margin-bottom:5px;cursor:grab;font-size:.78rem;font-weight:600;transition:border-color .12s;}
+.frd:hover{border-color:var(--bd2);}
+.frd.placed{border-color:var(--gr);opacity:.7;}
+.field-canvas-area{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:12px;position:relative;}
+.fmt-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto;padding-top:8px;border-top:1px solid var(--bd);}
+/* MATCH */
+.match-shell{display:flex;flex:1;overflow:hidden;position:relative;}
+.match-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.match-hud{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
+.hud-team{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:100px;}
+.hud-name{font-size:.75rem;font-weight:800;letter-spacing:1px;}
+.hud-poss{font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;min-height:14px;}
+.hud-score-c{display:flex;align-items:center;gap:12px;flex-direction:column;}
+.hud-score{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;}
+.hud-time{font-size:.68rem;font-weight:800;color:var(--muted);letter-spacing:2px;}
+.match-canvas-wrap{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);position:relative;overflow:hidden;}
+.match-sidebar{width:210px;flex-shrink:0;background:var(--s1);border-left:1px solid var(--bd);display:flex;flex-direction:column;}
+.ms-head{padding:10px 12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.ms-title{font-size:.62rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.ms-log{flex:1;overflow-y:auto;padding:6px;}
+.le{font-size:.72rem;padding:5px 8px;border-radius:6px;margin-bottom:3px;line-height:1.4;border-left:2px solid transparent;}
+.le-goal{background:rgba(245,196,0,.08);color:var(--ye);border-color:var(--ye);font-weight:700;}
+.le-action{color:var(--txt);border-color:var(--s4);}
+.le-chip{color:var(--cy);border-color:rgba(0,212,232,.3);}
+.le-info{color:var(--muted);}
+.le-if{color:var(--pu);border-color:rgba(159,111,255,.3);}
+.ms-ctrl{padding:8px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:5px;}
+.match-overlay{position:absolute;inset:0;background:rgba(7,8,14,.92);z-index:10;display:flex;align-items:center;justify-content:center;}
+.mo-box{background:var(--s2);border:1px solid var(--bd2);border-radius:16px;padding:28px;width:360px;}
+.mo-title{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--gr);letter-spacing:3px;margin-bottom:18px;text-align:center;}
+.vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.vs-card{padding:14px;border:1px solid var(--bd);border-radius:10px;cursor:pointer;text-align:center;transition:all .15s;background:var(--s3);}
+.vs-card:hover,.vs-card.on{border-color:var(--gr);background:rgba(0,229,122,.06);}
+.vs-ico{font-size:1.8rem;margin-bottom:5px;}
+.vs-lbl{font-size:.78rem;font-weight:700;}
+.dur-row{display:flex;gap:6px;margin-bottom:14px;}
+.dur-btn{flex:1;padding:7px;border:1px solid var(--bd);border-radius:7px;background:var(--s3);color:var(--muted);font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .12s;}
+.dur-btn.on{border-color:var(--gr);color:var(--gr);background:rgba(0,229,122,.08);}
+.mo-err{font-size:.73rem;color:var(--re);margin-top:6px;}
+/* ONLINE */
+.online-wrap{flex:1;overflow-y:auto;padding:20px;max-width:820px;margin:0 auto;width:100%;}
+.online-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.online-grid{grid-template-columns:1fr;}}
+.o-card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:18px;}
+.o-card-title{font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.code-big{font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;letter-spacing:10px;color:var(--gr);text-align:center;padding:12px 0;}
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.rec-box{background:var(--s3);border:1px solid var(--bd);border-radius:8px;padding:10px;text-align:center;}
+.rec-num{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;}
+.rec-lbl{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.divider{height:1px;background:var(--bd);margin:12px 0;}
+</style>
+</head>
+<body>
+<div id="authScreen">
+  <div class="auth-glow"></div>
+  <div class="auth-box">
+    <div class="auth-logo">BIT FOOTBALL</div>
+    <div class="auth-tagline">PROGRAM · BUILD · DOMINATE</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+    </div>
+    <div id="authForm"></div>
+    <div class="auth-err" id="authErr"></div>
+    <div class="auth-existing" id="authExisting"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">BIT/FB</div>
+    <nav class="nav-list">
+      <button class="nav-btn active" onclick="goScreen('robots',this)">🤖 Robots</button>
+      <button class="nav-btn" onclick="goScreen('scratch',this)">🧩 Program</button>
+      <button class="nav-btn" onclick="goScreen('field',this)">🏟 Formation</button>
+      <button class="nav-btn" onclick="goScreen('match',this)">⚽ Match</button>
+      <button class="nav-btn" onclick="goScreen('online',this)">🌐 Online</button>
+    </nav>
+    <div class="topbar-right">
+      <div class="rec-row">
+        <span class="rb rb-w" id="recW">W 0</span>
+        <span class="rb rb-d" id="recD">D 0</span>
+        <span class="rb rb-l" id="recL">L 0</span>
+      </div>
+      <div class="user-pill" onclick="signOut()">
+        <span id="userAva">🤖</span><span id="userName">—</span>
+        <span style="color:var(--muted);font-size:.65rem">↩</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="screen-robots" class="screen active">
+      <div class="two-col">
+        <div class="col-left">
+          <div class="col-header">
+            <span class="col-title">Robots</span>
+            <button class="btn btn-gr btn-sm" onclick="openNewRobotModal()">+ New</button>
+          </div>
+          <div class="col-body" id="robotsList"></div>
+        </div>
+        <div class="col-right" id="robotEditor">
+          <div class="empty-hint"><div class="big">🤖</div><div class="txt">Select or create a robot</div><button class="btn btn-gr" onclick="openNewRobotModal()">+ Create Robot</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-scratch" class="screen">
+      <div class="scratch-wrap">
+        <div class="palette">
+          <div class="pal-cats" id="palCats"></div>
+          <div class="pal-search"><input class="inp" id="palSearch" placeholder="Search chips…" oninput="renderPalette()" style="font-size:.72rem;padding:5px 8px;"></div>
+          <div class="pal-list" id="palList"></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-tabs-row" id="progTabs">
+            <span style="font-size:.68rem;color:var(--muted);font-weight:700;">PROGRAM A ROBOT →</span>
+          </div>
+          <div class="prog-canvas" id="progCanvas">
+            <div class="empty-hint"><div class="big">🧩</div><div class="txt">Pick a robot tab, then drag chips in</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-field" class="screen">
+      <div class="field-wrap">
+        <div class="field-side">
+          <div class="field-side-title">Drag onto field</div>
+          <div id="fieldSideRobots"></div>
+          <div class="fmt-btns">
+            <div style="font-size:.62rem;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;width:100%;">Formation</div>
+            <button class="btn btn-s3 btn-xs" onclick="applyFormation('442')">4-4-2</button>
+            <button class="btn btn-s3 btn-xs" onclick="applyFormation('433')">4-3-3</button>
+            <button class="btn btn-s3 btn-xs" onclick="applyFormation('352')">3-5-2</button>
+            <button class="btn btn-s3 btn-xs" onclick="applyFormation('532')">5-3-2</button>
+          </div>
+        </div>
+        <div class="field-canvas-area" id="fieldCanvasArea">
+          <canvas id="fieldCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-match" class="screen">
+      <div class="match-shell">
+        <div class="match-main">
+          <div class="match-hud">
+            <div class="hud-team">
+              <div class="hud-name" id="hudHomeName" style="color:var(--gr)">—</div>
+              <div class="hud-poss" id="hudPossH"></div>
+            </div>
+            <div class="hud-score-c">
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div class="hud-score" id="hudSH">0</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--muted)">:</div>
+                <div class="hud-score" id="hudSA">0</div>
+              </div>
+              <div class="hud-time" id="hudTime">—</div>
+            </div>
+            <div class="hud-team" style="align-items:flex-end">
+              <div class="hud-name" id="hudAwayName" style="color:var(--re)">—</div>
+              <div class="hud-poss" id="hudPossA"></div>
+            </div>
+          </div>
+          <div class="match-canvas-wrap" id="matchCanvasWrap">
+            <canvas id="matchCanvas"></canvas>
+            <div class="match-overlay" id="matchOverlay">
+              <div class="mo-box">
+                <div class="mo-title">⚽ KICK OFF</div>
+                <div class="vs-grid">
+                  <div class="vs-card on" id="vsAI" onclick="pickVs('ai')"><div class="vs-ico">🤖</div><div class="vs-lbl">vs AI</div></div>
+                  <div class="vs-card" id="vsFriend" onclick="pickVs('friend')"><div class="vs-ico">👥</div><div class="vs-lbl">vs Friend</div></div>
+                </div>
+                <div id="friendCodeRow" style="display:none;margin-bottom:10px;">
+                  <input class="inp" id="friendCodeInp" placeholder="Friend's 4-char code…" maxlength="4" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                </div>
+                <div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Duration</div>
+                <div class="dur-row">
+                  <button class="dur-btn" onclick="pickDur(60,this)">1 min</button>
+                  <button class="dur-btn on" onclick="pickDur(180,this)">3 min</button>
+                  <button class="dur-btn" onclick="pickDur(300,this)">5 min</button>
+                </div>
+                <button class="btn btn-gr" style="width:100%;justify-content:center;padding:11px;" onclick="kickOff()">⚽ Kick Off!</button>
+                <div class="mo-err" id="moErr"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="match-sidebar">
+          <div class="ms-head"><div class="ms-title">Match Log</div></div>
+          <div class="ms-log" id="matchLog"></div>
+          <div class="ms-ctrl">
+            <button class="btn btn-s3 btn-sm" id="speedBtn" onclick="toggleSpeed()" style="justify-content:center;">⏩ 3× Speed</button>
+            <button class="btn btn-re btn-sm" onclick="stopMatch()" style="justify-content:center;">⏹ End Match</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-online" class="screen">
+      <div class="online-wrap">
+        <div class="online-grid">
+          <div class="o-card">
+            <div class="o-card-title">Your Team Code</div>
+            <div class="code-big" id="myCodeDisplay">----</div>
+            <div style="font-size:.73rem;color:var(--muted);text-align:center;margin-bottom:10px;">Share so friends can challenge you</div>
+            <div style="display:flex;gap:6px;justify-content:center;">
+              <button class="btn btn-gr btn-sm" onclick="genCode()">Generate</button>
+              <button class="btn btn-s3 btn-sm" onclick="copyCode()">Copy</button>
+            </div>
+            <div class="divider"></div>
+            <div class="o-card-title">Your Record</div>
+            <div class="rec-grid">
+              <div class="rec-box"><div class="rec-num" style="color:var(--gr)" id="oRecW">0</div><div class="rec-lbl">Wins</div></div>
+              <div class="rec-box"><div class="rec-num" style="color:var(--muted)" id="oRecD">0</div><div class="rec-lbl">Draws</div></div>
+              <div class="rec-box"><div class="rec-num" style="color:var(--re)" id="oRecL">0</div><div class="rec-lbl">Losses</div></div>
+            </div>
+          </div>
+          <div class="o-card">
+            <div class="o-card-title">Challenge a Friend</div>
+            <input class="inp" id="challengeInp" placeholder="Enter friend's code…" maxlength="4" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" style="margin-bottom:10px;">
+            <button class="btn btn-bl" style="width:100%;justify-content:center;" onclick="loadChallenge()">⚔️ Challenge!</button>
+            <div class="divider"></div>
+            <div class="o-card-title">How It Works</div>
+            <div style="font-size:.76rem;color:var(--muted);line-height:1.9;">
+              1. Build &amp; program your robots<br>
+              2. Generate a Team Code<br>
+              3. Share it with a friend<br>
+              4. Enter their code to battle<br>
+              5. Results update your record
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="robotModal">
+  <div class="modal">
+    <div class="modal-title">Create Robot</div>
+    <div style="text-align:center;margin-bottom:14px;">
+      <div id="newRobotAva" onclick="openEmojiModal()" style="font-size:2.5rem;cursor:pointer;display:inline-block;padding:10px 16px;border-radius:14px;background:var(--s3);border:2px solid var(--bd2);">🤖</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-top:4px;">Click to change</div>
+    </div>
+    <div style="margin-bottom:10px;"><label class="af-label">Name</label><input class="inp" id="newRobotName" placeholder="Robot name…"></div>
+    <div style="margin-bottom:10px;"><label class="af-label">Color</label><div class="cpal" id="newRobotColors"></div></div>
+    <label class="af-label" style="margin-bottom:6px;display:block;">Stats</label>
+    <div id="newRobotStats"></div>
+    <div class="modal-footer">
+      <button class="btn btn-s3" onclick="closeModal('robotModal')">Cancel</button>
+      <button class="btn btn-gr" onclick="saveNewRobot()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="emojiModal">
+  <div class="modal" style="width:300px;">
+    <div class="modal-title">Pick Icon</div>
+    <div class="emo-grid" id="emojiGrid"></div>
+    <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('emojiModal')">Close</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+// ════════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════════
+const COLORS=['#00e57a','#3d7eff','#ff7a2f','#ff3d5a','#9f6fff','#00d4e8','#f5c400','#ff4fa3','#00d4a8','#7bed9f','#ffa502','#ff6b6b'];
+const EMOJIS=['🤖','🦾','🛡️','⚡','🔥','🌪️','💎','🧠','🏋️','💨','🎯','🚀','👾','🦿','⚙️','🔩','💪','🌟','🎮','🕹️','🏆','👊','🛸','🤯','🦅','🐉','🌊','☄️','🪄','🎪'];
+
+const CHIP_CATS={
+  move:   {label:'MOVE',   color:'#00e57a',bg:'rgba(0,229,122,.13)'},
+  attack: {label:'ATTACK', color:'#ff7a2f',bg:'rgba(255,122,47,.13)'},
+  defend: {label:'DEFEND', color:'#3d7eff',bg:'rgba(61,127,255,.13)'},
+  special:{label:'SPECIAL',color:'#9f6fff',bg:'rgba(159,111,255,.13)'},
+  support:{label:'SUPPORT',color:'#00d4a8',bg:'rgba(0,212,168,.13)'},
+  trick:  {label:'TRICK',  color:'#ff4fa3',bg:'rgba(255,79,163,.13)'},
+};
+
+const CHIPS=[
+  // MOVE
+  {id:'m01',cat:'move',icon:'🏃',name:'Sprint',         desc:'Charge straight at goal',             pow:3,spd:4,def:0},
+  {id:'m02',cat:'move',icon:'↔️',name:'Wide Run',       desc:'Spread play to the wings',            pow:1,spd:3,def:0},
+  {id:'m03',cat:'move',icon:'🎯',name:'Through Ball',   desc:'Split the defensive line',            pow:2,spd:3,def:1},
+  {id:'m04',cat:'move',icon:'⤴️',name:'Lofted Pass',    desc:'Launch ball over defenders',          pow:2,spd:2,def:0},
+  // ATTACK
+  {id:'a01',cat:'attack',icon:'🔥',name:'Power Shot',    desc:'Blast it past the keeper',            pow:5,spd:2,def:0},
+  {id:'a02',cat:'attack',icon:'🎯',name:'Finesse',       desc:'Curve it into the corner',            pow:2,spd:4,def:0},
+  {id:'a03',cat:'attack',icon:'🚲',name:'Bicycle Kick',  desc:'Acrobatic high-risk shot',            pow:4,spd:3,def:0},
+  // DEFEND
+  {id:'d01',cat:'defend',icon:'🛡️',name:'Slide Tackle',  desc:'Aggressive ball recovery',            pow:0,spd:3,def:4},
+  {id:'d02',cat:'defend',icon:'🧱',name:'Block',         desc:'Stand your ground',                   pow:0,spd:1,def:5},
+  {id:'d03',cat:'defend',icon:'🧲',name:'Intercept',     desc:'Read the pass and steal',             pow:0,spd:4,def:3},
+  // SPECIAL / IF LOGIC
+  {id:'s01',cat:'special',icon:'⚡',name:'Overclock',    desc:'Boost all stats temporarily',         pow:2,spd:2,def:2},
+  {id:'s02',cat:'special',icon:'🧠',name:'Analyze',      desc:'Wait and counter opponent',           pow:1,spd:1,def:4}
+];
+
+const IF_CONDS = [
+  {id:'c_has_ball', label:'If Team Has Ball'},
+  {id:'c_no_ball',  label:'If Enemy Has Ball'},
+  {id:'c_winning',  label:'If Winning Match'},
+  {id:'c_losing',   label:'If Losing Match'},
+  {id:'c_rnd_50',   label:'If 50% Chance'}
+];
+
+// STATE
+let sys = {
+  users: JSON.parse(localStorage.getItem('bitfb_users')) || {},
+  currentUser: null
+};
+
+let appState = {
+  robots: [],
+  formation: '442',
+  fieldRobots: [], // id, x, y
+  matchRecord: {w:0, d:0, l:0}
+};
+
+let ui = {
+  activeScreen: 'robots',
+  activeRobotId: null,
+  draggedItem: null
+};
+
+// ════════════════════════════════════════════════════
+//  INIT & UTILS
+// ════════════════════════════════════════════════════
+function saveSys() { localStorage.setItem('bitfb_users', JSON.stringify(sys.users)); }
+
+function toast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (isErr ? 'err' : 'ok');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function goScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ui.activeScreen = id;
+  
+  if(id === 'scratch') renderScratchUI();
+  if(id === 'field') renderFieldSide();
+  if(id === 'match') resetMatchUI();
+}
+
+// ════════════════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════════════════
+let authMode = 'login';
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderAuth();
+}
+
+function renderAuth() {
+  const f = document.getElementById('authForm');
+  f.innerHTML = `
+    <div class="af-field">
+      <label class="af-label">Username</label>
+      <input class="af-input" id="authName" placeholder="e.g. Player1">
+    </div>
+    ${authMode === 'register' ? `
+    <div class="af-field">
+      <label class="af-label">Secret PIN (4 digits)</label>
+      <input class="af-input" id="authPin" type="password" maxlength="4" placeholder="••••">
+    </div>` : `
+    <div class="af-field">
+      <label class="af-label">Secret PIN</label>
+      <input class="af-input" id="authPin" type="password" maxlength="4" placeholder="••••">
+    </div>`}
+    <button class="af-btn" onclick="submitAuth()">${authMode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT'}</button>
+  `;
+  document.getElementById('authErr').textContent = '';
+  
+  // existing users
+  let exHtml = '<div class="ae-title">Known Accounts on Device</div>';
+  let count = 0;
+  for(let u in sys.users) {
+    count++;
+    exHtml += `<div class="ae-pill" onclick="quickLogin('${u}')">
+      <div class="ae-ava">${sys.users[u].ava || '🤖'}</div>
+      <div>${u}</div>
+    </div>`;
+  }
+  document.getElementById('authExisting').innerHTML = count > 0 ? exHtml : '';
+}
+
+function submitAuth() {
+  const name = document.getElementById('authName').value.trim();
+  const pin = document.getElementById('authPin').value.trim();
+  if(!name || !pin) return document.getElementById('authErr').textContent = 'Fill all fields';
+  
+  if(authMode === 'register') {
+    if(sys.users[name]) return document.getElementById('authErr').textContent = 'Name taken';
+    sys.users[name] = { pin, ava: '🤖', robots: [], formation:'442', fieldRobots:[], rec:{w:0,d:0,l:0}, code: genRandCode() };
+    saveSys();
+    doLogin(name);
+  } else {
+    if(!sys.users[name] || sys.users[name].pin !== pin) return document.getElementById('authErr').textContent = 'Invalid credentials';
+    doLogin(name);
+  }
+}
+
+function quickLogin(name) {
+  document.getElementById('authName').value = name;
+  authMode = 'login';
+  document.getElementById('authPin').focus();
+}
+
+function doLogin(name) {
+  sys.currentUser = name;
+  appState = sys.users[name];
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('app').classList.add('on');
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userAva').textContent = appState.ava;
+  updateRecUI();
+  renderRobotsList();
+  renderPalette();
+  goScreen('robots', document.querySelector('.nav-btn'));
+}
+
+function signOut() {
+  sys.currentUser = null;
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('authScreen').style.display = 'flex';
+  renderAuth();
+}
+
+function genRandCode() { return Math.random().toString(36).substring(2,6).toUpperCase(); }
+
+function updateRecUI() {
+  const r = appState.rec;
+  document.getElementById('recW').textContent = 'W ' + r.w;
+  document.getElementById('recD').textContent = 'D ' + r.d;
+  document.getElementById('recL').textContent = 'L ' + r.l;
+  document.getElementById('oRecW').textContent = r.w;
+  document.getElementById('oRecD').textContent = r.d;
+  document.getElementById('oRecL').textContent = r.l;
+  document.getElementById('myCodeDisplay').textContent = appState.code;
+}
+
+// ════════════════════════════════════════════════════
+//  ROBOTS
+// ════════════════════════════════════════════════════
+let tempStats = {pow:3, spd:3, def:3};
+let maxStats = 15;
+
+function openNewRobotModal() {
+  document.getElementById('newRobotName').value = 'Bot-' + Math.floor(Math.random()*999);
+  document.getElementById('newRobotAva').textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+  
+  let cHtml = '';
+  COLORS.forEach((c, i) => {
+    cHtml += `<div class="csw ${i===0?'on':''}" style="background:${c}" onclick="selCol(this, '${c}')"></div>`;
+  });
+  document.getElementById('newRobotColors').innerHTML = cHtml;
+  document.getElementById('newRobotColors').dataset.val = COLORS[0];
+  
+  tempStats = {pow:3, spd:3, def:3};
+  renderNewStats();
+  openModal('robotModal');
+}
+
+function selCol(el, c) {
+  document.querySelectorAll('.csw').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('newRobotColors').dataset.val = c;
+}
+
+function renderNewStats() {
+  const tot = tempStats.pow + tempStats.spd + tempStats.def;
+  const rem = maxStats - tot;
+  let html = `<div style="font-size:.65rem;color:var(--gr);text-align:right;margin-bottom:5px;">Points left: ${rem}</div><div class="stat3">`;
+  ['pow','spd','def'].forEach(s => {
+    html += `<div class="stat-c">
+      <div class="lbl">${s.toUpperCase()}</div>
+      <div class="val">${tempStats[s]}</div>
+      <div class="bar"><div class="bar-fill" style="width:${(tempStats[s]/10)*100}%;background:var(--bl)"></div></div>
+      <div class="adj">
+        <button class="btn btn-s3 btn-xs" onclick="adjStat('${s}',-1)">-</button>
+        <button class="btn btn-s3 btn-xs" onclick="adjStat('${s}',1)">+</button>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('newRobotStats').innerHTML = html;
+}
+
+function adjStat(s, dir) {
+  const tot = tempStats.pow + tempStats.spd + tempStats.def;
+  if(dir > 0 && tot >= maxStats) return;
+  if(tempStats[s] + dir < 1 || tempStats[s] + dir > 10) return;
+  tempStats[s] += dir;
+  renderNewStats();
+}
+
+function saveNewRobot() {
+  const name = document.getElementById('newRobotName').value.trim();
+  if(!name) return toast('Name required', true);
+  const bot = {
+    id: 'r_' + Date.now(),
+    name: name,
+    ava: document.getElementById('newRobotAva').textContent,
+    color: document.getElementById('newRobotColors').dataset.val,
+    stats: {...tempStats},
+    prog: [] // Scratch blocks
+  };
+  appState.robots.push(bot);
+  saveSys();
+  closeModal('robotModal');
+  renderRobotsList();
+  toast('Robot Created!');
+}
+
+function renderRobotsList() {
+  const list = document.getElementById('robotsList');
+  if(!appState.robots.length) {
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted);font-size:.75rem;">No robots yet.</div>`;
+    return;
+  }
+  let html = '';
+  appState.robots.forEach(r => {
+    const isSel = r.id === ui.activeRobotId;
+    html += `<div class="rli ${isSel?'sel':''}" onclick="selRobot('${r.id}')">
+      <div class="rli-ava" style="background:${r.color}22;border:1px solid ${r.color}">${r.ava}</div>
+      <div>
+        <div class="rli-name">${r.name}</div>
+        <div class="rli-sub">P:${r.stats.pow} S:${r.stats.spd} D:${r.stats.def}</div>
+      </div>
+      <div style="margin-left:auto" class="rli-ct">${r.prog.length} chips</div>
+    </div>`;
+  });
+  list.innerHTML = html;
+  
+  if(ui.activeRobotId) renderRobotEditor();
+}
+
+function selRobot(id) {
+  ui.activeRobotId = id;
+  renderRobotsList();
+  renderRobotEditor();
+}
+
+function renderRobotEditor() {
+  const r = appState.robots.find(x => x.id === ui.activeRobotId);
+  if(!r) return;
+  const re = document.getElementById('robotEditor');
+  re.innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <div style="font-size:3rem;background:${r.color}22;border:2px solid ${r.color};width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;">${r.ava}</div>
+      <div>
+        <div style="font-size:1.4rem;font-weight:800;">${r.name}</div>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:4px;">ID: ${r.id}</div>
+      </div>
+      <button class="btn btn-re" style="margin-left:auto" onclick="delRobot('${r.id}')">Delete</button>
+    </div>
+    <div class="re-section">
+      <div class="re-stitle">Core Attributes</div>
+      <div class="stat3" style="margin-top:10px;">
+        <div class="stat-c"><div class="lbl">POWER</div><div class="val">${r.stats.pow}</div></div>
+        <div class="stat-c"><div class="lbl">SPEED</div><div class="val">${r.stats.spd}</div></div>
+        <div class="stat-c"><div class="lbl">DEFENSE</div><div class="val">${r.stats.def}</div></div>
+      </div>
+    </div>
+    <div class="re-section">
+      <div class="re-stitle">Logic Payload</div>
+      <div style="font-size:.75rem;color:var(--txt);margin-bottom:12px;">This robot is carrying ${r.prog.length} behavior chips.</div>
+      <button class="btn btn-gr" onclick="goScreen('scratch'); selScratchTab('${r.id}')">Edit Program 🧩</button>
+    </div>
+  `;
+}
+
+function delRobot(id) {
+  if(!confirm('Delete this robot?')) return;
+  appState.robots = appState.robots.filter(x => x.id !== id);
+  ui.activeRobotId = null;
+  saveSys();
+  renderRobotsList();
+  document.getElementById('robotEditor').innerHTML = '<div class="empty-hint"><div class="big">🤖</div><div class="txt">Select or create a robot</div></div>';
+}
+
+// Emoji picker
+function openEmojiModal() {
+  const eg = document.getElementById('emojiGrid');
+  eg.innerHTML = EMOJIS.map(e => `<div class="emo-opt" onclick="selEmoji('${e}')">${e}</div>`).join('');
+  openModal('emojiModal');
+}
+function selEmoji(e) { document.getElementById('newRobotAva').textContent = e; closeModal('emojiModal'); }
+
+// ════════════════════════════════════════════════════
+//  SCRATCH EDITOR
+// ════════════════════════════════════════════════════
+let activeProgId = null;
+
+function renderPalette() {
+  const cats = document.getElementById('palCats');
+  cats.innerHTML = Object.keys(CHIP_CATS).map(k => {
+    const c = CHIP_CATS[k];
+    return `<button class="pc-btn on" style="background:${c.bg};color:${c.color};border:1px solid ${c.color}55">${c.label}</button>`;
+  }).join('');
+  
+  const term = document.getElementById('palSearch').value.toLowerCase();
+  const list = document.getElementById('palList');
+  list.innerHTML = CHIPS.filter(c => c.name.toLowerCase().includes(term)).map(c => {
+    const cat = CHIP_CATS[c.cat];
+    return `<div class="blk" draggable="true" ondragstart="dragStart(event, 'chip', '${c.id}')" style="background:${cat.bg};border-left-color:${cat.color}">
+      <div class="blk-icon">${c.icon}</div>
+      <div><div class="blk-name">${c.name}</div><div class="blk-sub">${c.desc}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderScratchUI() {
+  const tabs = document.getElementById('progTabs');
+  let thtml = `<span style="font-size:.68rem;color:var(--muted);font-weight:700;">PROGRAM A ROBOT →</span>`;
+  appState.robots.forEach(r => {
+    thtml += `<div class="robot-prog-tab ${activeProgId===r.id?'on':''}" onclick="selScratchTab('${r.id}')">${r.ava} ${r.name}</div>`;
+  });
+  tabs.innerHTML = thtml;
+  renderProgCanvas();
+}
+
+function selScratchTab(id) {
+  activeProgId = id;
+  renderScratchUI();
+}
+
+function renderProgCanvas() {
+  const cvs = document.getElementById('progCanvas');
+  if(!activeProgId) {
+    cvs.innerHTML = `<div class="empty-hint"><div class="big">🧩</div><div class="txt">Pick a robot tab above</div></div>`;
+    return;
+  }
+  const r = appState.robots.find(x => x.id === activeProgId);
+  
+  let html = `<div class="prog-seq">
+    <div class="start-blk">🟢 ON MATCH START</div>
+    ${buildNodes(r.prog, [])}
+    <div class="dz" ondragover="allowDrop(event)" ondrop="dropNode(event, '[]', ${r.prog.length})">Drop chip here</div>
+    <div class="end-blk">🔄 REPEAT LOOP</div>
+  </div>
+  <div class="prog-actions">
+    <button class="add-if-btn" onclick="addIfBlock()">+ Add IF Statement</button>
+    <button class="btn btn-re btn-sm" onclick="clearProg()">Clear All</button>
+  </div>`;
+  cvs.innerHTML = html;
+}
+
+function buildNodes(arr, path) {
+  let h = '';
+  arr.forEach((node, i) => {
+    const curPath = [...path, i];
+    const pStr = JSON.stringify(curPath);
+    h += `<div class="dz" ondragover="allowDrop(event)" ondrop='dropNode(event, ${pStr}, 0)'></div>`;
+    
+    if(node.type === 'if') {
+      let optHtml = IF_CONDS.map(c => `<option value="${c.id}" ${node.cond===c.id?'selected':''}>${c.label}</option>`).join('');
+      h += `<div class="if-wrap">
+        <div class="if-head">
+          <span>IF</span>
+          <select class="if-cond-sel" onchange='updateIfCond(${pStr}, this.value)'>${optHtml}</select>
+          <span>THEN</span>
+          <button class="pb-del" onclick='delNode(${pStr})'>✖</button>
+        </div>
+        <div class="if-body">
+          ${buildNodes(node.then, [...curPath, 'then'])}
+          <div class="dz" ondragover="allowDrop(event)" ondrop='dropNode(event, ${JSON.stringify([...curPath, 'then'])}, ${node.then.length})'></div>
+        </div>
+        <div class="else-head">ELSE</div>
+        <div class="else-body">
+          ${buildNodes(node.else, [...curPath, 'else'])}
+          <div class="dz" ondragover="allowDrop(event)" ondrop='dropNode(event, ${JSON.stringify([...curPath, 'else'])}, ${node.else.length})'></div>
+        </div>
+        <div class="if-end">END IF</div>
+      </div>`;
+    } else {
+      const chip = CHIPS.find(c => c.id === node.chipId);
+      if(!chip) return;
+      const cat = CHIP_CATS[chip.cat];
+      h += `<div class="prog-blk" style="background:${cat.bg}; border-left-color:${cat.color}">
+        <div class="pb-num">${i+1}</div>
+        <div class="pb-icon">${chip.icon}</div>
+        <div class="pb-label">${chip.name}</div>
+        <div class="pb-cat" style="color:${cat.color};background:${cat.color}22">${cat.label}</div>
+        <button class="pb-del" onclick='delNode(${pStr})'>✖</button>
+      </div>`;
+    }
+  });
+  return h;
+}
+
+function dragStart(ev, type, data) { ev.dataTransfer.setData('text/plain', JSON.stringify({type, data})); }
+function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
+function dropNode(ev, pathStr, index) {
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('over');
+  const data = JSON.parse(ev.dataTransfer.getData('text/plain'));
+  if(data.type !== 'chip') return;
+  
+  const r = appState.robots.find(x => x.id === activeProgId);
+  const path = Array.isArray(pathStr) ? pathStr : JSON.parse(pathStr);
+  
+  let targetArr = r.prog;
+  if(path.length > 0) {
+    targetArr = resolvePath(r.prog, path);
+  }
+  
+  targetArr.splice(index, 0, { type:'action', chipId: data.data });
+  saveSys();
+  renderProgCanvas();
+}
+
+function resolvePath(arr, path) {
+  let curr = arr;
+  for(let i=0; i<path.length; i+=2) {
+    if(i+1 >= path.length) break;
+    curr = curr[path[i]][path[i+1]]; 
+  }
+  return curr;
+}
+
+function addIfBlock() {
+  if(!activeProgId) return;
+  const r = appState.robots.find(x => x.id === activeProgId);
+  r.prog.push({ type:'if', cond:'c_has_ball', then:[], else:[] });
+  saveSys();
+  renderProgCanvas();
+}
+
+function updateIfCond(path, val) {
+  const r = appState.robots.find(x => x.id === activeProgId);
+  let arr = resolvePath(r.prog, path);
+  let idx = path.length > 0 ? path[path.length-1] : -1;
+  if(idx >= 0) arr[idx].cond = val;
+  saveSys();
+}
+
+function delNode(path) {
+  const r = appState.robots.find(x => x.id === activeProgId);
+  let parentArr = r.prog;
+  if(path.length > 1) {
+    parentArr = resolvePath(r.prog, path.slice(0, -1));
+  }
+  const idx = path[path.length-1];
+  parentArr.splice(idx, 1);
+  saveSys();
+  renderProgCanvas();
+}
+
+function clearProg() {
+  if(!activeProgId) return;
+  const r = appState.robots.find(x => x.id === activeProgId);
+  r.prog = [];
+  saveSys();
+  renderProgCanvas();
+}
+
+// ════════════════════════════════════════════════════
+//  FIELD & FORMATION
+// ════════════════════════════════════════════════════
+function renderFieldSide() {
+  const c = document.getElementById('fieldSideRobots');
+  let html = '';
+  appState.robots.forEach(r => {
+    let placed = appState.fieldRobots.find(x => x.id === r.id);
+    html += `<div class="frd ${placed?'placed':''}" draggable="true" ondragstart="dragStart(event, 'fieldRobot', '${r.id}')">
+      ${r.ava} ${r.name}
+    </div>`;
+  });
+  c.innerHTML = html;
+  drawFieldEditor();
+}
+
+function applyFormation(fmt) {
+  appState.formation = fmt;
+  // Automatically place top N robots based on formation total
+  let spots = getFormationSpots(fmt);
+  appState.fieldRobots = [];
+  for(let i=0; i<Math.min(spots.length, appState.robots.length); i++) {
+    appState.fieldRobots.push({
+      id: appState.robots[i].id,
+      x: spots[i].x,
+      y: spots[i].y
+    });
+  }
+  saveSys();
+  renderFieldSide();
+}
+
+function getFormationSpots(fmt) {
+  // Returns relative x,y (0 to 1) for the left side of the field
+  const spots = [];
+  spots.push({x: 0.1, y: 0.5}); // GK
+  const def = parseInt(fmt[0]), mid = parseInt(fmt[1]), att = parseInt(fmt[2]);
+  
+  const addLine = (count, xBase) => {
+    for(let i=0; i<count; i++) {
+      spots.push({x: xBase, y: 0.2 + (0.6 * (i + 0.5) / count)});
+    }
+  };
+  addLine(def, 0.3);
+  addLine(mid, 0.55);
+  addLine(att, 0.8);
+  return spots;
+}
+
+// Field Editor Canvas Setup
+const fcvs = document.getElementById('fieldCanvas');
+const fctx = fcvs.getContext('2d');
+fcvs.width = 600; fcvs.height = 400;
+
+fcvs.addEventListener('dragover', e => { e.preventDefault(); });
+fcvs.addEventListener('drop', e => {
+  e.preventDefault();
+  const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+  if(data.type !== 'fieldRobot') return;
+  
+  const rect = fcvs.getBoundingClientRect();
+  const rx = (e.clientX - rect.left) / rect.width;
+  const ry = (e.clientY - rect.top) / rect.height;
+  
+  let ex = appState.fieldRobots.find(x => x.id === data.data);
+  if(ex) { ex.x = rx; ex.y = ry; }
+  else { appState.fieldRobots.push({id: data.data, x: rx, y: ry}); }
+  
+  saveSys();
+  renderFieldSide();
+});
+
+function drawFieldEditor() {
+  fctx.clearRect(0, 0, fcvs.width, fcvs.height);
+  // pitch grass
+  fctx.fillStyle = '#153a20'; fctx.fillRect(0,0,fcvs.width,fcvs.height);
+  fctx.strokeStyle = 'rgba(255,255,255,0.3)'; fctx.lineWidth = 2;
+  fctx.beginPath();
+  fctx.rect(10, 10, fcvs.width-20, fcvs.height-20); // outer
+  fctx.moveTo(fcvs.width/2, 10); fctx.lineTo(fcvs.width/2, fcvs.height-10); // half
+  fctx.stroke();
+  fctx.beginPath(); fctx.arc(fcvs.width/2, fcvs.height/2, 40, 0, Math.PI*2); fctx.stroke();
+  
+  // Players
+  appState.fieldRobots.forEach(fr => {
+    const r = appState.robots.find(x => x.id === fr.id);
+    if(!r) return;
+    const px = fr.x * fcvs.width;
+    const py = fr.y * fcvs.height;
+    
+    fctx.fillStyle = r.color;
+    fctx.beginPath(); fctx.arc(px, py, 15, 0, Math.PI*2); fctx.fill();
+    fctx.fillStyle = '#fff'; fctx.font = '14px sans-serif'; fctx.textAlign = 'center'; fctx.textBaseline = 'middle';
+    fctx.fillText(r.ava, px, py);
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  MATCH ENGINE
+// ════════════════════════════════════════════════════
+const mcvs = document.getElementById('matchCanvas');
+const mctx = mcvs.getContext('2d');
+mcvs.width = 800; mcvs.height = 400;
+
+let matchState = {
+  running: false, paused: false, speed: 1, duration: 180, time: 0,
+  scoreH: 0, scoreA: 0, ball: {x:400, y:200, tx:400, ty:200, owner:null},
+  players: [], logs: [], loopId: null, lastTick: 0
+};
+
+function resetMatchUI() {
+  document.getElementById('matchOverlay').style.display = 'flex';
+  document.getElementById('moErr').textContent = '';
+  document.getElementById('hudSH').textContent = '0';
+  document.getElementById('hudSA').textContent = '0';
+  document.getElementById('hudTime').textContent = '00:00';
+  document.getElementById('matchLog').innerHTML = '';
+  document.getElementById('hudHomeName').textContent = sys.currentUser;
+  drawMatchStatic();
+}
+
+function pickVs(type) {
+  document.querySelectorAll('.vs-card').forEach(c=>c.classList.remove('on'));
+  document.getElementById('vs' + (type==='ai'?'AI':'Friend')).classList.add('on');
+  document.getElementById('friendCodeRow').style.display = type==='friend' ? 'block' : 'none';
+}
+function pickDur(sec, btn) {
+  document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  matchState.duration = sec;
+}
+
+function toggleSpeed() {
+  matchState.speed = matchState.speed === 1 ? 3 : 1;
+  document.getElementById('speedBtn').textContent = matchState.speed === 1 ? '⏩ 3× Speed' : '▶️ 1× Speed';
+}
+
+function getOpponentData() {
+  const isFriend = document.getElementById('vsFriend').classList.contains('on');
+  if(!isFriend) {
+    // Gen AI team
+    let aiBots = [];
+    let spots = getFormationSpots('442');
+    for(let i=0; i<11; i++) {
+      aiBots.push({
+        id:'ai_'+i, name:'Bot '+i, ava:'👾', color:'#ff3d5a', 
+        stats:{pow:5, spd:5, def:5}, prog: [{type:'action', chipId:'m01'}]
+      });
+    }
+    return { name: 'AI Overlord', code: 'AI', robots: aiBots, fieldRobots: spots.map((s,i)=>({id:'ai_'+i, x:1-s.x, y:1-s.y})) };
+  } else {
+    const code = document.getElementById('friendCodeInp').value;
+    for(let u in sys.users) {
+      if(sys.users[u].code === code && u !== sys.currentUser) {
+        return { name: u, code, robots: sys.users[u].robots, fieldRobots: sys.users[u].fieldRobots.map(f=>({id:f.id, x:1-f.x, y:1-f.y})) };
+      }
+    }
+    return null;
+  }
+}
+
+function kickOff() {
+  if(appState.fieldRobots.length === 0) return document.getElementById('moErr').textContent = 'Set formation first!';
+  const opp = getOpponentData();
+  if(!opp) return document.getElementById('moErr').textContent = 'Opponent not found!';
+  
+  document.getElementById('matchOverlay').style.display = 'none';
+  document.getElementById('hudAwayName').textContent = opp.name;
+  
+  // Init match state
+  matchState.players = [];
+  matchState.scoreH = 0; matchState.scoreA = 0;
+  matchState.time = 0; matchState.logs = [];
+  matchState.ball = {x:400, y:200, tx:400, ty:200, owner:null};
+  
+  // Load Home
+  appState.fieldRobots.forEach(fr => {
+    let r = appState.robots.find(x=>x.id===fr.id);
+    if(r) matchState.players.push({ team:'home', data:r, baseX: fr.x*800, baseY: fr.y*400, x: fr.x*800, y:fr.y*400, tx: fr.x*800, ty:fr.y*400, cd:0 });
+  });
+  // Load Away
+  opp.fieldRobots.forEach(fr => {
+    let r = opp.robots.find(x=>x.id===fr.id);
+    if(r) matchState.players.push({ team:'away', data:r, baseX: fr.x*800, baseY: fr.y*400, x: fr.x*800, y:fr.y*400, tx: fr.x*800, ty:fr.y*400, cd:0 });
+  });
+  
+  matchState.running = true;
+  logM(`Match started! ${sys.currentUser} vs ${opp.name}`, 'info');
+  matchState.lastTick = performance.now();
+  requestAnimationFrame(matchLoop);
+}
+
+function stopMatch() {
+  matchState.running = false;
+  if(matchState.loopId) cancelAnimationFrame(matchState.loopId);
+  logM('Match Ended.', 'info');
+  
+  // Update record
+  if(matchState.scoreH > matchState.scoreA) appState.matchRecord.w++;
+  else if(matchState.scoreH < matchState.scoreA) appState.matchRecord.l++;
+  else appState.matchRecord.d++;
+  
+  appState.rec = appState.matchRecord;
+  saveSys();
+  updateRecUI();
+  
+  setTimeout(()=> resetMatchUI(), 2000);
+}
+
+function logM(msg, type='action') {
+  const c = document.getElementById('matchLog');
+  const d = document.createElement('div');
+  d.className = 'le le-' + type;
+  d.innerHTML = `[${Math.floor(matchState.time/60)}:${(matchState.time%60).toString().padStart(2,'0')}] ` + msg;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+// Logic Evaluator
+function evalProg(prog, p) {
+  for(let b of prog) {
+    if(b.type === 'if') {
+      let condMet = false;
+      const bTeam = matchState.ball.owner ? matchState.ball.owner.team : null;
+      if(b.cond === 'c_has_ball') condMet = bTeam === p.team;
+      else if(b.cond === 'c_no_ball') condMet = bTeam && bTeam !== p.team;
+      else if(b.cond === 'c_winning') condMet = (p.team==='home'?matchState.scoreH>matchState.scoreA : matchState.scoreA>matchState.scoreH);
+      else if(b.cond === 'c_losing') condMet = (p.team==='home'?matchState.scoreH<matchState.scoreA : matchState.scoreA<matchState.scoreH);
+      else if(b.cond === 'c_rnd_50') condMet = Math.random() > 0.5;
+      
+      let res = evalProg(condMet ? b.then : b.else, p);
+      if(res) return res;
+    } else {
+      return CHIPS.find(x => x.id === b.chipId);
+    }
+  }
+  return null;
+}
+
+function matchLoop(now) {
+  if(!matchState.running) return;
+  const dt = (now - matchState.lastTick) * matchState.speed;
+  matchState.lastTick = now;
+  
+  // Time progression
+  matchState.time += (dt / 1000);
+  document.getElementById('hudTime').textContent = `${Math.floor(matchState.time/60)}:${Math.floor(matchState.time%60).toString().padStart(2,'0')}`;
+  
+  if(matchState.time >= matchState.duration) {
+    stopMatch();
+    return;
+  }
+  
+  // Logic Tick (every real second scaled by speed)
+  if(Math.random() < (0.02 * matchState.speed)) {
+    matchState.players.forEach(p => {
+      if(p.cd > 0) p.cd -= dt;
+      if(p.cd <= 0) {
+        // Decide Action
+        let action = evalProg(p.data.prog, p);
+        if(!action) action = CHIPS[0]; // default move
+        
+        // Execute Action
+        if(action.cat === 'move') {
+          // move towards ball or goal
+          if(matchState.ball.owner === p) {
+            p.tx = p.team === 'home' ? 750 : 50;
+            p.ty = 200 + (Math.random()*100 - 50);
+          } else {
+            p.tx = matchState.ball.x + (Math.random()*60 - 30);
+            p.ty = matchState.ball.y + (Math.random()*60 - 30);
+          }
+        } 
+        else if(action.cat === 'attack' && matchState.ball.owner === p) {
+          logM(`${p.data.name} used ${action.name}!`, 'chip');
+          matchState.ball.owner = null;
+          matchState.ball.tx = p.team === 'home' ? 800 : 0;
+          matchState.ball.ty = 200;
+          // Shot logic
+          if(Math.random() * 10 < p.data.stats.pow + action.pow) {
+            logM(`GOAL! Amazing shot by ${p.data.name}!`, 'goal');
+            if(p.team === 'home') matchState.scoreH++; else matchState.scoreA++;
+            document.getElementById('hudSH').textContent = matchState.scoreH;
+            document.getElementById('hudSA').textContent = matchState.scoreA;
+            // Reset positions
+            matchState.players.forEach(pl => { pl.x = pl.baseX; pl.y = pl.baseY; pl.tx = pl.baseX; pl.ty = pl.baseY; });
+            matchState.ball.x = 400; matchState.ball.y = 200; matchState.ball.tx = 400; matchState.ball.ty = 200;
+          } else {
+            logM(`Shot saved/missed.`, 'info');
+          }
+        }
+        else if(action.cat === 'defend' && matchState.ball.owner && matchState.ball.owner.team !== p.team) {
+          let dist = Math.hypot(p.x - matchState.ball.owner.x, p.y - matchState.ball.owner.y);
+          if(dist < 50 && Math.random() * 10 < p.data.stats.def + action.def) {
+            logM(`${p.data.name} tackles the ball using ${action.name}!`, 'action');
+            matchState.ball.owner = p;
+          } else {
+            p.tx = matchState.ball.owner.x; p.ty = matchState.ball.owner.y;
+          }
+        }
+        
+        // Boundaries
+        p.tx = Math.max(10, Math.min(790, p.tx));
+        p.ty = Math.max(10, Math.min(390, p.ty));
+        p.cd = 2000 - (p.data.stats.spd * 100); // speed reduces cooldown
+      }
+    });
+  }
+
+  // Tweening Players
+  matchState.players.forEach(p => {
+    p.x += (p.tx - p.x) * 0.05 * matchState.speed;
+    p.y += (p.ty - p.y) * 0.05 * matchState.speed;
+    
+    // Auto-grab loose ball
+    if(!matchState.ball.owner) {
+      if(Math.hypot(p.x - matchState.ball.x, p.y - matchState.ball.y) < 20) {
+        matchState.ball.owner = p;
+        document.getElementById('hudPoss' + (p.team==='home'?'H':'A')).textContent = 'POSSESSION';
+        document.getElementById('hudPoss' + (p.team==='home'?'A':'H')).textContent = '';
+      }
+    }
+  });
+
+  // Tween Ball
+  if(matchState.ball.owner) {
+    matchState.ball.x = matchState.ball.owner.x + 10;
+    matchState.ball.y = matchState.ball.owner.y + 10;
+  } else {
+    matchState.ball.x += (matchState.ball.tx - matchState.ball.x) * 0.1 * matchState.speed;
+    matchState.ball.y += (matchState.ball.ty - matchState.ball.y) * 0.1 * matchState.speed;
+  }
+
+  drawMatchFrame();
+  matchState.loopId = requestAnimationFrame(matchLoop);
+}
+
+function drawMatchStatic() {
+  mctx.clearRect(0,0,mcvs.width,mcvs.height);
+  mctx.fillStyle = '#153a20'; mctx.fillRect(0,0,mcvs.width,mcvs.height);
+  mctx.strokeStyle = 'rgba(255,255,255,0.2)'; mctx.lineWidth = 2;
+  mctx.beginPath();
+  mctx.rect(20, 20, 760, 360);
+  mctx.moveTo(400, 20); mctx.lineTo(400, 380);
+  mctx.stroke();
+  mctx.beginPath(); mctx.arc(400, 200, 50, 0, Math.PI*2); mctx.stroke();
+  mctx.fillStyle = 'rgba(255,255,255,0.1)';
+  mctx.fillRect(20, 120, 80, 160);
+  mctx.fillRect(700, 120, 80, 160);
+}
+
+function drawMatchFrame() {
+  drawMatchStatic();
+  
+  // Players
+  matchState.players.forEach(p => {
+    mctx.fillStyle = p.data.color;
+    mctx.beginPath(); mctx.arc(p.x, p.y, 14, 0, Math.PI*2); mctx.fill();
+    mctx.strokeStyle = '#000'; mctx.lineWidth = 1; mctx.stroke();
+    mctx.fillStyle = '#fff'; mctx.font = '12px sans-serif'; mctx.textAlign = 'center'; mctx.textBaseline = 'middle';
+    mctx.fillText(p.data.ava, p.x, p.y);
+    
+    // Team identifier rings
+    mctx.strokeStyle = p.team === 'home' ? 'var(--gr)' : 'var(--re)';
+    mctx.lineWidth = 2;
+    mctx.beginPath(); mctx.arc(p.x, p.y, 18, 0, Math.PI*2); mctx.stroke();
+  });
+  
+  // Ball
+  mctx.fillStyle = '#fff';
+  mctx.beginPath(); mctx.arc(matchState.ball.x, matchState.ball.y, 6, 0, Math.PI*2); mctx.fill();
+  mctx.strokeStyle = '#000'; mctx.lineWidth = 1; mctx.stroke();
+}
+
+// ════════════════════════════════════════════════════
+//  ONLINE ACTIONS
+// ════════════════════════════════════════════════════
+function genCode() {
+  appState.code = genRandCode();
+  saveSys();
+  updateRecUI();
+  toast('New code generated!');
+}
+function copyCode() {
+  navigator.clipboard.writeText(appState.code);
+  toast('Code copied to clipboard!');
+}
+function loadChallenge() {
+  const code = document.getElementById('challengeInp').value;
+  if(code.length !== 4) return toast('Enter a valid 4-char code', true);
+  if(code === appState.code) return toast('Cannot challenge yourself!', true);
+  
+  let found = false;
+  for(let u in sys.users) {
+    if(sys.users[u].code === code) found = true;
+  }
+  if(!found) return toast('Team code not found', true);
+  
+  goScreen('match', document.querySelectorAll('.nav-btn')[3]);
+  pickVs('friend');
+  document.getElementById('friendCodeInp').value = code;
+  toast('Challenge Ready!');
+}
+
+// INIT
+renderAuth();
+</script>
+</body>
+</html>
