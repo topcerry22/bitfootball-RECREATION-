@@ -41,6 +41,14 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .ae-pill:hover{border-color:var(--gr);}
 .ae-del{margin-left:auto;font-size:.65rem;color:var(--muted);padding:2px 6px;border-radius:4px;background:transparent;border:none;cursor:pointer;}
 .ae-del:hover{color:var(--re);}
+.profile-modal-ava{width:72px;height:72px;border-radius:16px;background:var(--s3);border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;margin:0 auto 14px;transition:border-color .15s;}
+.profile-modal-ava:hover{border-color:var(--gr);}
+.profile-section{margin-bottom:14px;}
+.profile-section-title{font-size:.62rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;}
+.profile-stat-row{display:flex;gap:8px;margin-top:8px;}
+.profile-stat{flex:1;background:var(--s3);border-radius:8px;padding:8px 10px;text-align:center;}
+.profile-stat-val{font-size:1.1rem;font-weight:800;color:var(--gr);}
+.profile-stat-lbl{font-size:.6rem;color:var(--muted);margin-top:2px;}
 #app{display:none;flex-direction:column;height:100%;}#app.on{display:flex;}
 .topbar{display:flex;align-items:center;height:46px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;}
 .topbar-logo{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--gr);letter-spacing:4px;padding:0 14px;border-right:1px solid var(--bd);height:100%;display:flex;align-items:center;}
@@ -127,6 +135,12 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .prog-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
 .add-if-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1.5px dashed rgba(159,111,255,.35);background:transparent;color:var(--pu);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s;justify-content:center;}
 .add-if-btn:hover{border-color:var(--pu);background:rgba(159,111,255,.08);}
+.add-shoot-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1.5px dashed rgba(245,196,0,.40);background:transparent;color:var(--ye);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s;justify-content:center;}
+.add-shoot-btn:hover{border-color:var(--ye);background:rgba(245,196,0,.08);}
+.shoot-blk{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:7px;background:#2a1800;border-left:3px solid var(--ye);font-size:.78rem;font-weight:800;color:var(--ye);margin:2px 0;}
+.goalrun-blk{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:7px;background:#0a2218;border-left:3px solid var(--gr);font-size:.78rem;font-weight:800;color:var(--gr);margin:2px 0;}
+.add-goalrun-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1.5px dashed rgba(0,229,122,.40);background:transparent;color:var(--gr);font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .12s;justify-content:center;}
+.add-goalrun-btn:hover{border-color:var(--gr);background:rgba(0,229,122,.08);}
 /* FIELD */
 .field-wrap{display:flex;flex:1;overflow:hidden;}
 .field-side{width:180px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:10px;}
@@ -262,7 +276,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
     <div class="topbar-right">
       <div class="rec-row"><span class="rb rb-w" id="recW">W 0</span><span class="rb rb-d" id="recD">D 0</span><span class="rb rb-l" id="recL">L 0</span></div>
       <div id="rankBadge" style="font-size:.7rem;font-weight:800;padding:3px 8px;border-radius:5px;background:rgba(245,196,0,.15);color:var(--ye);">🥉 BRONZE</div>
-      <div class="user-pill" onclick="signOut()"><span id="userAva">🤖</span><span id="userName">—</span><span style="color:var(--muted);font-size:.65rem">↩</span></div>
+      <div class="user-pill" onclick="openProfileModal()"><span id="userAva">🤖</span><span id="userName">—</span><span style="color:var(--muted);font-size:.65rem">⚙</span></div>
     </div>
   </div>
   <div class="main">
@@ -476,6 +490,16 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
     <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('emojiModal')">Close</button></div>
   </div>
 </div>
+<div class="modal-wrap" id="profileModal">
+  <div class="modal" style="width:340px;">
+    <div class="modal-title">⚙️ My Profile</div>
+    <div id="profileModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-re btn-sm" onclick="signOut();closeModal('profileModal')">Sign Out</button>
+      <button class="btn btn-s3" onclick="closeModal('profileModal')">Close</button>
+    </div>
+  </div>
+</div>
 <div class="modal-wrap" id="createClanModal">
   <div class="modal">
     <div class="modal-title">Create Clan</div>
@@ -528,6 +552,8 @@ const CHIPS=[
   {id:'a13',cat:'attack',icon:'🎪',name:'Nutmeg',desc:'Ball through defender legs',pow:2,spd:3,def:0},
   {id:'a14',cat:'attack',icon:'☄️',name:'Knuckleball',desc:'Swerving unpredictable shot',pow:4,spd:1,def:0},
   {id:'a15',cat:'attack',icon:'👊',name:'Shoulder Barge',desc:'Barge through the defender',pow:3,spd:1,def:0},
+  {id:'x01',cat:'attack',icon:'🎯',name:'Shoot at Goal',desc:'Fire an immediate aimed shot at goal',pow:5,spd:0,def:0,_action:'shoot'},
+  {id:'x02',cat:'attack',icon:'🏃',name:'Go to Enemy Goal',desc:'Sprint directly into the enemy goal area',pow:0,spd:5,def:0,_action:'goal_run'},
   {id:'d01',cat:'defend',icon:'⬆️',name:'Tackle',desc:'Slide in to win the ball',pow:0,spd:1,def:5},
   {id:'d02',cat:'defend',icon:'🧱',name:'Block',desc:'Intercept the shot',pow:0,spd:0,def:5},
   {id:'d03',cat:'defend',icon:'⬇️',name:'Drop Back',desc:'Retreat into compact shape',pow:0,spd:0,def:4},
@@ -540,6 +566,7 @@ const CHIPS=[
   {id:'d10',cat:'defend',icon:'🕸️',name:'Spider Web',desc:'Trap the attacker',pow:0,spd:0,def:5},
   {id:'d11',cat:'defend',icon:'🪤',name:'Offside Trap',desc:'Synced last-man run',pow:0,spd:1,def:5},
   {id:'d12',cat:'defend',icon:'🛡️',name:'Shield',desc:'Body-block incoming shot',pow:0,spd:0,def:6},
+  {id:'d13',cat:'defend',icon:'🥅',name:'Go to Goal',desc:'Sprint back and guard the goal mouth',pow:0,spd:3,def:5},
   {id:'s01',cat:'special',icon:'✨',name:'Super Shot',desc:'Unstoppable legendary strike',pow:7,spd:0,def:0},
   {id:'s02',cat:'special',icon:'🌀',name:'Tornado Spin',desc:'Confuse every defender',pow:4,spd:4,def:0},
   {id:'s03',cat:'special',icon:'🚀',name:'Rocket Pass',desc:'50-yard pinpoint laser',pow:3,spd:5,def:0},
@@ -579,6 +606,10 @@ const IF_CONDS=[
   {id:'high_str',l:'robot strength > 7'},{id:'high_int',l:'robot intelligence > 7'},
   {id:'ball_in_their_half',l:'ball is in opponent\'s half'},
   {id:'ball_in_our_half',l:'ball is in our half'},
+  {id:'teammate_nearby',l:'teammate is nearby'},
+  {id:'near_enemy_goal',l:'ball is near enemy goal'},
+  {id:'teammate_has_ball',l:'a teammate has the ball'},
+  {id:'enemy_nearby',l:'enemy is nearby'},
   {id:'random',l:'50% chance'},
 ];
 // STADIUMS
@@ -699,7 +730,58 @@ function renderRobotsList(){
     <span class="rli-ct">${countChips(r.id)}🧩</span>
   </div>`).join('');
 }
-function countChips(rid){let n=0;function w(s){s.forEach(i=>{if(i.type==='chip')n++;else if(i.type==='if'){w(i.then||[]);w(i.else||[]);}});}w(acct().programs[rid]||[]);return n;}
+function countChips(rid){
+  let n=0;
+  function w(s){s.forEach(i=>{
+    if(i.type==='chip') n++;
+    else if(i.type==='shoot'||i.type==='goal_run') n++;
+    else if(i.type==='if'){w(i.then||[]);w(i.else||[]);}
+  });}
+  w(acct().programs[rid]||[]);return n;
+}
+function openProfileModal(){
+  renderProfileModal();openModal('profileModal');
+}
+function renderProfileModal(){
+  if(!CUR)return;
+  const a=acct(),r=a.record||{w:0,d:0,l:0};
+  const tier=getTier(a.rp||0);
+  document.getElementById('profileModalBody').innerHTML=`
+    <div class="profile-modal-ava" id="profAva" onclick="openEmojiModal(e=>{acct().avatar=e;document.getElementById('profAva').textContent=e;document.getElementById('userAva').textContent=e;save();})">${a.avatar||'🤖'}</div>
+    <div class="profile-section">
+      <div class="profile-section-title">Account</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:6px;">Username: <strong style="color:var(--txt)">${CUR}</strong></div>
+      <div class="af-field"><label class="af-label">Team Name</label><input class="af-input" id="profTeam" value="${a.teamName||''}" placeholder="Team name"></div>
+      <div class="af-field"><label class="af-label">New Password (leave blank to keep)</label><input class="af-input" type="password" id="profPw" placeholder="new password"></div>
+      <button class="btn btn-gr btn-sm" onclick="saveProfile()" style="margin-top:6px;width:100%">Save Changes</button>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-title">Stats</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span style="font-size:1.1rem">${tier.icon}</span>
+        <span style="font-weight:800;color:${tier.color}">${tier.name}</span>
+        <span style="font-size:.7rem;color:var(--muted);">${a.rp||0} RP</span>
+      </div>
+      <div class="profile-stat-row">
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--gr)">${r.w||0}</div><div class="profile-stat-lbl">WINS</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--muted)">${r.d||0}</div><div class="profile-stat-lbl">DRAWS</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--re)">${r.l||0}</div><div class="profile-stat-lbl">LOSSES</div></div>
+        <div class="profile-stat"><div class="profile-stat-val" style="color:var(--cy)">${(a.robots||[]).length}</div><div class="profile-stat-lbl">ROBOTS</div></div>
+      </div>
+    </div>`;
+}
+function saveProfile(){
+  const team=document.getElementById('profTeam').value.trim();
+  const pw=document.getElementById('profPw').value;
+  if(team) acct().teamName=team;
+  if(pw){
+    if(pw.length<4){toast('Password must be 4+ chars','err');return;}
+    acct().password=btoa(pw);
+  }
+  save();
+  document.getElementById('userName').textContent=CUR;
+  toast('Profile saved ✓');
+}
 function selectRobot(id){SEL_ROBOT=id;renderRobotsList();renderRobotEditor();}
 function renderRobotEditor(){
   const r=acct().robots.find(x=>x.id===SEL_ROBOT);if(!r)return;
@@ -830,6 +912,37 @@ function insertBlock(path,item){
 function removeBlock(path){
   const idx=path[path.length-1];const s=getSeq(path.slice(0,-1));if(Array.isArray(s))s.splice(idx,1);
   save();renderProgram();renderRobotsList();
+}
+function renderSeqInto(parent,seq,path){
+  seq.forEach((item,i)=>{
+    if(item.type==='chip'||item.type==='shoot'||item.type==='goal_run'){
+      // legacy shoot/goal_run blocks rendered as chip blocks
+      const renderItem = (item.type==='shoot') ? {type:'chip',id:'x01'} : (item.type==='goal_run') ? {type:'chip',id:'x02'} : item;
+      parent.appendChild(mkChipBlk(renderItem,i,path));
+      parent.appendChild(mkDZ([...path,i+1]));
+    }
+    else if(item.type==='if'){parent.appendChild(mkIfBlk(item,i,path));}
+  });
+}
+function mkShootBlk(item,i,path){
+  const d=document.createElement('div');d.className='shoot-blk';
+  d.innerHTML=`<span class="pb-num">${i+1}</span><span>🎯</span><span style="flex:1">SHOOT AT GOAL</span><span style="font-size:.65rem;opacity:.6;margin-right:6px">fires immediately</span><button class="pb-del" onclick="removeBlock(${JSON.stringify([...path,i])})">✕</button>`;
+  return d;
+}
+function mkGoalRunBlk(item,i,path){
+  const d=document.createElement('div');d.className='goalrun-blk';
+  d.innerHTML=`<span class="pb-num">${i+1}</span><span>🏃</span><span style="flex:1">GO TO ENEMY GOAL</span><span style="font-size:.65rem;opacity:.6;margin-right:6px">sprints to goal</span><button class="pb-del" onclick="removeBlock(${JSON.stringify([...path,i])})">✕</button>`;
+  return d;
+}
+function addShootBlock(){
+  if(!PROG_ROBOT){toast('Select a robot first','err');return;}
+  acct().programs[PROG_ROBOT].push({type:'shoot'});
+  save();renderProgram();
+}
+function addGoalRunBlock(){
+  if(!PROG_ROBOT){toast('Select a robot first','err');return;}
+  acct().programs[PROG_ROBOT].push({type:'goal_run'});
+  save();renderProgram();
 }
 function addIfBlock(){
   if(!PROG_ROBOT){toast('Select a robot first','err');return;}
@@ -1173,6 +1286,7 @@ function initMatch(homeRobots,homeProgs,homeField,homeName,away,isRain,isNight,s
     goalCooldown:0,  // prevent double-goals
     possession:'home',
     awayDifficulty: MS.difficulty||'medium',
+    _awaySweeper: null,   // assigned once by tickAwayAI on first tick
   };
 
   // Rain drops
@@ -1214,8 +1328,10 @@ function initMatch(homeRobots,homeProgs,homeField,homeName,away,isRain,isNight,s
 function buildFlatProg(seq){
   const flat=[];
   seq.forEach(item=>{
-    if(item.type==='chip')flat.push(item.id);
-    else if(item.type==='if')flat.push(item);
+    if(item.type==='chip') flat.push(item.id);
+    else if(item.type==='if') flat.push(item);
+    else if(item.type==='shoot') flat.push('x01');   // legacy → action chip
+    else if(item.type==='goal_run') flat.push('x02'); // legacy → action chip
   });
   return flat;
 }
@@ -1225,7 +1341,25 @@ function resolveChip(player){
   for(let tries=0;tries<player.prog.length*2+2;tries++){
     const item=player.prog[player.progIdx%Math.max(1,player.prog.length)];
     player.progIdx++;
-    if(typeof item==='string')return CHIPS.find(c=>c.id===item)||CHIPS[0];
+    if(typeof item==='string'){
+      const chip=CHIPS.find(c=>c.id===item)||CHIPS[0];
+      // ── Action chips: x01=shoot, x02=goal_run ──
+      if(chip._action==='shoot'){ player._shootNow=true; addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action'); }
+      if(chip._action==='goal_run'){ player._goalRun=true; addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action'); }
+      return chip;
+    }
+    // ── SHOOT block: force an immediate aimed shot at goal ──
+    if(item&&item.type==='shoot'){
+      player._shootNow=true;
+      addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action');
+      return CHIPS.find(c=>c.id==='x01')||CHIPS[0];
+    }
+    // ── GOAL RUN block: sprint directly to enemy goal ──
+    if(item&&item.type==='goal_run'){
+      player._goalRun=true;
+      addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action');
+      return CHIPS.find(c=>c.id==='x02')||CHIPS[0];
+    }
     if(item&&(item.type==='if'||item.then)){
       const branch=evalCond(item.cond||'random',player)?item.then:item.else||[];
       const flat=buildFlatProg(branch);
@@ -1236,6 +1370,20 @@ function resolveChip(player){
           const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
           addLog(`🔀 IF ${condL} → ${chip.icon} ${chip.name}`,'if');
           return chip;
+        }
+        // shoot block inside an if branch
+        if(cid&&cid.type==='shoot'){
+          player._shootNow=true;
+          const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
+          addLog(`🔀 IF ${condL} → 🎯 SHOOT AT GOAL`,'if');
+          return CHIPS.find(c=>c.id==='x01')||CHIPS[0];
+        }
+        // goal_run block inside an if branch
+        if(cid&&cid.type==='goal_run'){
+          player._goalRun=true;
+          const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
+          addLog(`🔀 IF ${condL} → 🏃 GO TO ENEMY GOAL`,'if');
+          return CHIPS.find(c=>c.id==='x02')||CHIPS[0];
         }
       }
     }
@@ -1268,6 +1416,33 @@ function evalCond(cond,player){
     case 'ball_in_our_half': {
       const isHome3=player.team==='home';
       return isHome3 ? MG.ball.x > 0.5 : MG.ball.x < 0.5;
+    }
+    case 'teammate_nearby': {
+      // True if any teammate is within ~0.18 normalised units (~18% of field width)
+      const teammates = MG.players.filter(q => q !== player && q.team === player.team);
+      return teammates.some(q => Math.hypot(q.x - player.x, q.y - player.y) < 0.18);
+    }
+    case 'near_enemy_goal': {
+      // True when ball is within ~0.20 of the opponent's goal
+      // Home attacks left (goal at x≈0.02), Away attacks right (goal at x≈0.98)
+      const isHome4 = player.team === 'home';
+      return isHome4 ? MG.ball.x < 0.20 : MG.ball.x > 0.80;
+    }
+    case 'teammate_has_ball': {
+      // True when a teammate (not this player) is touching the ball right now
+      const touchDist = PLAYER_RADIUS + BALL_RADIUS + 0.012;
+      return MG.players.some(q =>
+        q !== player &&
+        q.team === player.team &&
+        Math.hypot(q.x - MG.ball.x, q.y - MG.ball.y) < touchDist
+      );
+    }
+    case 'enemy_nearby': {
+      // True if any opponent is within ~0.18 of this player
+      return MG.players.some(q =>
+        q.team !== player.team &&
+        Math.hypot(q.x - player.x, q.y - player.y) < 0.18
+      );
     }
     case 'random':  return Math.random()<.5;
     default:        return true;
@@ -1305,6 +1480,12 @@ const DIFF_PARAMS = {
     defLineX:      0.22,   // how deep defenders hold (away coords)
     midPressure:   0.2,    // how aggressively midfielders press
     updateEvery:   4,      // recalculate target every N ticks
+    kickMult:      0.85,   // kick power multiplier
+    predictTicks:  0,      // how far ahead to predict ball position (ticks)
+    dribbleTight:  1.00,   // carry tap jitter multiplier (lower=tighter control)
+    stealReact:    6,      // ticks before attempting steal after losing ball
+    longBall:      false,  // whether defenders use long ball counter-attack
+    sweeper:       false,  // whether one def acts as a pure sweeper
   },
   medium: {
     reactionDelay: 50,
@@ -1317,18 +1498,30 @@ const DIFF_PARAMS = {
     defLineX:      0.18,
     midPressure:   0.35,
     updateEvery:   2,
+    kickMult:      1.00,
+    predictTicks:  4,
+    dribbleTight:  0.75,
+    stealReact:    4,
+    longBall:      false,
+    sweeper:       false,
   },
   hard: {
     reactionDelay: 20,
-    speedMult:     1.08,
-    aimNoise:      0.03,
-    pressRadius:   0.32,
-    shotRange:     0.50,
+    speedMult:     1.10,   // slightly faster than before
+    aimNoise:      0.025,  // near-perfect aim
+    pressRadius:   0.42,   // aggressive pressing from wide range
+    shotRange:     0.52,
     passChance:    0.45,
-    tackleRadius:  0.12,
+    tackleRadius:  0.13,
     defLineX:      0.13,
-    midPressure:   0.55,
-    updateEvery:   1,
+    midPressure:   0.58,
+    updateEvery:   1,      // reacts every single tick
+    kickMult:      1.22,   // boss-tier kick power
+    predictTicks:  12,     // predicts ball position 12 ticks ahead
+    dribbleTight:  0.35,   // very tight dribbling — ball barely leaves feet
+    stealReact:    1,      // steals back almost instantly
+    longBall:      true,   // defenders launch long balls to strikers
+    sweeper:       true,   // one defender is a pure sweeper
   },
 };
 
@@ -1346,27 +1539,34 @@ function getAwayAIDifficulty(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  OPPOSING TEAM AI
-//  Rules your answers defined:
-//  - Without ball: hold defensive shape, ONLY 1 player presses
-//  - Ball in our half: FULL team drops behind ball, 1-2 press
-//  - Forwards without ball: press home defenders aggressively
-//  - With ball: role decides — striker carries→shoots, mid passes, def clears
-//  - Max 1-2 players near ball at any time (enforced by presser slot)
+//  🔴 RED TEAM AI  —  Boss-tier opponent
+//
+//  What makes Red different from Blue (home, chip-driven):
+//  • Predictive targeting: aims at ball.pos + ball.vel × predictTicks
+//  • Wider press radius: D.pressRadius (up to 0.42 on hard)
+//  • Dedicated sweeper: deepest def always guards goal-ball line
+//  • Faster reaction: updateEvery − 1 per cycle
+//  • Harder kicks: base power × D.kickMult (1.22 on hard)
+//  • Tighter carry: jitter × D.dribbleTight (0.35 on hard)
+//  • Long ball: defender wins ball in own half → launch to striker
 // ═══════════════════════════════════════════════════════════════
 
 function tickAwayAI(){
-  const B = MG.ball;
-  const D = getAwayAIDifficulty();
+  const B  = MG.ball;
+  const D  = getAwayAIDifficulty();
   const awayPlayers = MG.players.filter(p=>p.team==='away');
   const homePlayers = MG.players.filter(p=>p.team==='home');
-  const weHaveBall  = (MG.possession === 'away');
+  const weHaveBall  = MG.possession === 'away';
 
-  // Away: left half (x<0.5), defends LEFT goal (x≈0.02), attacks RIGHT goal (x≈0.98)
   const DEFEND_X = 0.02;
   const ATTACK_X = 0.98;
 
-  // ── Assign roles from base position (computed once, cached on player) ──
+  // ── 🔴 Predicted ball position — Red's core edge over Blue ──
+  const look  = D.predictTicks || 0;
+  const predX = Math.max(0.02, Math.min(0.98, B.x + B.vx * look));
+  const predY = Math.max(0.03, Math.min(0.97, B.y + B.vy * look));
+
+  // ── Assign roles once per player (cached) ──
   awayPlayers.forEach(p => {
     if(!p._role){
       const rs = Math.max(0, Math.min(1, (p.baseX - 0.02) / 0.46));
@@ -1374,186 +1574,185 @@ function tickAwayAI(){
     }
   });
 
-  // ── Pre-compute shared context ──
-  // Sort away players by distance to ball — closest is candidate presser
-  const sorted = [...awayPlayers].sort((a,b)=>
-    Math.hypot(a.x-B.x,a.y-B.y) - Math.hypot(b.x-B.x,b.y-B.y)
-  );
-  const ballPresser  = sorted[0];   // ONLY this player may chase ball
-  const ballSupport  = sorted[1];   // second closest may move nearby but not chase hard
+  // ── 🔴 Sweeper: deepest defender ALWAYS covers the goal-ball line ──
+  const defs = awayPlayers.filter(p=>p._role==='def');
+  const sweeper = D.sweeper && defs.length
+    ? defs.reduce((a,b)=> a.baseX < b.baseX ? a : b)
+    : null;
 
+  // ── Striker target for long ball (most forward non-def, non-gk) ──
+  const fwds = awayPlayers.filter(p=>p._role==='fwd'||p._role==='mid');
+  const striker = fwds.length
+    ? fwds.reduce((a,b)=> a.baseX > b.baseX ? a : b)
+    : null;
+
+  // ── Sort by distance to PREDICTED ball — determines who presses ──
+  const pressable = awayPlayers.filter(p=> p !== sweeper);
+  const sorted = [...pressable].sort((a,b)=>
+    Math.hypot(a.x-predX,a.y-predY) - Math.hypot(b.x-predX,b.y-predY)
+  );
+  const ballPresser = sorted[0];
+  const ballSupport = sorted[1];
+
+  // ── Ball zone flags ──
   const ballInOurHalf     = B.x < 0.50;
   const ballNearOurGoal   = B.x < 0.20;
   const ballInTheirHalf   = B.x > 0.50;
   const ballNearTheirGoal = B.x > 0.80;
 
-  const hs = MG.homeScore, as = MG.awayScore;
-  const losing  = as < hs;
-  const winning = as > hs;
+  const losing  = MG.awayScore < MG.homeScore;
   const timePct = MG.tick / (MG.maxTick || 1);
 
-  // ── Decide each player's state ──
+  // ── 🔴 Faster reaction: minimum 1 fewer tick than Blue ──
+  const reactBase = Math.max(1, (D.updateEvery||2) - 1);
+
+  // ── State decisions ──
   awayPlayers.forEach(p => {
-    // Reaction delay gate
     if(p.aiReactTimer > 0){ p.aiReactTimer--; return; }
-    p.aiReactTimer = D.updateEvery + Math.floor(Math.random()*3);
+    p.aiReactTimer = reactBase + Math.floor(Math.random()*2);
 
-    const r            = p._role;
-    const distToBall   = Math.hypot(p.x-B.x, p.y-B.y);
-    const isPresser    = (p === ballPresser);
-    const isSupport    = (p === ballSupport);
+    const r          = p._role;
+    const distToBall = Math.hypot(p.x-B.x, p.y-B.y);
+    const isPresser  = p === ballPresser;
+    const isSupport  = p === ballSupport;
 
-    // ─────────────────────────────────────────────────────
-    //  GOALKEEPER — never leaves goal area unless desperate
-    // ─────────────────────────────────────────────────────
+    // ── 🔴 SWEEPER: permanently on goal-ball line ──
+    if(p === sweeper){
+      p.aiState = 'sweeper';
+      return;
+    }
+
+    // ── GOALKEEPER ──
     if(r === 'gk'){
-      if(ballNearOurGoal && distToBall < 0.15) p.aiState = 'gk_rush';
+      if(ballNearOurGoal && distToBall < 0.14) p.aiState = 'gk_rush';
       else if(ballInOurHalf)                   p.aiState = 'gk_set';
       else                                     p.aiState = 'gk_idle';
       return;
     }
 
-    // ─────────────────────────────────────────────────────
-    //  WE HAVE THE BALL — role-based attacking behaviour
-    // ─────────────────────────────────────────────────────
+    // ── WE HAVE BALL ──
     if(weHaveBall){
       if(r === 'def'){
-        // Defenders hold shape when we have ball; one may push if losing late
+        // 🔴 Long ball flag: defender touches ball in own half → launch to striker
+        p._wantsLongBall = D.longBall && ballInOurHalf && striker && striker !== p;
         if(isPresser && losing && timePct > 0.65) p.aiState = 'attack';
         else                                       p.aiState = 'hold';
       } else if(r === 'mid'){
-        // Midfielders: closest advances, others support
-        if(isPresser)       p.aiState = 'attack';
-        else if(isSupport)  p.aiState = 'support';
-        else                p.aiState = 'hold';
+        if(isPresser)      p.aiState = 'attack';
+        else if(isSupport) p.aiState = 'support';
+        else               p.aiState = 'hold';
       } else if(r === 'fwd'){
-        // Forwards: shoot if in range, else carry ball toward goal
         const distToGoal = Math.hypot(p.x-ATTACK_X, p.y-0.5);
-        if(isPresser && distToGoal < D.shotRange)   p.aiState = 'shoot';
-        else if(isPresser)                           p.aiState = 'carry';  // dribble toward goal
-        else if(isSupport)                           p.aiState = 'lurk';
-        else                                         p.aiState = 'lurk';
+        if(isPresser && distToGoal < D.shotRange) p.aiState = 'shoot';
+        else if(isPresser)                         p.aiState = 'carry';
+        else                                       p.aiState = 'lurk';
       }
       return;
     }
 
-    // ─────────────────────────────────────────────────────
-    //  OPPONENT HAS BALL
-    //  Core rule: ONLY the presser chases. Everyone else holds
-    //  shape or tracks back based on ball position.
-    // ─────────────────────────────────────────────────────
+    // ── OPPONENT HAS BALL ──
+    const pressR = D.pressRadius;
 
-    // ── Ball in OUR half — full team drops behind ball line ──
     if(ballInOurHalf){
       if(r === 'def'){
-        // Defenders: presser challenges, others form defensive wall
         p.aiState = isPresser ? 'press' : 'defend_line';
       } else if(r === 'mid'){
-        // Mids: presser or close support presses, rest drop to defence line
-        if(isPresser)      p.aiState = 'press';
-        else if(isSupport && distToBall < D.pressRadius*1.5) p.aiState = 'cover_zone';
-        else               p.aiState = 'defend_line';
+        if(isPresser)                                   p.aiState = 'press';
+        else if(isSupport && distToBall < pressR*1.5)   p.aiState = 'cover_zone';
+        else                                             p.aiState = 'defend_line';
       } else if(r === 'fwd'){
-        // Forwards track back — but stay ahead of the ball a bit to be outlet
         p.aiState = 'recover';
       }
       return;
     }
 
-    // ── Ball near our goal — emergency, all defenders press ──
     if(ballNearOurGoal){
       if(r === 'def')      p.aiState = isPresser ? 'press' : 'goal_cover';
-      else if(r === 'mid') p.aiState = distToBall < D.pressRadius*1.3 ? 'press' : 'goal_cover';
+      else if(r === 'mid') p.aiState = distToBall < pressR*1.3 ? 'press' : 'goal_cover';
       else if(r === 'fwd') p.aiState = 'recover';
       return;
     }
 
-    // ── Ball in THEIR half / midfield — defensive shape, forwards press home defs ──
-    if(ballInTheirHalf || !ballInOurHalf){
-      if(r === 'def'){
-        // Defenders hold their line — DON'T chase ball into their half
-        p.aiState = 'hold';
-      } else if(r === 'mid'){
-        // Only the presser advances; others hold midfield shape
-        if(isPresser && distToBall < D.pressRadius*1.2) p.aiState = 'press';
-        else                                             p.aiState = 'hold';
-      } else if(r === 'fwd'){
-        // Forwards press the home defenders aggressively when ball is in their half
-        // Find nearest home defender to press
-        let nearestHomeDef = null, nearestDefDist = 999;
-        homePlayers.forEach(h=>{
-          // Home defenders are on the right side (x > 0.5 = home half)
-          if(h.x > 0.60){
-            const d = Math.hypot(h.x-p.x, h.y-p.y);
-            if(d < nearestDefDist){ nearestDefDist=d; nearestHomeDef=h; }
-          }
-        });
-        p._pressTarget = nearestHomeDef;
-        if(isPresser || distToBall < D.pressRadius*0.8){
-          p.aiState = 'fwd_press';   // press the home defender directly
-        } else {
-          p.aiState = 'lurk';        // stay in dangerous position
+    // Ball in their half / midfield
+    if(r === 'def'){
+      p.aiState = 'hold';
+    } else if(r === 'mid'){
+      // 🔴 Presses from further (pressRadius already 0.42 on hard)
+      p.aiState = (isPresser && distToBall < pressR) ? 'press' : 'hold';
+    } else if(r === 'fwd'){
+      // 🔴 Forwards aggressively press home defenders in their half
+      let nearestDef = null, nearestDist = 999;
+      homePlayers.forEach(h=>{
+        if(h.x > 0.55){
+          const d = Math.hypot(h.x-p.x, h.y-p.y);
+          if(d < nearestDist){ nearestDist=d; nearestDef=h; }
         }
-      }
-      return;
+      });
+      p._pressTarget = nearestDef;
+      p.aiState = (isPresser || distToBall < pressR*0.85) ? 'fwd_press' : 'lurk';
     }
-
-    // Fallback
-    p.aiState = 'hold';
   });
 
-  // ── Compute movement targets ──
+  // ── Movement targets ──
   awayPlayers.forEach(p => {
     const distToBall = Math.hypot(p.x-B.x, p.y-B.y);
+    const jit = D.dribbleTight || 0.015;   // 🔴 tighter on hard (0.35 scale)
     let tx = p.baseX, ty = p.baseY;
 
     switch(p.aiState){
 
       case 'hold':
-        // Stay in formation with tiny jitter — visible but disciplined
         tx = p.baseX + rnd(0.022);
         ty = p.baseY + rnd(0.022);
         break;
 
       case 'press':
-        // Designated presser sprints to ball
-        tx = B.x + rnd(0.018);
-        ty = B.y + rnd(0.018);
+        // 🔴 Aim at PREDICTED ball position
+        tx = predX + rnd(0.015);
+        ty = predY + rnd(0.015);
+        break;
+
+      case 'sweeper':
+        // 🔴 Always on the line between ball and our goal
+        {
+          const svdx = B.x - DEFEND_X, svdy = B.y - 0.5;
+          const svd  = Math.hypot(svdx, svdy) || 0.001;
+          const hold = 0.11;
+          tx = DEFEND_X + (svdx/svd)*hold + rnd(0.018);
+          ty = 0.5       + (svdy/svd)*hold + rnd(0.018);
+          tx = Math.max(DEFEND_X, Math.min(0.34, tx));
+          ty = Math.max(0.05, Math.min(0.95, ty));
+        }
         break;
 
       case 'defend_line':
-        // Drop into a defensive line based on ball's X position
-        // The whole line shuffles to stay between ball and our goal
         {
-          const lineX = Math.min(p.baseX + 0.04, Math.max(DEFEND_X+0.06, B.x - 0.10));
+          const lineX = Math.min(p.baseX+0.04, Math.max(DEFEND_X+0.06, B.x-0.10));
           tx = lineX + rnd(0.03);
-          ty = p.baseY + (B.y - 0.5)*0.15 + rnd(0.04);  // slight shift toward ball Y
+          ty = p.baseY + (B.y-0.5)*0.15 + rnd(0.04);
         }
         break;
 
       case 'cover_zone':
-        // Mid covers the zone between ball and goal — not marking, not pressing
         {
-          const zoneX = (B.x + DEFEND_X) * 0.5 + rnd(0.04);
-          const zoneY = (B.y + p.baseY) * 0.5 + rnd(0.05);
-          tx = Math.max(DEFEND_X+0.05, zoneX);
-          ty = Math.max(0.08, Math.min(0.92, zoneY));
+          const zx = (B.x+DEFEND_X)*0.5 + rnd(0.04);
+          const zy = (B.y+p.baseY)*0.5  + rnd(0.05);
+          tx = Math.max(DEFEND_X+0.05, zx);
+          ty = Math.max(0.08, Math.min(0.92, zy));
         }
         break;
 
       case 'goal_cover':
-        // Pack the goal mouth — spread in front of goal
         tx = DEFEND_X + 0.07 + rnd(0.04);
         ty = 0.5 + (p.baseY-0.5)*0.55 + rnd(0.04);
         break;
 
       case 'gk_rush':
-        tx = Math.min(0.17, B.x + 0.01) + rnd(0.02);
+        tx = Math.min(0.17, B.x+0.01) + rnd(0.02);
         ty = B.y + rnd(0.025);
         break;
 
       case 'gk_set':
-        // Position on a line between ball and goal center
         tx = DEFEND_X + 0.10 + rnd(0.02);
         ty = B.y + (0.5-B.y)*0.35 + rnd(0.025);
         break;
@@ -1564,85 +1763,76 @@ function tickAwayAI(){
         break;
 
       case 'support':
-        // Run into open space ahead of ball, avoid clustering
         {
           let bestX=B.x+0.10, bestY=0.5, best=-9e9;
-          const tries = D.updateEvery<=1 ? 8 : 5;
+          const tries = D.updateEvery<=1 ? 9 : 6;
           for(let i=0;i<tries;i++){
-            const cx = Math.min(0.94, B.x + 0.06 + Math.random()*0.20);
-            const cy = 0.10 + Math.random()*0.80;
-            let sc2  = (cx - 0.5)*4;
+            const cx = Math.min(0.94, B.x+0.06+Math.random()*0.22);
+            const cy = 0.10+Math.random()*0.80;
+            let sc2  = (cx-0.5)*4;
             homePlayers.forEach(h=>{ sc2 -= Math.max(0,0.20-Math.hypot(h.x-cx,h.y-cy))*10; });
             awayPlayers.forEach(a=>{ if(a!==p) sc2 -= Math.max(0,0.11-Math.hypot(a.x-cx,a.y-cy))*7; });
             if(sc2>best){best=sc2;bestX=cx;bestY=cy;}
           }
-          tx = bestX + rnd(0.02);
-          ty = Math.max(0.06,Math.min(0.94,bestY)) + rnd(0.02);
+          tx = bestX+rnd(0.02);
+          ty = Math.max(0.06,Math.min(0.94,bestY))+rnd(0.02);
         }
         break;
 
       case 'attack':
-        // Move to ball if close, else advance into space ahead
+        // 🔴 Move toward predicted ball position
         if(distToBall < 0.14){
-          tx = B.x + rnd(0.02); ty = B.y + rnd(0.025);
+          tx = predX + rnd(0.016); ty = predY + rnd(0.020);
         } else {
-          tx = Math.min(0.93, B.x + 0.09 + (p._role==='fwd'?0.05:0)) + rnd(0.04);
-          ty = p.baseY + (B.y-p.baseY)*0.35 + rnd(0.06);
+          tx = Math.min(0.93, B.x+0.09+(p._role==='fwd'?0.05:0))+rnd(0.04);
+          ty = p.baseY+(B.y-p.baseY)*0.35+rnd(0.06);
         }
         break;
 
       case 'carry':
-        // Dribble: stay glued right on top of the ball, nudging it forward toward goal
-        // The ball collision handler will do a gentle tap instead of a blast
-        tx = B.x + rnd(0.015);
-        ty = B.y + rnd(0.015);
+        // 🔴 Tighter dribble — jitter scaled down by dribbleTight
+        tx = B.x + rnd(jit * 0.6);
+        ty = B.y + rnd(jit * 0.6);
         break;
 
       case 'shoot':
-        // Get onto ball for the shot
         if(distToBall < 0.16){
-          tx = B.x + rnd(0.015); ty = B.y + rnd(0.015);
+          tx = B.x+rnd(jit*0.5); ty = B.y+rnd(jit*0.5);
         } else {
-          tx = ATTACK_X - 0.08 + rnd(0.04);
-          ty = 0.5 + rnd(0.12);
+          tx = ATTACK_X-0.08+rnd(0.04);
+          ty = 0.5+rnd(0.12);
         }
         break;
 
       case 'lurk':
-        // Stay in their half, threatening but not bunched on ball
-        tx = ATTACK_X - 0.13 - Math.random()*0.09 + rnd(0.04);
-        ty = p.baseY + rnd(0.09);
+        tx = ATTACK_X-0.12-Math.random()*0.09+rnd(0.04);
+        ty = p.baseY+rnd(0.09);
         break;
 
       case 'fwd_press':
-        // Press the nearest home defender — go right at them
+        // 🔴 Press home defenders with purpose — head straight at them
         if(p._pressTarget){
-          tx = p._pressTarget.x + rnd(0.025);
-          ty = p._pressTarget.y + rnd(0.025);
+          tx = p._pressTarget.x + rnd(0.020);
+          ty = p._pressTarget.y + rnd(0.020);
         } else {
-          // No home defender found in their half — press the ball instead
-          tx = B.x + rnd(0.025);
-          ty = B.y + rnd(0.025);
+          tx = predX+rnd(0.020); ty = predY+rnd(0.020);
         }
         break;
 
       case 'recover':
-        // Sprint back to base position
-        tx = p.baseX + rnd(0.018);
-        ty = p.baseY + rnd(0.018);
+        tx = p.baseX+rnd(0.018); ty = p.baseY+rnd(0.018);
         break;
 
       default:
-        tx = p.baseX + rnd(0.04);
-        ty = p.baseY + rnd(0.04);
+        tx = p.baseX+rnd(0.04); ty = p.baseY+rnd(0.04);
     }
 
-    // ── Speed ──
-    const chip    = p.lastChip || CHIPS[0];
-    const chipSpd = chip.spd || 0;
-    const sprint  = (p.aiState==='press'||p.aiState==='recover'||p.aiState==='gk_rush'||p.aiState==='fwd_press');
-    const idle    = (p.aiState==='hold'||p.aiState==='gk_idle'||p.aiState==='defend_line');
-    const spdMult = sprint ? 1.12 : idle ? 0.68 : 1.00;
+    // Speed
+    const chip    = p.lastChip||CHIPS[0];
+    const chipSpd = chip.spd||0;
+    const sprint  = ['press','recover','gk_rush','fwd_press','sweeper'].includes(p.aiState);
+    const idle    = ['hold','gk_idle','defend_line'].includes(p.aiState);
+    const spdMult = sprint ? 1.15 : idle ? 0.68 : 1.00;
 
     const moveSpd = PLAYER_SPEED *
       (0.55 + (p.robot.spd||5)/10 * 0.90) *
@@ -1650,18 +1840,17 @@ function tickAwayAI(){
       D.speedMult * spdMult *
       (MG.isRain ? 0.84 : 1.0);
 
-    const dx = tx-p.x, dy = ty-p.y;
-    const moveDist = Math.hypot(dx,dy);
+    const ddx = tx-p.x, ddy = ty-p.y;
+    const moveDist = Math.hypot(ddx,ddy);
     if(moveDist > 0.002){
-      p.vx = dx/moveDist * moveSpd;
-      p.vy = dy/moveDist * moveSpd;
+      p.vx = ddx/moveDist * moveSpd;
+      p.vy = ddy/moveDist * moveSpd;
     } else {
       p.vx *= 0.55; p.vy *= 0.55;
     }
 
     p.x += p.vx; p.y += p.vy;
 
-    // Half clamp: only attacking states cross midline
     const canCross = ['attack','carry','shoot','lurk','support','fwd_press'].includes(p.aiState) && B.x > 0.40;
     if(!canCross) p.x = Math.min(0.50, p.x);
     p.x = Math.max(0.02, Math.min(0.98, p.x));
@@ -1672,94 +1861,122 @@ function tickAwayAI(){
   });
 }
 
-// ── Away AI kick — carry state taps ball gently forward; shoot state blasts it ──
+// ── 🔴 Red Team kick — boss power, tight carry, long ball counter-attack ──
 function applyAwayAIKick(p, B, nx, ny){
   const D       = getAwayAIDifficulty();
   const ATTACK_X = 0.98;
   const str     = (p.robot.str||5)/10;
   const intl    = (p.robot.int||5)/10;
-  const chip    = p.lastChip || CHIPS[0];
+  const chip    = p.lastChip||CHIPS[0];
   const chipPow = (chip.pow||0)/10;
   const chipSpd = (chip.spd||0)/10;
+  const awayPlayers = MG.players.filter(q=>q.team==='away');
 
-  const basePow  = KICK_POWER * (0.45 + str*0.85 + chipPow*0.55) * (0.82 + D.speedMult*0.18);
+  // 🔴 Harder kick — kickMult up to 1.22 on hard
+  const basePow = KICK_POWER * (0.45 + str*0.85 + chipPow*0.55)
+                * (0.82 + D.speedMult*0.18)
+                * (D.kickMult || 1.0);
   const kickPow  = basePow * (MG.isRain ? 0.80 : 1.0);
-  const noiseBase= D.aimNoise * (1.0 - intl*0.45) * kickPow * 2.0;
 
-  const state = p.aiState || 'attack';
+  // 🔴 Better aim — aimNoise as low as 0.025 on hard
+  const noiseBase = D.aimNoise * (1.0 - intl*0.50) * kickPow * 1.8;
+
+  const state  = p.aiState || 'attack';
+  const ballInOurHalf = B.x < 0.50;
   let kickVx, kickVy;
 
-  if(state === 'carry'){
-    // ── DRIBBLE / CARRY: gentle nudge toward goal, keep ball controllable ──
-    // Just a soft tap — player stays close and keeps nudging
-    const tapPow = kickPow * 0.28;
-    const toGoalX = ATTACK_X - B.x;
-    const toGoalY = 0.5 - B.y;
-    const gd = Math.hypot(toGoalX, toGoalY*0.4)||0.001;
-    kickVx = (toGoalX/gd)*tapPow + nx*tapPow*0.15 + rnd(noiseBase*0.4);
-    kickVy = (toGoalY*0.4/gd)*tapPow + ny*tapPow*0.10 + rnd(noiseBase*0.5);
-    // Don't blast possession away — keep it
-    MG.possession = 'away';
-
-    // Transition to shoot when close enough to goal
-    const distToGoal = Math.hypot(B.x-ATTACK_X, B.y-0.5);
-    if(distToGoal < D.shotRange * 0.85){
-      p.aiState = 'shoot';
-      addLog(`${chip.icon} ${p.robot.emoji} dribbles in... SHOT!`,'action');
+  // ── 🔴 LONG BALL: defender wins ball in own half → launch to striker ──
+  if(p._wantsLongBall && (state==='hold'||state==='defend_line'||state==='press'||state==='carry')){
+    p._wantsLongBall = false;
+    const target = awayPlayers
+      .filter(q=>q!==p && q._role!=='gk' && q._role!=='def')
+      .reduce((best,q)=> q.baseX > (best?best.baseX:-1) ? q : best, null);
+    if(target){
+      const toTgtX = target.x - B.x;
+      const toTgtY = target.y - B.y;
+      const td = Math.hypot(toTgtX, toTgtY)||0.001;
+      kickVx = (toTgtX/td) * kickPow * 1.45 + rnd(noiseBase*0.45);
+      kickVy = (toTgtY/td) * kickPow * 1.45 + rnd(noiseBase*0.45);
+      addLog(`⚡ ${p.robot.emoji} LONG BALL → ${target.robot.emoji}!`,'action');
+      B.vx = B.vx*0.08 + kickVx*0.92;
+      B.vy = B.vy*0.08 + kickVy*0.92;
+      MG.possession = 'away';
+      return;
     }
-
-  } else if(state === 'shoot'){
-    // ── SHOT: aimed hard at goal ──
-    const toGoalX = ATTACK_X - B.x;
-    const toGoalY = 0.5 - B.y;
-    const gd = Math.hypot(toGoalX, toGoalY*0.5)||0.001;
-    kickVx = (toGoalX/gd)*kickPow*1.35 + rnd(noiseBase*0.6);
-    kickVy = (toGoalY*0.5/gd)*kickPow  + rnd(noiseBase*0.9);
-    if(Math.random()<0.3) addLog(`${chip.icon} ${p.robot.emoji} SHOOTS!`,'action');
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else if(state === 'lurk'){
-    // Lurker gets ball — turn and fire
-    const toGoalX = ATTACK_X - B.x;
-    const toGoalY = 0.5 - B.y;
-    const gd = Math.hypot(toGoalX, toGoalY*0.4)||0.001;
-    kickVx = (toGoalX/gd)*kickPow*1.18 + rnd(noiseBase*0.8);
-    kickVy = (toGoalY*0.4/gd)*kickPow  + rnd(noiseBase*0.85);
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else if(state === 'attack'){
-    // Forward pass / advance
-    kickVx = kickPow*(0.72+chipSpd*0.18) + nx*kickPow*0.22 + rnd(noiseBase*0.85);
-    kickVy = ny*kickPow*0.18 + (0.5-B.y)*kickPow*0.10 + rnd(noiseBase*1.0);
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else if(state === 'support'){
-    // Soft pass into space
-    kickVx = kickPow*0.48 + rnd(noiseBase*0.55);
-    kickVy = ny*kickPow*0.18 + rnd(noiseBase*0.65);
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else if(state==='press'||state==='defend_line'||state==='cover_zone'||state==='goal_cover'||state==='mark'){
-    // Defensive clear — boot it away hard
-    kickVx = kickPow*(0.82+chipPow*0.12) + rnd(noiseBase*0.75);
-    kickVy = (0.5-B.y)*kickPow*0.22 + rnd(noiseBase*1.3);
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else if(state==='gk_rush'||state==='gk_set'){
-    // GK distributes
-    kickVx = kickPow*0.72 + rnd(noiseBase*0.45);
-    kickVy = (0.5-B.y)*kickPow*0.28 + rnd(noiseBase*0.9);
-    if(Math.random()>0.10) MG.possession='away';
-
-  } else {
-    kickVx = kickPow*0.62 + rnd(noiseBase*0.9);
-    kickVy = ny*kickPow*0.22 + rnd(noiseBase*0.9);
-    if(Math.random()>0.10) MG.possession='away';
   }
 
-  B.vx = B.vx*0.12 + kickVx*0.88;
-  B.vy = B.vy*0.12 + kickVy*0.88;
+  if(state === 'carry'){
+    // Hold ball glued just ahead of player — same as home dribble carry
+    const moveDir  = Math.atan2(p.vy, p.vx);
+    const holdDist = PLAYER_RADIUS + BALL_RADIUS + 0.005;
+    B.x = Math.max(0.02, Math.min(0.98, p.x + Math.cos(moveDir)*holdDist));
+    B.y = Math.max(0.03, Math.min(0.97, p.y + Math.sin(moveDir)*holdDist));
+    B.vx = p.vx * 0.85;
+    B.vy = p.vy * 0.85;
+    MG.possession = 'away';
+    if(Math.hypot(B.x-ATTACK_X, B.y-0.5) < D.shotRange*0.85){
+      p.aiState = 'shoot';
+      addLog(`${chip.icon} ${p.robot.emoji} drives in... 🔴 SHOT!`,'action');
+    }
+    return;
+
+  } else if(state === 'shoot'){
+    const toGoalX = ATTACK_X - B.x, toGoalY = 0.5 - B.y;
+    const gd = Math.hypot(toGoalX, toGoalY*0.5)||0.001;
+    // 🔴 Boss shot: 1.40× multiplier on top of kickMult already baked in
+    kickVx = (toGoalX/gd)*kickPow*1.40 + rnd(noiseBase*0.50);
+    kickVy = (toGoalY*0.5/gd)*kickPow  + rnd(noiseBase*0.75);
+    if(Math.random()<0.35) addLog(`${chip.icon} ${p.robot.emoji} 🔴 FIRES!`,'action');
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else if(state === 'lurk'){
+    const toGoalX = ATTACK_X - B.x, toGoalY = 0.5 - B.y;
+    const gd = Math.hypot(toGoalX, toGoalY*0.4)||0.001;
+    kickVx = (toGoalX/gd)*kickPow*1.22 + rnd(noiseBase*0.72);
+    kickVy = (toGoalY*0.4/gd)*kickPow  + rnd(noiseBase*0.78);
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else if(state === 'attack'){
+    kickVx = kickPow*(0.76+chipSpd*0.18) + nx*kickPow*0.22 + rnd(noiseBase*0.78);
+    kickVy = ny*kickPow*0.18 + (0.5-B.y)*kickPow*0.10 + rnd(noiseBase*0.92);
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else if(state === 'support'){
+    kickVx = kickPow*0.52 + rnd(noiseBase*0.48);
+    kickVy = ny*kickPow*0.18 + rnd(noiseBase*0.58);
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else if(['press','defend_line','cover_zone','goal_cover','sweeper'].includes(state)){
+    // Smart clear: on long ball difficulty, pass to teammate; otherwise just boot it
+    const fwdTarget = D.longBall
+      ? awayPlayers.filter(q=>q!==p&&q._role!=='gk'&&q.x>B.x).sort((a,b)=>b.x-a.x)[0]
+      : null;
+    if(fwdTarget){
+      const ttx = fwdTarget.x-B.x, tty = fwdTarget.y-B.y;
+      const td = Math.hypot(ttx,tty)||0.001;
+      kickVx = (ttx/td)*kickPow*1.12 + rnd(noiseBase*0.65);
+      kickVy = (tty/td)*kickPow*1.12 + rnd(noiseBase*0.65);
+    } else {
+      kickVx = kickPow*(0.84+chipPow*0.10) + rnd(noiseBase*0.70);
+      kickVy = (0.5-B.y)*kickPow*0.20    + rnd(noiseBase*1.20);
+    }
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else if(state==='gk_rush'||state==='gk_set'){
+    kickVx = kickPow*0.72 + rnd(noiseBase*0.42);
+    kickVy = (0.5-B.y)*kickPow*0.28 + rnd(noiseBase*0.85);
+    if(Math.random()>0.08) MG.possession='away';
+
+  } else {
+    kickVx = kickPow*0.62 + rnd(noiseBase*0.88);
+    kickVy = ny*kickPow*0.22 + rnd(noiseBase*0.88);
+    if(Math.random()>0.08) MG.possession='away';
+  }
+
+  B.vx = B.vx*0.10 + kickVx*0.90;
+  B.vy = B.vy*0.10 + kickVy*0.90;
 }
+
 
 function tickMatch(){
   if(MG.phase==='ended')return;
@@ -1840,6 +2057,22 @@ function tickMatch(){
     // Each chip category produces genuinely different spatial behaviour.
     let tx = p.baseX, ty = p.baseY;
 
+    // ── 🏃 GO TO ENEMY GOAL block: override all chip logic — sprint to goal mouth ──
+    if(p._goalRun){
+      p._goalRun = false;
+      // Home attacks left goal at x≈0.02, y=0.5
+      tx = attackGoalX + 0.06 + rnd(0.04);
+      ty = 0.5 + rnd(0.18);
+      // Apply movement immediately and skip chip movement switch
+      const goalSpd = PLAYER_SPEED * (0.5 + (robotSpd/10)*1.0) * 1.35 * (MG.isRain ? 0.82 : 1.0);
+      const gdx = tx-p.x, gdy = ty-p.y, gdist = Math.hypot(gdx,gdy);
+      if(gdist>0.002){ p.vx=(gdx/gdist)*goalSpd; p.vy=(gdy/gdist)*goalSpd; }
+      p.x+=p.vx; p.y+=p.vy;
+      p.x=Math.max(0.02,Math.min(0.98,p.x)); p.y=Math.max(0.03,Math.min(0.97,p.y));
+      p.trail.push({x:p.x,y:p.y}); if(p.trail.length>10)p.trail.shift();
+      return;  // skip all chip movement logic
+    }
+
     if(chip.cat === 'defend'){
       // DEFEND chips: Stay disciplined. Press hard if chip is aggressive (high chipDef+chipSpd).
       // High-press chips (d04 High Press, d06 Interception) move toward ball actively.
@@ -1853,6 +2086,23 @@ function tickMatch(){
         const blockX = 0.72 + p.baseY*0.04;
         tx = blockX + rnd(0.03);
         ty = p.baseY + rnd(0.03);
+      } else if(chip.id === 'd13'){
+        // ── GO TO GOAL: sprint straight back and stand in the goal mouth ──
+        // Position on the line between the ball and the centre of own goal,
+        // standing just in front of the goal line. Moves with ball angle.
+        const goalX = defendGoalX;  // home goal is right side x≈0.98
+        const goalY = 0.5;
+        // Stand on the ball-to-goal line, offset inward by ~0.08
+        const dx = goalX - B.x, dy = goalY - B.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const guardDist = 0.08;  // distance in front of goal line
+        tx = goalX - (dx/dist)*guardDist + rnd(0.02);
+        ty = goalY - (dy/dist)*guardDist + rnd(0.04);
+        // If ball is very close and no team-mate is between — press it
+        if(distToBall < 0.14 && amClosest){
+          tx = B.x + rnd(0.02);
+          ty = B.y + rnd(0.02);
+        }
       } else if(isHighPress || (!myTeamHasBall && distToBall < pressRadius + 0.15)){
         // Press the ball carrier
         tx = B.x + rnd(0.03);
@@ -1880,14 +2130,10 @@ function tickMatch(){
       const headerChips = ['a04','s10'];
 
       if(dribbleChips.includes(chip.id)){
-        // Stay on ball, weave with jitter
-        if(amClosest||distToBall<0.15){
-          tx = B.x + attackDir*0.04 + rnd(0.03);
-          ty = B.y + rnd(0.05);
-        } else {
-          tx = B.x + rnd(0.06);
-          ty = B.y + rnd(0.08);
-        }
+        // Chase the ball — it just got tapped ahead, so run onto it
+        // Slightly ahead of current ball pos toward goal to intercept next touch
+        tx = B.x + attackDir*0.05 + rnd(0.04);
+        ty = B.y + rnd(0.05);
       } else if(crossChips.includes(chip.id)){
         // Wide wing position, push toward byline (home attacks left so byline is x~0.08)
         const wingY = p.baseY < 0.5 ? 0.15 : 0.85;
@@ -2069,9 +2315,12 @@ function tickMatch(){
     p.x += p.vx;
     p.y += p.vy;
 
-    // Half-clamp: home players stay in right half (x>0.5) unless pursuing ball
-    const canCross = distToBall < 0.18 && (amClosest || isAttacker);
-    if(!canCross) p.x = Math.max(0.50, p.x);
+    // Half-clamp: only home DEFENDERS stay back, and only when it's not an emergency
+    // Attackers and midfielders can cross freely — no restriction at all
+    // Defenders cross only when ball is near their goal (x > 0.80 = danger zone)
+    const ballNearHomeGoal = MG.ball.x > 0.80;
+    const defenderShouldStay = isDefender && !ballNearHomeGoal;
+    if(defenderShouldStay) p.x = Math.max(0.50, p.x);
     p.x = Math.max(0.02, Math.min(0.98, p.x));
     p.y = Math.max(0.03, Math.min(0.97, p.y));
 
@@ -2142,30 +2391,54 @@ function tickMatch(){
       const aimQuality = Math.min(1, intl*0.7 + chipPow*0.3 + (chip.cat==='attack'?0.2:0) + (chip.cat==='special'?0.25:0));
       const scatter = (1-aimQuality) * kickPow * 1.8;  // noise on kick direction
 
-      // ── CARRY MODE: Go to Ball chip (m13) or dribble chips nudge ball gently ──
-      // Player taps ball softly toward goal rather than blasting it
+      // ── 🎯 SHOOT AT GOAL block: override everything — fire directly at goal ──
+      if(p._shootNow){
+        p._shootNow = false;
+        const toGoalX = attackGoalX - B.x;
+        const toGoalY = 0.5 - B.y;
+        const gd = Math.hypot(toGoalX, toGoalY*0.5)||0.001;
+        // Full power aimed shot, minimal scatter (uses INT for precision)
+        const shotPow = KICK_POWER * (0.55 + str*1.0 + chipPow*0.5) * rainPenalty;
+        B.vx = (toGoalX/gd)*shotPow*1.35 + rnd(scatter*0.35);
+        B.vy = (toGoalY*0.5/gd)*shotPow   + rnd(scatter*0.40);
+        MG.possession = p.team;
+        return;
+      }
+
+      // ── DRIBBLE MODE: a02, a09, m13 — ball held close to player (carry, not kick) ──
+      // The ball is repositioned just ahead of the player each touch and its
+      // velocity is almost fully killed — it moves WITH the player, not away from them.
+      // Enemies can still steal: collision physics still runs, so if an opponent
+      // contacts the ball the separation force will break the hold naturally.
       const isDribbleCarry = chip.id==='m13' || chip.id==='a02' || chip.id==='a09';
-      const distToBallNow  = Math.hypot(p.x-B.x, p.y-B.y);
       if(isDribbleCarry){
-        const tapPow = kickPow * 0.26;
-        const toGoalX2 = attackGoalX - B.x;
-        const toGoalY2 = 0.5 - B.y;
-        const gd2 = Math.hypot(toGoalX2, toGoalY2*0.4)||0.001;
-        kickVx = (toGoalX2/gd2)*tapPow + nx*tapPow*0.12 + rnd(scatter*0.3);
-        kickVy = (toGoalY2*0.4/gd2)*tapPow + ny*tapPow*0.08 + rnd(scatter*0.35);
-        // When close to goal, shoot instead
+        // Offset ball to sit just in front of player in their movement direction
+        const moveDir  = Math.atan2(p.vy, p.vx);               // which way player is moving
+        const holdDist = PLAYER_RADIUS + BALL_RADIUS + 0.005;  // snug against body
+        const bx = p.x + Math.cos(moveDir) * holdDist;
+        const by = p.y + Math.sin(moveDir) * holdDist;
+
+        // Clamp to field
+        B.x = Math.max(0.02, Math.min(0.98, bx));
+        B.y = Math.max(0.03, Math.min(0.97, by));
+
+        // Kill ball velocity almost entirely — it travels with the player
+        B.vx = p.vx * 0.85;
+        B.vy = p.vy * 0.85;
+
+        // Auto-shoot when close to enemy goal
         const distToGoalNow = Math.hypot(B.x-attackGoalX, B.y-0.5);
-        if(distToGoalNow < 0.22){
-          kickVx = (toGoalX2/gd2)*kickPow*1.25 + rnd(scatter*0.5);
-          kickVy = (toGoalY2*0.4/gd2)*kickPow  + rnd(scatter*0.6);
-          if(Math.random()<0.25) addLog(`${chip.icon} ${p.robot.emoji} dribbles in... SHOOTS!`,'action');
+        if(distToGoalNow < 0.20){
+          const toGoalX2 = attackGoalX - B.x;
+          const toGoalY2 = 0.5 - B.y;
+          const gd2 = Math.hypot(toGoalX2, toGoalY2*0.4)||0.001;
+          B.vx = (toGoalX2/gd2)*kickPow*1.30 + rnd(scatter*0.5);
+          B.vy = (toGoalY2*0.4/gd2)*kickPow   + rnd(scatter*0.6);
+          if(Math.random()<0.3) addLog(`${chip.icon} ${p.robot.emoji} dribbles in... SHOOTS!`,'action');
         }
-        B.vx = B.vx*0.15 + kickVx*0.85;
-        B.vy = B.vy*0.15 + kickVy*0.85;
+
         if(Math.random()>0.12) MG.possession=p.team;
-        if(Math.random()<0.08) addLog(`${chip.icon} ${p.robot.emoji} ${chip.name}!`,'action');
-        // Skip normal kick logic
-        // (jump to end of collision handler via a flag)
+        if(Math.random()<0.04) addLog(`${chip.icon} ${p.robot.emoji} ${chip.name}!`,'action');
         p._didCarry = true;
       }
 
@@ -2391,7 +2664,9 @@ function onGoal(team){
     p.x=p.baseX+rnd(0.03); p.y=p.baseY+rnd(0.03);
     p.vx=0; p.vy=0; p.trail=[];
     p.aiState='hold'; p.aiReactTimer=Math.floor(Math.random()*15);
+    p._longBallTarget=null;
   });
+  MG._awaySweeper=null; // re-assign sweeper each restart
   MG.possession=team==='home'?'away':'home';
 }
 
@@ -2416,7 +2691,9 @@ function endPeriod(){
     p.vx=0;p.vy=0;p.trail=[];
     p.chipTimer=30+Math.floor(Math.random()*50);
     p.aiState='hold'; p.aiReactTimer=Math.floor(Math.random()*15);
+    p._longBallTarget=null;
   });
+  MG._awaySweeper=null;
   MG.possession=MG.period%2===0?'away':'home';
   addLog(`▶ PERIOD ${MG.period} KICKS OFF`,'info');
 }
@@ -2619,6 +2896,29 @@ function drawMatch(){
     if(hasBall){
       ctx.beginPath();ctx.arc(ppx,ppy,R*1.7,0,Math.PI*2);
       ctx.fillStyle=pl.robot.color+'22';ctx.fill();
+    }
+
+    // 🔴 Sweeper ring — pulsing red halo around the designated sweeper
+    if(pl.team==='away' && pl.aiState==='sweeper'){
+      const pulse = 0.55 + 0.45*Math.sin(MG.tick*0.12);
+      ctx.beginPath();ctx.arc(ppx,ppy,R*2.0,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(255,61,90,${pulse*0.7})`;ctx.lineWidth=2;ctx.stroke();
+      ctx.beginPath();ctx.arc(ppx,ppy,R*1.4,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(255,61,90,${pulse*0.4})`;ctx.lineWidth=1;ctx.stroke();
+    }
+
+    // 🔴 Hard difficulty: show AI state as tiny label above player
+    if(pl.team==='away' && MG.awayDifficulty==='hard' && pl.aiState && pl.aiState!=='hold'){
+      const stateColors = {
+        press:'#ff3d5a', fwd_press:'#ff6b00', shoot:'#f5c400',
+        carry:'#00e57a', sweeper:'#ff3d5a', attack:'#3d7eff',
+        lurk:'#9f6fff', recover:'#aaaaaa', gk_rush:'#ff3d5a'
+      };
+      const sc = stateColors[pl.aiState]||'#888';
+      ctx.font='bold 7px JetBrains Mono';
+      ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillStyle=sc;
+      ctx.fillText(pl.aiState.toUpperCase(), ppx, ppy-R-2);
     }
 
     // Body circle
