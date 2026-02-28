@@ -633,8 +633,38 @@ const RANK_TIERS=[
 ];
 function getTier(rp){return RANK_TIERS.find(t=>rp>=t.min&&rp<t.max)||RANK_TIERS[0];}
 
+// ═══════════════════════════════════════════════
+//  SERVER CONFIG
+//  After deploying to Render, paste your URL below:
+//  e.g. 'https://ballerexe.onrender.com'
+// ═══════════════════════════════════════════════
+const SERVER_URL = localStorage.getItem('bf_server') || 'https://ballerexeserver.onrender.com';
+
+// ── API helper ──────────────────────────────────
+let OFFLINE_MODE = false;
+async function api(method, path, body){
+  try {
+    const opts = {
+      method,
+      headers: {'Content-Type':'application/json',...(TOKEN?{'Authorization':'Bearer '+TOKEN}:{})}
+    };
+    if(body) opts.body = JSON.stringify(body);
+    const r = await fetch(SERVER_URL+path, opts);
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error||'Server error');
+    return data;
+  } catch(e) {
+    if(e.message==='Failed to fetch'||e.name==='TypeError'){
+      console.warn('Server unreachable — offline mode');
+      OFFLINE_MODE=true; return null;
+    }
+    throw e;
+  }
+}
+
 // STATE
-let ACCOUNTS={},CUR=null,DRAG=null,SEL_ROBOT=null,PROG_ROBOT=null,PAL_CAT='move';
+let ACCOUNTS={},CUR=null,CUR_USER=null,TOKEN=null;
+let DRAG=null,SEL_ROBOT=null,PROG_ROBOT=null,PAL_CAT='move';
 let _emojiCb=null,_newEmoji='🤖',_newColor=COLORS[0],_newStats={spd:5,str:5,int:5};
 let _clanEmoji='🛡️',_clanColor=COLORS[0];
 let fCanvas,fCtx,fDragId=null,mCanvas,mCtx,mRAF=null,rainCanvas,rainCtx;
@@ -642,9 +672,23 @@ let MS={running:false,speed:1,vsMode:'ai',duration:60,stadium:'classic',weather:
 let MG={};
 let rainDrops=[];
 
-function acct(){return ACCOUNTS[CUR];}
-function save(){localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));localStorage.setItem('bf5_cur',CUR||'');}
-function loadSt(){try{ACCOUNTS=JSON.parse(localStorage.getItem('bf5_acc')||'{}');}catch(e){ACCOUNTS={};}CUR=localStorage.getItem('bf5_cur')||null;}
+function acct(){return CUR_USER||ACCOUNTS[CUR]||{};}
+let _saveTimer=null;
+function save(){
+  if(CUR&&ACCOUNTS[CUR])localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));
+  localStorage.setItem('bf5_cur',CUR||'');
+  if(!OFFLINE_MODE&&TOKEN&&CUR_USER){
+    clearTimeout(_saveTimer);
+    _saveTimer=setTimeout(()=>{
+      api('PATCH','/api/me',{robots:CUR_USER.robots||[],programs:CUR_USER.programs||{},field:CUR_USER.field||{},teamName:CUR_USER.teamName,avatar:CUR_USER.avatar,color:CUR_USER.color}).catch(()=>{});
+    },800);
+  }
+}
+function loadSt(){
+  try{ACCOUNTS=JSON.parse(localStorage.getItem('bf5_acc')||'{}');}catch(e){ACCOUNTS={};}
+  CUR=localStorage.getItem('bf5_cur')||null;
+  TOKEN=localStorage.getItem('bf_token')||null;
+}
 
 let _tt;
 function toast(m,t='ok'){const el=document.getElementById('toast');el.textContent=m;el.className='show '+(t==='err'?'err':'ok');clearTimeout(_tt);_tt=setTimeout(()=>el.className='',2400);}
@@ -669,34 +713,73 @@ function renderExisting(){
   if(!names.length){el.innerHTML='';return;}
   el.innerHTML=`<div class="ae-title">Saved Accounts</div>`+names.map(n=>{const a=ACCOUNTS[n];return`<div class="ae-pill" onclick="quickLogin('${n}')"><span style="font-size:1.1rem">${a.avatar||'🤖'}</span><span>${n}</span><span style="color:var(--muted);font-size:.7rem;">${a.teamName||''}</span><button class="ae-del" onclick="delAcc(event,'${n}')">✕</button></div>`;}).join('');
 }
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('liU').value.trim(),p=document.getElementById('liP').value;
   if(!u||!p){document.getElementById('authErr').textContent='Fill in both fields.';return;}
-  if(!ACCOUNTS[u]){document.getElementById('authErr').textContent='Account not found.';return;}
-  if(ACCOUNTS[u].password!==btoa(p)){document.getElementById('authErr').textContent='Wrong password.';return;}
-  loginAs(u);
+  document.getElementById('authErr').textContent='Signing in…';
+  try{
+    const data=await api('POST','/api/login',{username:u,password:p});
+    if(!data){
+      // Offline fallback
+      if(!ACCOUNTS[u]){document.getElementById('authErr').textContent='Account not found (offline).';return;}
+      loginAs(u,null,ACCOUNTS[u]); return;
+    }
+    TOKEN=data.token; localStorage.setItem('bf_token',TOKEN);
+    loginAs(data.user.username,data.token,data.user);
+  }catch(e){document.getElementById('authErr').textContent=e.message;}
 }
-function doRegister(){
+async function doRegister(){
   const u=document.getElementById('rU').value.trim(),p=document.getElementById('rP').value,t=document.getElementById('rT').value.trim()||'Team';
   if(!u||!p){document.getElementById('authErr').textContent='Fill in all fields.';return;}
   if(u.length<3){document.getElementById('authErr').textContent='Username 3+ chars.';return;}
-  if(ACCOUNTS[u]){document.getElementById('authErr').textContent='Username taken.';return;}
-  ACCOUNTS[u]={password:btoa(p),teamName:t,avatar:'🤖',color:COLORS[Math.floor(Math.random()*COLORS.length)],robots:[],field:{},programs:{},record:{w:0,d:0,l:0},code:null,rp:250,clan:null,leagueId:null};
-  save();loginAs(u);
+  document.getElementById('authErr').textContent='Creating account…';
+  try{
+    const data=await api('POST','/api/register',{username:u,password:p,teamName:t});
+    if(!data){
+      // Offline fallback
+      if(ACCOUNTS[u]){document.getElementById('authErr').textContent='Username taken.';return;}
+      ACCOUNTS[u]={teamName:t,avatar:'🤖',color:COLORS[0],robots:[],field:{},programs:{},record:{w:0,d:0,l:0},rp:250,clan:null,leagueId:null};
+      loginAs(u,null,ACCOUNTS[u]); return;
+    }
+    TOKEN=data.token; localStorage.setItem('bf_token',TOKEN);
+    loginAs(data.user.username,data.token,data.user);
+  }catch(e){document.getElementById('authErr').textContent=e.message;}
 }
-function quickLogin(u){CUR=u;save();enterApp();}
-function loginAs(u){CUR=u;save();enterApp();}
-function delAcc(e,u){e.stopPropagation();if(!confirm(`Delete "${u}"?`))return;delete ACCOUNTS[u];save();renderExisting();}
-function signOut(){CUR=null;save();document.getElementById('app').className='';document.getElementById('app').style.display='none';document.getElementById('authScreen').style.display='flex';renderAuthForm();}
+async function quickLogin(u){
+  // Quick-login from saved accounts uses stored token if available
+  const t=localStorage.getItem('bf_token');
+  if(t){TOKEN=t;try{const me=await api('GET','/api/me');if(me){loginAs(me.username,t,me);return;}}catch(e){}}
+  // Offline fallback
+  loginAs(u,null,ACCOUNTS[u]);
+}
+function loginAs(username,token,userData){
+  CUR=username; CUR_USER=userData||ACCOUNTS[username]||{};
+  if(token){TOKEN=token;localStorage.setItem('bf_token',token);}
+  // Merge into local cache
+  if(!ACCOUNTS[username]) ACCOUNTS[username]={};
+  Object.assign(ACCOUNTS[username],CUR_USER);
+  save(); enterApp();
+}
+function delAcc(e,u){e.stopPropagation();if(!confirm(`Remove "${u}" from this device?`))return;delete ACCOUNTS[u];localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));renderExisting();}
+function signOut(){
+  CUR=null;CUR_USER=null;TOKEN=null;
+  localStorage.removeItem('bf_token');localStorage.setItem('bf5_cur','');
+  document.getElementById('app').className='';document.getElementById('app').style.display='none';
+  document.getElementById('authScreen').style.display='flex';renderAuthForm();
+}
 function enterApp(){
   document.getElementById('authScreen').style.display='none';
   const app=document.getElementById('app');app.style.display='flex';app.className='on';
-  document.getElementById('userName').textContent=CUR;document.getElementById('userAva').textContent=acct().avatar||'🤖';
-  if(!acct().programs)acct().programs={};if(!acct().field)acct().field={};if(!acct().record)acct().record={w:0,d:0,l:0};
-  if(acct().rp===undefined)acct().rp=250;
-  if(!acct().clan)acct().clan=null;
+  if(!CUR_USER||typeof CUR_USER!=='object') CUR_USER=ACCOUNTS[CUR]||{};
+  if(!CUR_USER.programs) CUR_USER.programs={};
+  if(!CUR_USER.field)    CUR_USER.field={};
+  if(!CUR_USER.record)   CUR_USER.record={w:0,d:0,l:0};
+  if(CUR_USER.rp===undefined) CUR_USER.rp=250;
+  document.getElementById('userName').textContent=CUR;
+  document.getElementById('userAva').textContent=CUR_USER.avatar||'🤖';
   updateRec();updateRankBadge();renderRobotsList();renderScratchTabs();renderFieldSide();renderOnline();
   initStadPicker();initWxPicker();
+  if(OFFLINE_MODE) toast('⚠️ Offline mode — server unreachable','err');
 }
 function updateRankBadge(){
   if(!CUR)return;
@@ -2698,23 +2781,50 @@ function endPeriod(){
   addLog(`▶ PERIOD ${MG.period} KICKS OFF`,'info');
 }
 
-function finalizeMatch(){
+async function finalizeMatch(){
   MS.running=false;MG.phase='ended';
   const h=MG.homeScore,a=MG.awayScore;
   let rpChange=0,resultStr='';
-  if(h>a){resultStr=`🏆 ${MG.homeName} WIN! ${h}–${a}`;acct().record.w++;rpChange=+25;}
-  else if(a>h){resultStr=`${MG.awayName} WIN ${a}–${h}`;acct().record.l++;rpChange=-15;}
-  else{resultStr=`DRAW ${h}–${a}`;acct().record.d++;rpChange=+5;}
+  const result=h>a?'win':a>h?'loss':'draw';
+  if(result==='win') {resultStr=`🏆 ${MG.homeName} WIN! ${h}–${a}`;}
+  else if(result==='loss'){resultStr=`${MG.awayName} WIN ${a}–${h}`;}
+  else{resultStr=`DRAW ${h}–${a}`;}
   addLog(resultStr,'goal');
-  acct().rp=Math.max(0,(acct().rp||0)+rpChange);
-  updateRec();updateRankBadge();save();
   stopRain();
-  updateLeagueStandings(h>a?'win':a>h?'loss':'draw',h,a);
-  document.getElementById('endTitle').textContent=h>a?'🏆 VICTORY!':(a>h?'😤 DEFEAT':'🤝 DRAW');
-  document.getElementById('endTitle').style.color=h>a?'var(--gr)':(a>h?'var(--re)':'var(--ye)');
+
+  // Report to server (handles RP + record update)
+  try{
+    const res=await api('POST','/api/match-result',{result,homeScore:h,awayScore:a});
+    if(res){
+      CUR_USER.rp=res.rp; CUR_USER.record=res.record;
+      ACCOUNTS[CUR]=Object.assign(ACCOUNTS[CUR]||{},CUR_USER);
+      rpChange=res.rpChange;
+    } else {
+      // Offline fallback
+      const rpMap={win:25,draw:5,loss:-15};
+      rpChange=rpMap[result]||0;
+      if(!CUR_USER.record)CUR_USER.record={w:0,d:0,l:0};
+      CUR_USER.rp=Math.max(0,(CUR_USER.rp||0)+rpChange);
+      if(result==='win')CUR_USER.record.w++;
+      if(result==='loss')CUR_USER.record.l++;
+      if(result==='draw')CUR_USER.record.d++;
+    }
+  }catch(e){
+    const rpMap={win:25,draw:5,loss:-15};
+    rpChange=rpMap[result]||0;
+    if(!CUR_USER.record)CUR_USER.record={w:0,d:0,l:0};
+    CUR_USER.rp=Math.max(0,(CUR_USER.rp||0)+rpChange);
+    if(result==='win')CUR_USER.record.w++;
+    if(result==='loss')CUR_USER.record.l++;
+    if(result==='draw')CUR_USER.record.d++;
+  }
+  updateRec();updateRankBadge();save();
+  updateLeagueStandings(result,h,a);
+  document.getElementById('endTitle').textContent=result==='win'?'🏆 VICTORY!':(result==='loss'?'😤 DEFEAT':'🤝 DRAW');
+  document.getElementById('endTitle').style.color=result==='win'?'var(--gr)':(result==='loss'?'var(--re)':'var(--ye)');
   document.getElementById('endScore').textContent=`${h} : ${a}`;
-  const tier=getTier(acct().rp);
-  document.getElementById('endRankInfo').innerHTML=`RP: ${rpChange>=0?'+':''}${rpChange} → ${acct().rp} &nbsp;${tier.icon} ${tier.name}`;
+  const tier=getTier(CUR_USER.rp||0);
+  document.getElementById('endRankInfo').innerHTML=`RP: ${rpChange>=0?'+':''}${rpChange} → ${CUR_USER.rp||0} &nbsp;${tier.icon} ${tier.name}`;
   document.getElementById('endOverlay').style.display='flex';
 }
 
@@ -2984,7 +3094,7 @@ function drawMatch(){
 }
 
 // ==================== RANKED ====================
-function renderRanked(){
+async function renderRanked(){
   if(!CUR)return;
   const rp=acct().rp||0;
   const tier=getTier(rp);
@@ -3004,11 +3114,30 @@ function renderRanked(){
   }).join('');
   document.getElementById('rankedStats').innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-      <div class="rec-box"><div class="rec-num" style="color:var(--gr)">${acct().record.w||0}</div><div class="rec-lbl">Wins</div></div>
-      <div class="rec-box"><div class="rec-num" style="color:var(--muted)">${acct().record.d||0}</div><div class="rec-lbl">Draws</div></div>
-      <div class="rec-box"><div class="rec-num" style="color:var(--re)">${acct().record.l||0}</div><div class="rec-lbl">Losses</div></div>
+      <div class="rec-box"><div class="rec-num" style="color:var(--gr)">${acct().record?.w||0}</div><div class="rec-lbl">Wins</div></div>
+      <div class="rec-box"><div class="rec-num" style="color:var(--muted)">${acct().record?.d||0}</div><div class="rec-lbl">Draws</div></div>
+      <div class="rec-box"><div class="rec-num" style="color:var(--re)">${acct().record?.l||0}</div><div class="rec-lbl">Losses</div></div>
     </div>
-    <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Win: +25 RP &nbsp;|&nbsp; Draw: +5 RP &nbsp;|&nbsp; Loss: -15 RP</div>`;
+    <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Win: +25 RP &nbsp;|&nbsp; Draw: +5 RP &nbsp;|&nbsp; Loss: -15 RP</div>
+    <div style="margin-top:14px;font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;">🌍 Global Leaderboard</div>
+    <div id="leaderboardList" style="margin-top:8px;font-size:.75rem;color:var(--muted);text-align:center;">Loading…</div>`;
+  // Fetch global leaderboard
+  if(!OFFLINE_MODE){
+    try{
+      const lb=await api('GET','/api/leaderboard')||[];
+      document.getElementById('leaderboardList').innerHTML=lb.slice(0,20).map((p,i)=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);${p.username===CUR?'background:rgba(0,229,122,.05);border-radius:5px;padding:5px 6px;':''}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);width:18px">${i+1}</span>
+          <span style="font-size:1rem">${p.avatar||'🤖'}</span>
+          <span style="font-weight:700;flex:1">${p.teamName||p.username}${p.username===CUR?' 👤':''}</span>
+          <span style="color:${getTier(p.rp).color};font-weight:800;">${getTier(p.rp).icon} ${p.rp}</span>
+        </div>`).join('')||'<div style="padding:12px;text-align:center;">No players yet</div>';
+    }catch(e){
+      document.getElementById('leaderboardList').innerHTML=`<div style="color:var(--muted);padding:10px">Offline — leaderboard unavailable</div>`;
+    }
+  } else {
+    document.getElementById('leaderboardList').innerHTML=`<div style="color:var(--muted);padding:10px">⚠️ Offline mode</div>`;
+  }
 }
 
 function startRankedMatch(){
@@ -3018,117 +3147,99 @@ function startRankedMatch(){
 }
 
 // ==================== LEAGUES ====================
-function getLeagues(){
-  try{return JSON.parse(localStorage.getItem('bf5_leagues')||'[]');}catch(e){return[];}
-}
-function saveLeagues(l){localStorage.setItem('bf5_leagues',JSON.stringify(l));}
-
-function joinLeague(){
-  const leagues=getLeagues();
-  // Find open league or create one
-  let league=leagues.find(l=>l.teams.length<8&&!l.teams.some(t=>t.player===CUR));
-  if(!league){
-    league={id:'lg'+Date.now(),season:1,teams:[],matches:[]};
-    leagues.push(league);
-  }
-  if(league.teams.some(t=>t.player===CUR)){toast('Already in a league!','err');renderLeagues();return;}
-  league.teams.push({player:CUR,name:acct().teamName||CUR,w:0,d:0,l:0,gf:0,ga:0,pts:0});
-  // Fill with AI bots if league not full
-  const aiNames=['Bot United','Robo City','Circuit FC','Byte Athletic','RAM Rovers','Pixel XI','Logic Legends'];
-  while(league.teams.length<8){
-    const ai=aiNames.shift()||'AI Team';
-    league.teams.push({player:null,name:ai,w:Math.floor(Math.random()*5),d:Math.floor(Math.random()*3),l:Math.floor(Math.random()*5),gf:Math.floor(Math.random()*15),ga:Math.floor(Math.random()*12),pts:0});
-    const t=league.teams[league.teams.length-1];
-    t.pts=t.w*3+t.d;
-  }
-  saveLeagues(leagues);acct().leagueId=league.id;save();
-  toast('Joined league!');renderLeagues();
+// ==================== LEAGUES (SERVER) ====================
+async function joinLeague(){
+  if(OFFLINE_MODE){toast('Server offline — leagues unavailable','err');return;}
+  try{
+    const league=await api('POST','/api/leagues/join');
+    acct().leagueId=league.id;save();
+    toast('Joined league!');renderLeagues();
+  }catch(e){toast(e.message,'err');}
 }
 
-function updateLeagueStandings(result,gf,ga){
-  if(!acct().leagueId)return;
-  const leagues=getLeagues();
-  const league=leagues.find(l=>l.id===acct().leagueId);
-  if(!league)return;
-  const team=league.teams.find(t=>t.player===CUR);
-  if(!team)return;
-  if(result==='win'){team.w++;team.pts+=3;}
-  else if(result==='draw'){team.d++;team.pts+=1;}
-  else{team.l++;}
-  team.gf+=gf;team.ga+=ga;
-  saveLeagues(leagues);
+async function updateLeagueStandings(result,gf,ga){
+  // Handled server-side by /api/match-result — nothing to do client-side
 }
 
-function renderLeagues(){
+async function renderLeagues(){
   const el=document.getElementById('leagueContent');
   if(!acct().leagueId){
-    el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">Not in a league yet</div></div>`;return;
+    el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">Not in a league yet</div><button class="btn btn-gr btn-sm" onclick="joinLeague()" style="margin-top:10px;">Join a League</button></div>`;
+    return;
   }
-  const leagues=getLeagues();
-  const league=leagues.find(l=>l.id===acct().leagueId);
-  if(!league){el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">League not found</div></div>`;return;}
-  const sorted=[...league.teams].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga));
-  el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <div style="font-size:.72rem;color:var(--muted);">Season ${league.season} · ${league.teams.length} Teams</div>
-      <button class="btn btn-s3 btn-xs" onclick="leaveLeague()">Leave League</button>
-    </div>
-    <table class="league-table">
-      <thead><tr><th>#</th><th>Team</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>PTS</th></tr></thead>
-      <tbody>${sorted.map((t,i)=>`<tr style="${t.player===CUR?'background:rgba(0,229,122,.06);':''}">
-        <td class="lt-pos">${i+1}</td>
-        <td style="font-weight:700;font-size:.75rem;">${t.name}${t.player===CUR?' 👤':''}</td>
-        <td style="color:var(--gr)">${t.w}</td><td style="color:var(--muted)">${t.d}</td><td style="color:var(--re)">${t.l}</td>
-        <td>${t.gf}</td><td>${t.ga}</td><td class="lt-pts">${t.pts}</td>
-      </tr>`).join('')}</tbody>
-    </table>
-    <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Your league record updates automatically after each match.</div>`;
+  el.innerHTML=`<div style="color:var(--muted);font-size:.75rem;padding:20px;text-align:center;">Loading…</div>`;
+  try{
+    const leagues=await api('GET','/api/leagues')||[];
+    const league=leagues.find(l=>l.id===acct().leagueId);
+    if(!league){
+      el.innerHTML=`<div class="empty-hint"><div class="big">🥇</div><div class="txt">League not found</div></div>`;return;
+    }
+    const sorted=[...league.teams].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga));
+    el.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:.72rem;color:var(--muted);">${league.name} · ${league.teams.length} Teams</div>
+        <button class="btn btn-s3 btn-xs" onclick="leaveLeague()">Leave League</button>
+      </div>
+      <table class="league-table">
+        <thead><tr><th>#</th><th>Team</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>PTS</th></tr></thead>
+        <tbody>${sorted.map((t,i)=>`<tr style="${t.player===CUR?'background:rgba(0,229,122,.06);':''}">
+          <td class="lt-pos">${i+1}</td>
+          <td style="font-weight:700;font-size:.75rem;">${t.name}${t.player===CUR?' 👤':''}</td>
+          <td style="color:var(--gr)">${t.w}</td><td style="color:var(--muted)">${t.d}</td><td style="color:var(--re)">${t.l}</td>
+          <td>${t.gf}</td><td>${t.ga}</td><td class="lt-pts">${t.pts}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="margin-top:10px;font-size:.72rem;color:var(--muted);">Record updates automatically after each match.</div>`;
+  }catch(e){el.innerHTML=`<div style="color:var(--muted);padding:20px;text-align:center;">${e.message}</div>`;}
 }
 
-function leaveLeague(){
-  acct().leagueId=null;save();renderLeagues();}
+async function leaveLeague(){
+  if(!confirm('Leave league?'))return;
+  try{
+    await api('POST','/api/leagues/leave');
+    acct().leagueId=null;save();renderLeagues();toast('Left league');
+  }catch(e){toast(e.message,'err');}
+}
 
-// ==================== CLANS ====================
-function getClans(){try{return JSON.parse(localStorage.getItem('bf5_clans')||'[]');}catch(e){return[];}}
-function saveClans(c){localStorage.setItem('bf5_clans',JSON.stringify(c));}
-
-function renderClans(){
-  const clans=getClans();
+// ==================== CLANS (SERVER) ====================
+async function renderClans(){
   const el=document.getElementById('clanContent');
-  const myClan=acct().clan?clans.find(c=>c.id===acct().clan):null;
-  if(myClan){
-    const members=Object.keys(ACCOUNTS).filter(u=>ACCOUNTS[u].clan===myClan.id);
-    el.innerHTML=`<div class="clan-card" style="border-color:${myClan.color}44">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-        <div style="font-size:2rem">${myClan.icon}</div>
-        <div><div style="font-size:1rem;font-weight:800;">${myClan.name}</div>
-        <span class="clan-tag" style="background:${myClan.color}22;color:${myClan.color};">[${myClan.tag}]</span>
-        <span style="font-size:.65rem;color:var(--muted);">${members.length} members</span></div>
-        <button class="btn btn-re btn-xs" style="margin-left:auto;" onclick="leaveClan()">Leave</button>
-      </div>
-      <div style="font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">MEMBERS</div>
-      ${members.map(u=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);">
-        <span>${ACCOUNTS[u].avatar||'🤖'}</span>
-        <span style="font-size:.78rem;font-weight:700;">${u}${u===CUR?' (you)':''}</span>
-        <span style="margin-left:auto;font-size:.65rem;color:${getTier(ACCOUNTS[u].rp||0).color};">${getTier(ACCOUNTS[u].rp||0).icon} ${getTier(ACCOUNTS[u].rp||0).name}</span>
-      </div>`).join('')}
-    </div>`;
-  } else {
-    el.innerHTML=`<div class="empty-hint"><div class="big">🛡</div><div class="txt">Not in a clan</div></div>`;
-  }
-  if(!myClan&&clans.length>0){
-    el.innerHTML+='<div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;margin:14px 0 8px;text-transform:uppercase;">All Clans</div>'+
-      clans.map(c=>{
-        const count=Object.keys(ACCOUNTS).filter(u=>ACCOUNTS[u].clan===c.id).length;
-        return `<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;">
-          <div style="font-size:1.5rem">${c.icon}</div>
-          <div><div style="font-size:.9rem;font-weight:800;">${c.name}</div>
-          <span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span>
-          <span style="font-size:.65rem;color:var(--muted)">${count} members</span></div>
-          <button class="btn btn-gr btn-xs" style="margin-left:auto;" onclick="joinClanById('${c.id}')">Join</button>
-        </div></div>`;
-      }).join('');
-  }
+  el.innerHTML=`<div style="color:var(--muted);font-size:.75rem;padding:20px;text-align:center;">Loading…</div>`;
+  try{
+    const clans=OFFLINE_MODE?[]:await api('GET','/api/clans')||[];
+    const myClanId=acct().clan;
+    const myClan=myClanId?clans.find(c=>c.id===myClanId):null;
+    if(myClan){
+      const members=myClan.members||[];
+      el.innerHTML=`<div class="clan-card" style="border-color:${myClan.color}44">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="font-size:2rem">${myClan.icon}</div>
+          <div><div style="font-size:1rem;font-weight:800;">${myClan.name}</div>
+          <span class="clan-tag" style="background:${myClan.color}22;color:${myClan.color};">[${myClan.tag}]</span>
+          <span style="font-size:.65rem;color:var(--muted);">${members.length} members</span></div>
+          <button class="btn btn-re btn-xs" style="margin-left:auto;" onclick="leaveClan()">Leave</button>
+        </div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">MEMBERS</div>
+        ${members.map(u=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd);">
+          <span>${u.avatar||'🤖'}</span>
+          <span style="font-size:.78rem;font-weight:700;">${u.username}${u.username===CUR?' (you)':''}</span>
+          <span style="margin-left:auto;font-size:.65rem;color:${getTier(u.rp||0).color};">${getTier(u.rp||0).icon} ${getTier(u.rp||0).name}</span>
+        </div>`).join('')}
+      </div>`;
+    } else {
+      el.innerHTML=`<div class="empty-hint"><div class="big">🛡</div><div class="txt">Not in a clan</div></div>`;
+      if(clans.length>0){
+        el.innerHTML+='<div style="font-size:.65rem;font-weight:800;color:var(--muted);letter-spacing:2px;margin:14px 0 8px;text-transform:uppercase;">All Clans</div>'+
+          clans.map(c=>`<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:1.5rem">${c.icon}</div>
+            <div><div style="font-size:.9rem;font-weight:800;">${c.name}</div>
+            <span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span>
+            <span style="font-size:.65rem;color:var(--muted)">${(c.members||[]).length} members</span></div>
+            <button class="btn btn-gr btn-xs" style="margin-left:auto;" onclick="joinClanById('${c.id}')">Join</button>
+          </div></div>`).join('');
+      }
+    }
+  }catch(e){el.innerHTML=`<div style="color:var(--muted);padding:20px;text-align:center;">${e.message}</div>`;}
 }
 
 function openCreateClanModal(){
@@ -3138,53 +3249,88 @@ function openCreateClanModal(){
   document.getElementById('clanEmojis').innerHTML=EMOJIS.map(e=>`<div class="emo-opt" style="font-size:1rem;" onclick="_clanEmoji='${e}';document.querySelectorAll('#clanEmojis .emo-opt').forEach(s=>s.style.background='');this.style.background='var(--s4)';">${e}</div>`).join('');
   openModal('createClanModal');
 }
-function saveClan(){
+async function saveClan(){
   const name=document.getElementById('clanName').value.trim(),tag=document.getElementById('clanTag').value.trim();
   if(!name||!tag){toast('Fill in name and tag','err');return;}
   if(acct().clan){toast('Leave current clan first','err');return;}
-  const clans=getClans();
-  if(clans.some(c=>c.tag===tag)){toast('Tag taken','err');return;}
-  const clan={id:'cl'+Date.now(),name,tag,icon:_clanEmoji,color:_clanColor};
-  clans.push(clan);saveClans(clans);
-  acct().clan=clan.id;save();
-  closeModal('createClanModal');renderClans();toast('Clan created!');
+  try{
+    const clan=await api('POST','/api/clans',{name,tag,color:_clanColor,icon:_clanEmoji});
+    acct().clan=clan.id;save();
+    closeModal('createClanModal');renderClans();toast('Clan created!');
+  }catch(e){toast(e.message,'err');}
 }
-function openJoinClanModal(){
-  const clans=getClans().filter(c=>c.id!==acct().clan);
-  document.getElementById('joinClanList').innerHTML=clans.length?clans.map(c=>`<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.5rem">${c.icon}</span><div><div style="font-size:.85rem;font-weight:800;">${c.name}</div><span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span></div><button class="btn btn-gr btn-xs" style="margin-left:auto" onclick="joinClanById('${c.id}');closeModal('joinClanModal')">Join</button></div></div>`).join(''):`<div style="text-align:center;color:var(--muted);padding:20px;">No clans yet. Create one!</div>`;
+async function openJoinClanModal(){
+  try{
+    const clans=(await api('GET','/api/clans')||[]).filter(c=>c.id!==acct().clan);
+    document.getElementById('joinClanList').innerHTML=clans.length
+      ?clans.map(c=>`<div class="clan-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.5rem">${c.icon}</span><div><div style="font-size:.85rem;font-weight:800;">${c.name}</div><span class="clan-tag" style="background:${c.color}22;color:${c.color}">[${c.tag}]</span></div><button class="btn btn-gr btn-xs" style="margin-left:auto" onclick="joinClanById('${c.id}');closeModal('joinClanModal')">Join</button></div></div>`).join('')
+      :`<div style="text-align:center;color:var(--muted);padding:20px;">No clans yet. Create one!</div>`;
+  }catch(e){document.getElementById('joinClanList').innerHTML=`<div style="color:var(--re);padding:20px">${e.message}</div>`;}
   openModal('joinClanModal');
 }
-function joinClanById(id){
+async function joinClanById(id){
   if(acct().clan){toast('Leave current clan first','err');return;}
-  acct().clan=id;save();renderClans();toast('Joined clan!');
+  try{
+    await api('POST',`/api/clans/${id}/join`);
+    acct().clan=id;save();renderClans();toast('Joined clan!');
+  }catch(e){toast(e.message,'err');}
 }
-function leaveClan(){
-  if(!confirm('Leave clan?'))return;acct().clan=null;save();renderClans();}
+async function leaveClan(){
+  if(!confirm('Leave clan?'))return;
+  try{
+    await api('POST','/api/clans/leave');
+    acct().clan=null;save();renderClans();
+  }catch(e){toast(e.message,'err');}
+}
 
-// ONLINE
+// ==================== ONLINE / TEAM SHARING (SERVER) ====================
 function renderOnline(){
   if(!CUR)return;
   document.getElementById('myCodeDisplay').textContent=acct().code||'----';
-  document.getElementById('oRecW').textContent=acct().record.w;
-  document.getElementById('oRecD').textContent=acct().record.d;
-  document.getElementById('oRecL').textContent=acct().record.l;
+  document.getElementById('oRecW').textContent=acct().record?.w||0;
+  document.getElementById('oRecD').textContent=acct().record?.d||0;
+  document.getElementById('oRecL').textContent=acct().record?.l||0;
 }
-function genCode(){
-  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<4;i++)code+=c[Math.floor(Math.random()*c.length)];
-  acct().code=code;
-  localStorage.setItem('bf5_team_'+code,JSON.stringify({name:acct().teamName||CUR,robots:acct().robots,programs:acct().programs,field:acct().field}));
-  save();renderOnline();toast('Code generated!');
+async function genCode(){
+  if(OFFLINE_MODE){
+    // Offline fallback
+    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<4;i++)code+=c[Math.floor(Math.random()*c.length)];
+    acct().code=code;
+    localStorage.setItem('bf5_team_'+code,JSON.stringify({name:acct().teamName||CUR,robots:acct().robots,programs:acct().programs,field:acct().field}));
+    save();renderOnline();toast('Code generated (offline)!');
+    return;
+  }
+  try{
+    const {code}=await api('POST','/api/share-team');
+    acct().code=code;save();renderOnline();toast('Code generated!');
+  }catch(e){toast(e.message,'err');}
 }
-function copyCode(){const code=acct().code;if(!code){toast('Generate a code first','err');return;}navigator.clipboard.writeText(code).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','err'));}
-function loadChallenge(){
-  const code=document.getElementById('challengeInp').value.trim();
+function copyCode(){
+  const code=acct().code;
+  if(!code){toast('Generate a code first','err');return;}
+  navigator.clipboard.writeText(code).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','err'));
+}
+async function loadChallenge(){
+  const code=document.getElementById('challengeInp').value.trim().toUpperCase();
   if(code.length<4){toast('Enter a 4-char code','err');return;}
-  const saved=localStorage.getItem('bf5_team_'+code)||localStorage.getItem('bf3_team_'+code);
-  if(!saved){toast('No team found for that code','err');return;}
-  document.getElementById('friendCodeInp').value=code;pickVs('friend');
-  goScreen('match',null);
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
-  toast('Code loaded — hit Kick Off!');
+  try{
+    let saved=null;
+    if(!OFFLINE_MODE){
+      saved=await api('GET',`/api/team/${code}`).catch(()=>null);
+    }
+    if(!saved){
+      const ls=localStorage.getItem('bf5_team_'+code)||localStorage.getItem('bf3_team_'+code);
+      if(ls) saved=JSON.parse(ls);
+    }
+    if(!saved){toast('No team found for that code','err');return;}
+    document.getElementById('friendCodeInp').value=code;
+    // Store for match use
+    localStorage.setItem('bf5_team_'+code,JSON.stringify(saved));
+    pickVs('friend');
+    goScreen('match',null);
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
+    toast('Code loaded — hit Kick Off!');
+  }catch(e){toast('Code error: '+e.message,'err');}
 }
 
 function updateRec(){
