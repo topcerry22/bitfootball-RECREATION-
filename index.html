@@ -635,8 +635,6 @@ function getTier(rp){return RANK_TIERS.find(t=>rp>=t.min&&rp<t.max)||RANK_TIERS[
 
 // ═══════════════════════════════════════════════
 //  SERVER CONFIG
-//  After deploying to Render, paste your URL below:
-//  e.g. 'https://ballerexe.onrender.com'
 // ═══════════════════════════════════════════════
 const SERVER_URL = localStorage.getItem('bf_server') || 'https://ballerexeserver.onrender.com';
 
@@ -646,19 +644,24 @@ async function api(method, path, body){
   try {
     const opts = {
       method,
-      headers: {'Content-Type':'application/json',...(TOKEN?{'Authorization':'Bearer '+TOKEN}:{})}
+      headers: {
+        'Content-Type':'application/json',
+        ...(TOKEN ? {'Authorization':'Bearer '+TOKEN} : {})
+      }
     };
     if(body) opts.body = JSON.stringify(body);
     const r = await fetch(SERVER_URL+path, opts);
-    const data = await r.json();
-    if(!r.ok) throw new Error(data.error||'Server error');
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.error||'Server error ('+r.status+')');
+    OFFLINE_MODE = false;
     return data;
   } catch(e) {
-    if(e.message==='Failed to fetch'||e.name==='TypeError'){
+    if(e.message==='Failed to fetch'||e.name==='TypeError'||e.message.includes('NetworkError')){
       console.warn('Server unreachable — offline mode');
-      OFFLINE_MODE=true; return null;
+      OFFLINE_MODE = true;
+      return null;
     }
-    throw e;
+    throw e;  // real errors (400, 401, 409) bubble up to caller
   }
 }
 
@@ -675,19 +678,32 @@ let rainDrops=[];
 function acct(){return CUR_USER||ACCOUNTS[CUR]||{};}
 let _saveTimer=null;
 function save(){
-  if(CUR&&ACCOUNTS[CUR])localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));
+  // Always keep local cache in sync
+  if(CUR){
+    if(!ACCOUNTS[CUR]) ACCOUNTS[CUR]={};
+    Object.assign(ACCOUNTS[CUR], CUR_USER||{});
+    localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));
+  }
   localStorage.setItem('bf5_cur',CUR||'');
-  if(!OFFLINE_MODE&&TOKEN&&CUR_USER){
+  // Debounced server sync
+  if(!OFFLINE_MODE && TOKEN && CUR_USER){
     clearTimeout(_saveTimer);
-    _saveTimer=setTimeout(()=>{
-      api('PATCH','/api/me',{robots:CUR_USER.robots||[],programs:CUR_USER.programs||{},field:CUR_USER.field||{},teamName:CUR_USER.teamName,avatar:CUR_USER.avatar,color:CUR_USER.color}).catch(()=>{});
-    },800);
+    _saveTimer = setTimeout(()=>{
+      api('PATCH','/api/me',{
+        robots:   CUR_USER.robots   || [],
+        programs: CUR_USER.programs || {},
+        field:    CUR_USER.field    || {},
+        teamName: CUR_USER.teamName,
+        avatar:   CUR_USER.avatar,
+        color:    CUR_USER.color
+      }).catch(()=>{});
+    }, 800);
   }
 }
 function loadSt(){
-  try{ACCOUNTS=JSON.parse(localStorage.getItem('bf5_acc')||'{}');}catch(e){ACCOUNTS={};}
-  CUR=localStorage.getItem('bf5_cur')||null;
-  TOKEN=localStorage.getItem('bf_token')||null;
+  try{ ACCOUNTS=JSON.parse(localStorage.getItem('bf5_acc')||'{}'); }catch(e){ ACCOUNTS={}; }
+  CUR   = localStorage.getItem('bf5_cur')  || null;
+  TOKEN = localStorage.getItem('bf_token') || null;
 }
 
 let _tt;
@@ -709,63 +725,73 @@ function renderAuthForm(){
   renderExisting();
 }
 function renderExisting(){
-  const names=Object.keys(ACCOUNTS);const el=document.getElementById('authExisting');
+  const names=Object.keys(ACCOUNTS); const el=document.getElementById('authExisting');
   if(!names.length){el.innerHTML='';return;}
   el.innerHTML=`<div class="ae-title">Saved Accounts</div>`+names.map(n=>{const a=ACCOUNTS[n];return`<div class="ae-pill" onclick="quickLogin('${n}')"><span style="font-size:1.1rem">${a.avatar||'🤖'}</span><span>${n}</span><span style="color:var(--muted);font-size:.7rem;">${a.teamName||''}</span><button class="ae-del" onclick="delAcc(event,'${n}')">✕</button></div>`;}).join('');
 }
+
 async function doLogin(){
-  const u=document.getElementById('liU').value.trim(),p=document.getElementById('liP').value;
-  if(!u||!p){document.getElementById('authErr').textContent='Fill in both fields.';return;}
+  const u=document.getElementById('liU').value.trim(), p=document.getElementById('liP').value;
+  if(!u||!p){ document.getElementById('authErr').textContent='Fill in both fields.'; return; }
   document.getElementById('authErr').textContent='Signing in…';
   try{
-    const data=await api('POST','/api/login',{username:u,password:p});
+    const data = await api('POST','/api/login',{username:u, password:p});
     if(!data){
-      // Offline fallback
-      if(!ACCOUNTS[u]){document.getElementById('authErr').textContent='Account not found (offline).';return;}
-      loginAs(u,null,ACCOUNTS[u]); return;
+      // Server offline — fall back to local cache
+      if(!ACCOUNTS[u]){ document.getElementById('authErr').textContent='Account not found (server offline).'; return; }
+      loginAs(u, null, ACCOUNTS[u]); return;
     }
-    TOKEN=data.token; localStorage.setItem('bf_token',TOKEN);
-    loginAs(data.user.username,data.token,data.user);
-  }catch(e){document.getElementById('authErr').textContent=e.message;}
+    // Server returns { token, user: {...} }
+    loginAs(data.user.username, data.token, data.user);
+  } catch(e){ document.getElementById('authErr').textContent=e.message; }
 }
+
 async function doRegister(){
-  const u=document.getElementById('rU').value.trim(),p=document.getElementById('rP').value,t=document.getElementById('rT').value.trim()||'Team';
-  if(!u||!p){document.getElementById('authErr').textContent='Fill in all fields.';return;}
-  if(u.length<3){document.getElementById('authErr').textContent='Username 3+ chars.';return;}
+  const u=document.getElementById('rU').value.trim(), p=document.getElementById('rP').value, t=document.getElementById('rT').value.trim()||'Team';
+  if(!u||!p){ document.getElementById('authErr').textContent='Fill in all fields.'; return; }
+  if(u.length<3){ document.getElementById('authErr').textContent='Username needs 3+ chars.'; return; }
   document.getElementById('authErr').textContent='Creating account…';
   try{
-    const data=await api('POST','/api/register',{username:u,password:p,teamName:t});
+    const data = await api('POST','/api/register',{username:u, password:p, teamName:t});
     if(!data){
       // Offline fallback
-      if(ACCOUNTS[u]){document.getElementById('authErr').textContent='Username taken.';return;}
+      if(ACCOUNTS[u]){ document.getElementById('authErr').textContent='Username taken.'; return; }
       ACCOUNTS[u]={teamName:t,avatar:'🤖',color:COLORS[0],robots:[],field:{},programs:{},record:{w:0,d:0,l:0},rp:250,clan:null,leagueId:null};
-      loginAs(u,null,ACCOUNTS[u]); return;
+      loginAs(u, null, ACCOUNTS[u]); return;
     }
-    TOKEN=data.token; localStorage.setItem('bf_token',TOKEN);
-    loginAs(data.user.username,data.token,data.user);
-  }catch(e){document.getElementById('authErr').textContent=e.message;}
+    loginAs(data.user.username, data.token, data.user);
+  } catch(e){ document.getElementById('authErr').textContent=e.message; }
 }
+
 async function quickLogin(u){
-  // Quick-login from saved accounts uses stored token if available
-  const t=localStorage.getItem('bf_token');
-  if(t){TOKEN=t;try{const me=await api('GET','/api/me');if(me){loginAs(me.username,t,me);return;}}catch(e){}}
-  // Offline fallback
-  loginAs(u,null,ACCOUNTS[u]);
+  // Try to refresh from server using stored token
+  const storedToken = localStorage.getItem('bf_token');
+  if(storedToken){
+    TOKEN = storedToken;
+    try{
+      const me = await api('GET','/api/me');
+      if(me && me.username === u){ loginAs(me.username, storedToken, me); return; }
+    } catch(e){ TOKEN=null; }  // token expired or wrong user — fall through
+  }
+  // Local fallback
+  if(ACCOUNTS[u]) loginAs(u, null, ACCOUNTS[u]);
 }
-function loginAs(username,token,userData){
-  CUR=username; CUR_USER=userData||ACCOUNTS[username]||{};
-  if(token){TOKEN=token;localStorage.setItem('bf_token',token);}
-  // Merge into local cache
-  if(!ACCOUNTS[username]) ACCOUNTS[username]={};
-  Object.assign(ACCOUNTS[username],CUR_USER);
-  save(); enterApp();
+
+function loginAs(username, token, userData){
+  CUR      = username;
+  CUR_USER = {...(ACCOUNTS[username]||{}), ...userData};  // merge server data on top of local
+  if(token){ TOKEN=token; localStorage.setItem('bf_token',token); }
+  save();
+  enterApp();
 }
-function delAcc(e,u){e.stopPropagation();if(!confirm(`Remove "${u}" from this device?`))return;delete ACCOUNTS[u];localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS));renderExisting();}
+
+function delAcc(e,u){ e.stopPropagation(); if(!confirm(`Remove "${u}" from this device?`))return; delete ACCOUNTS[u]; localStorage.setItem('bf5_acc',JSON.stringify(ACCOUNTS)); renderExisting(); }
+
 function signOut(){
-  CUR=null;CUR_USER=null;TOKEN=null;
-  localStorage.removeItem('bf_token');localStorage.setItem('bf5_cur','');
-  document.getElementById('app').className='';document.getElementById('app').style.display='none';
-  document.getElementById('authScreen').style.display='flex';renderAuthForm();
+  CUR=null; CUR_USER=null; TOKEN=null;
+  localStorage.removeItem('bf_token'); localStorage.setItem('bf5_cur','');
+  document.getElementById('app').className=''; document.getElementById('app').style.display='none';
+  document.getElementById('authScreen').style.display='flex'; renderAuthForm();
 }
 function enterApp(){
   document.getElementById('authScreen').style.display='none';
@@ -3340,8 +3366,29 @@ function updateRec(){
 }
 
 // INIT
-loadSt();renderAuthForm();
-if(CUR&&ACCOUNTS[CUR]){document.getElementById('authScreen').style.display='none';enterApp();}
+loadSt();
+renderAuthForm();
+// Auto-login: if we have a stored token, verify it with server first
+(async()=>{
+  if(TOKEN){
+    try{
+      const me = await api('GET','/api/me');
+      if(me && me.username){
+        // Token still valid — log straight in with fresh server data
+        loginAs(me.username, TOKEN, me);
+        return;
+      }
+    } catch(e){
+      // Token expired or server error — clear it and fall through
+      TOKEN=null; localStorage.removeItem('bf_token');
+    }
+  }
+  // Fallback: restore last session from local cache
+  if(CUR && ACCOUNTS[CUR]){
+    document.getElementById('authScreen').style.display='none';
+    enterApp();
+  }
+})();
 </script>
 </body>
 </html>
