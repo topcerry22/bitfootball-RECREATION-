@@ -2603,12 +2603,10 @@ function tickMatch(){
           .filter(q=>q.team!==p.team)
           .sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
         if(nearestEnemy){
-          // Move perpendicular to enemy direction
           const ex = p.x - nearestEnemy.x, ey = p.y - nearestEnemy.y;
           const ed = Math.hypot(ex,ey)||0.001;
-          // Perpendicular = rotate 90°
           const perpX = -ey/ed, perpY = ex/ed;
-          const dodgeSpd = PLAYER_SPEED * (0.5+(robotSpd/10)) * 1.6;
+          const dodgeSpd = PLAYER_SPEED * (0.5 + ((p.robot.spd||5)/10)) * 1.6;
           p.vx = perpX * dodgeSpd; p.vy = perpY * dodgeSpd;
           p.x = Math.max(0.02,Math.min(0.98, p.x+p.vx));
           p.y = Math.max(0.03,Math.min(0.97, p.y+p.vy));
