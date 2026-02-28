@@ -346,7 +346,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
                   <div class="vs-card on" id="vsAI" onclick="pickVs('ai')"><div class="vs-ico">🤖</div><div class="vs-lbl">vs AI</div></div>
                   <div class="vs-card" id="vsFriend" onclick="pickVs('friend')"><div class="vs-ico">👥</div><div class="vs-lbl">vs Friend</div></div>
                 </div>
-                <div id="friendCodeRow" style="display:none;margin-bottom:10px;"><input class="inp" id="friendCodeInp" placeholder="Friend's 4-char code…" maxlength="4" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"></div>
+                <div id="friendCodeRow" style="display:none;margin-bottom:10px;"><input class="inp" id="friendCodeInp" placeholder="Friend's code…" maxlength="6" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"></div>
                 <div id="diffRow" style="margin-bottom:2px;">
                   <div class="mo-sect" style="margin-bottom:6px;">AI Difficulty</div>
                   <div class="diff-row">
@@ -387,7 +387,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
           <div class="ms-log" id="matchLog"></div>
           <div class="ms-ctrl">
             <button class="btn btn-s3 btn-sm" id="speedBtn" onclick="toggleSpeed()" style="justify-content:center;">⏩ 3× Speed</button>
-            <button class="btn btn-re btn-sm" onclick="stopMatch()" style="justify-content:center;">⏹ Stop</button>
+            <button class="btn btn-re btn-sm" id="stopBtn" onclick="stopMatch()" style="justify-content:center;" disabled>⏹ Stop</button>
           </div>
         </div>
       </div>
@@ -457,7 +457,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
           </div>
           <div class="o-card">
             <div class="o-card-title">Challenge a Friend</div>
-            <input class="inp" id="challengeInp" placeholder="Enter friend's code…" maxlength="4" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" style="margin-bottom:10px;">
+            <input class="inp" id="challengeInp" placeholder="Enter friend's code…" maxlength="6" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" style="margin-bottom:10px;">
             <button class="btn btn-bl" style="width:100%;justify-content:center;" onclick="loadChallenge()">⚔️ Challenge!</button>
             <div class="divider"></div>
             <div class="o-card-title">How It Works</div>
@@ -524,6 +524,7 @@ const COLORS=['#00e57a','#3d7eff','#ff7a2f','#ff3d5a','#9f6fff','#00d4e8','#f5c4
 const EMOJIS=['🤖','🦾','🛡️','⚡','🔥','🌪️','💎','🧠','🏋️','💨','🎯','🚀','👾','🦿','⚙️','🔩','💪','🌟','🎮','🕹️','🏆','👊','🛸','🤯','🦅','🐉','🌊','☄️','🪄','🎪'];
 const CC={move:{l:'MOVE',c:'#00e57a',b:'rgba(0,229,122,.13)'},attack:{l:'ATTACK',c:'#ff7a2f',b:'rgba(255,122,47,.13)'},defend:{l:'DEFEND',c:'#3d7eff',b:'rgba(61,127,255,.13)'},special:{l:'SPECIAL',c:'#9f6fff',b:'rgba(159,111,255,.13)'},support:{l:'SUPPORT',c:'#00d4a8',b:'rgba(0,212,168,.13)'},trick:{l:'TRICK',c:'#ff4fa3',b:'rgba(255,79,163,.13)'}};
 const CHIPS=[
+  // ── MOVE ──
   {id:'m01',cat:'move',icon:'🏃',name:'Sprint',desc:'Charge straight at goal',pow:3,spd:4,def:0},
   {id:'m13',cat:'move',icon:'⚽',name:'Go to Ball',desc:'Rush directly to the ball and carry it',pow:2,spd:5,def:0},
   {id:'m02',cat:'move',icon:'↔️',name:'Wide Run',desc:'Spread play to wings',pow:1,spd:3,def:0},
@@ -537,6 +538,12 @@ const CHIPS=[
   {id:'m10',cat:'move',icon:'🔃',name:'Recycle Ball',desc:'Pass back to reset play',pow:0,spd:0,def:3},
   {id:'m11',cat:'move',icon:'🧲',name:'Magnet Run',desc:'Draw defenders then release',pow:2,spd:2,def:1},
   {id:'m12',cat:'move',icon:'🎵',name:'Slow Buildup',desc:'Patient passing from deep',pow:0,spd:0,def:3},
+  {id:'m14',cat:'move',icon:'📍',name:'Hold Position',desc:'Stay planted, don\'t wander',pow:0,spd:0,def:2},
+  {id:'m15',cat:'move',icon:'🔙',name:'Drop Deep',desc:'Fall back into defensive shape',pow:0,spd:1,def:3},
+  {id:'m16',cat:'move',icon:'📐',name:'Diagonal Run',desc:'Cut inside on an angle',pow:2,spd:3,def:0},
+  {id:'m17',cat:'move',icon:'⬆️',name:'Vertical Run',desc:'Drive straight up the channel',pow:2,spd:4,def:0},
+  {id:'m18',cat:'move',icon:'🔁',name:'Rotate',desc:'Swap position with a teammate',pow:1,spd:2,def:1},
+  // ── ATTACK ──
   {id:'a01',cat:'attack',icon:'💥',name:'Power Shot',desc:'Max force strike on goal',pow:5,spd:1,def:0},
   {id:'a02',cat:'attack',icon:'🔄',name:'Dribble',desc:'Weave past defenders',pow:2,spd:2,def:0},
   {id:'a03',cat:'attack',icon:'🪁',name:'Chip Shot',desc:'Lob over the keeper',pow:3,spd:1,def:0},
@@ -552,8 +559,14 @@ const CHIPS=[
   {id:'a13',cat:'attack',icon:'🎪',name:'Nutmeg',desc:'Ball through defender legs',pow:2,spd:3,def:0},
   {id:'a14',cat:'attack',icon:'☄️',name:'Knuckleball',desc:'Swerving unpredictable shot',pow:4,spd:1,def:0},
   {id:'a15',cat:'attack',icon:'👊',name:'Shoulder Barge',desc:'Barge through the defender',pow:3,spd:1,def:0},
-  {id:'x01',cat:'attack',icon:'🎯',name:'Shoot at Goal',desc:'Fire an immediate aimed shot at goal',pow:5,spd:0,def:0,_action:'shoot'},
+  {id:'a16',cat:'attack',icon:'💨',name:'Dodge',desc:'Juke sideways to evade enemy',pow:1,spd:4,def:0,_action:'dodge'},
+  {id:'a17',cat:'attack',icon:'🏹',name:'Snap Shot',desc:'Quick first-time strike',pow:3,spd:3,def:0},
+  {id:'a18',cat:'attack',icon:'🌀',name:'Feint',desc:'Fake pass then drive forward',pow:2,spd:3,def:0},
+  {id:'a19',cat:'attack',icon:'🦵',name:'Penalty Blast',desc:'Explosive close-range shot',pow:6,spd:0,def:0},
+  {id:'a20',cat:'attack',icon:'🏃',name:'Chase Down',desc:'Sprint at ball from distance',pow:2,spd:5,def:0},
+  {id:'x01',cat:'attack',icon:'🎯',name:'Shoot at Goal',desc:'Turn and fire an aimed shot immediately',pow:5,spd:0,def:0,_action:'shoot'},
   {id:'x02',cat:'attack',icon:'🏃',name:'Go to Enemy Goal',desc:'Sprint directly into the enemy goal area',pow:0,spd:5,def:0,_action:'goal_run'},
+  // ── DEFEND ──
   {id:'d01',cat:'defend',icon:'⬆️',name:'Tackle',desc:'Slide in to win the ball',pow:0,spd:1,def:5},
   {id:'d02',cat:'defend',icon:'🧱',name:'Block',desc:'Intercept the shot',pow:0,spd:0,def:5},
   {id:'d03',cat:'defend',icon:'⬇️',name:'Drop Back',desc:'Retreat into compact shape',pow:0,spd:0,def:4},
@@ -567,6 +580,12 @@ const CHIPS=[
   {id:'d11',cat:'defend',icon:'🪤',name:'Offside Trap',desc:'Synced last-man run',pow:0,spd:1,def:5},
   {id:'d12',cat:'defend',icon:'🛡️',name:'Shield',desc:'Body-block incoming shot',pow:0,spd:0,def:6},
   {id:'d13',cat:'defend',icon:'🥅',name:'Go to Goal',desc:'Sprint back and guard the goal mouth',pow:0,spd:3,def:5},
+  {id:'d14',cat:'defend',icon:'🔍',name:'Track Runner',desc:'Follow attacker run everywhere',pow:0,spd:3,def:4},
+  {id:'d15',cat:'defend',icon:'✋',name:'Jockey',desc:'Slow retreat to delay attacker',pow:0,spd:1,def:3},
+  {id:'d16',cat:'defend',icon:'🦅',name:'Aerial Duel',desc:'Contest headers and crosses',pow:0,spd:0,def:4},
+  {id:'d17',cat:'defend',icon:'💢',name:'Hard Foul',desc:'Stop attacker by any means',pow:0,spd:0,def:5},
+  {id:'d18',cat:'defend',icon:'📦',name:'Box In',desc:'Surround and trap ball carrier',pow:0,spd:2,def:5},
+  // ── SPECIAL ──
   {id:'s01',cat:'special',icon:'✨',name:'Super Shot',desc:'Unstoppable legendary strike',pow:7,spd:0,def:0},
   {id:'s02',cat:'special',icon:'🌀',name:'Tornado Spin',desc:'Confuse every defender',pow:4,spd:4,def:0},
   {id:'s03',cat:'special',icon:'🚀',name:'Rocket Pass',desc:'50-yard pinpoint laser',pow:3,spd:5,def:0},
@@ -579,6 +598,12 @@ const CHIPS=[
   {id:'s10',cat:'special',icon:'🌊',name:'Tidal Wave',desc:'Overwhelming surge forward',pow:5,spd:4,def:0},
   {id:'s11',cat:'special',icon:'🦅',name:'Eagle Eye',desc:'Spots any open teammate',pow:2,spd:2,def:1},
   {id:'s12',cat:'special',icon:'🎮',name:'Overclock',desc:'Execute two chips this tick',pow:3,spd:3,def:2},
+  {id:'s13',cat:'special',icon:'🌪️',name:'Warp Drive',desc:'Teleport past two defenders',pow:2,spd:8,def:0},
+  {id:'s14',cat:'special',icon:'🔱',name:'Titan Strike',desc:'Breaks through any block',pow:9,spd:0,def:0},
+  {id:'s15',cat:'special',icon:'🧿',name:'Jinx',desc:'Scrambles opponent AI this turn',pow:0,spd:0,def:0},
+  {id:'s16',cat:'special',icon:'⚡',name:'Lightning Dash',desc:'Instant max-speed burst',pow:1,spd:9,def:0},
+  {id:'s17',cat:'special',icon:'🎆',name:'Firework Volley',desc:'Explosive multi-angle strike',pow:7,spd:2,def:0},
+  // ── SUPPORT ──
   {id:'p01',cat:'support',icon:'👥',name:'Team Press',desc:'Whole team presses together',pow:0,spd:2,def:3},
   {id:'p02',cat:'support',icon:'📐',name:'Set Piece',desc:'Organized dead-ball routine',pow:3,spd:0,def:1},
   {id:'p03',cat:'support',icon:'🎵',name:'Tempo Control',desc:'Slow it down, hold possession',pow:0,spd:0,def:2},
@@ -589,6 +614,13 @@ const CHIPS=[
   {id:'p08',cat:'support',icon:'🧬',name:'Adapt',desc:'Copy opponent best chip',pow:2,spd:2,def:2},
   {id:'p09',cat:'support',icon:'📡',name:'Intel Scan',desc:'Reveals opponent weakness',pow:0,spd:0,def:3},
   {id:'p10',cat:'support',icon:'🎯',name:'Precision Drill',desc:'Drilled passing sequence',pow:1,spd:1,def:2},
+  {id:'p11',cat:'support',icon:'⏸️',name:'Wait for Pass',desc:'Hold still and wait for a teammate to pass',pow:0,spd:0,def:1,_action:'wait_pass'},
+  {id:'p12',cat:'support',icon:'🔄',name:'Recycling Press',desc:'Win it back immediately after losing',pow:0,spd:3,def:3},
+  {id:'p13',cat:'support',icon:'🏳️',name:'Decoy Overlap',desc:'Run wide to drag defenders out',pow:1,spd:3,def:0},
+  {id:'p14',cat:'support',icon:'📊',name:'Structured Shape',desc:'Every player locks to their zone',pow:0,spd:0,def:3},
+  {id:'p15',cat:'support',icon:'🎙️',name:'Rally',desc:'Lifts team speed for 3 ticks',pow:0,spd:4,def:1},
+  {id:'p16',cat:'support',icon:'🛤️',name:'Run Channel',desc:'Open a corridor for attackers',pow:1,spd:2,def:0},
+  // ── TRICK ──
   {id:'t01',cat:'trick',icon:'🎩',name:'Vanishing Act',desc:'Disappear from all markers',pow:2,spd:4,def:0},
   {id:'t02',cat:'trick',icon:'🃏',name:'Bluff Run',desc:'Fake direction then burst',pow:2,spd:4,def:0},
   {id:'t03',cat:'trick',icon:'🌈',name:'Rainbow Flick',desc:'Flick ball over a head',pow:3,spd:2,def:0},
@@ -597,6 +629,11 @@ const CHIPS=[
   {id:'t06',cat:'trick',icon:'🕵️',name:'Shadow Step',desc:'Move without being tracked',pow:1,spd:5,def:0},
   {id:'t07',cat:'trick',icon:'🎭',name:'Puppet Master',desc:'Control where defenders move',pow:2,spd:2,def:2},
   {id:'t08',cat:'trick',icon:'🎲',name:'Wild Card',desc:'Completely random action',pow:3,spd:3,def:2},
+  {id:'t09',cat:'trick',icon:'🔮',name:'Mind Game',desc:'Opponent skips their next chip',pow:0,spd:2,def:0},
+  {id:'t10',cat:'trick',icon:'🎠',name:'Carousel',desc:'Circle the opponent rapidly',pow:2,spd:4,def:0},
+  {id:'t11',cat:'trick',icon:'🪬',name:'Eye of the Storm',desc:'Freeze nearest defender briefly',pow:1,spd:2,def:2},
+  {id:'t12',cat:'trick',icon:'🤸',name:'Backflip Pass',desc:'Heel-flick surprise through ball',pow:3,spd:2,def:0},
+  {id:'t13',cat:'trick',icon:'🎯',name:'No-Look Pass',desc:'Disguised pass fools everyone',pow:2,spd:2,def:1},
 ];
 const IF_CONDS=[
   {id:'winning',l:'score is winning'},{id:'losing',l:'score is losing'},{id:'drawing',l:'score is a draw'},
@@ -610,7 +647,15 @@ const IF_CONDS=[
   {id:'near_enemy_goal',l:'ball is near enemy goal'},
   {id:'teammate_has_ball',l:'a teammate has the ball'},
   {id:'enemy_nearby',l:'enemy is nearby'},
+  {id:'i_have_ball',l:'I have the ball'},
+  {id:'winning_big',l:'winning by 2+ goals'},
+  {id:'losing_big',l:'losing by 2+ goals'},
+  {id:'near_own_goal',l:'ball is near our goal'},
+  {id:'last_quarter',l:'last quarter of match'},
+  {id:'low_spd',l:'robot speed < 4'},
+  {id:'multiple_enemies',l:'2+ enemies nearby'},
   {id:'random',l:'50% chance'},
+  {id:'random25',l:'25% chance'},
 ];
 // STADIUMS
 const STADIUMS=[
@@ -987,12 +1032,12 @@ function mkIfBlk(item,i,path){
   wrap.appendChild(head);
   const thenBody=document.createElement('div');thenBody.className='if-body';
   renderSeqInto(thenBody,item.then||[],...[[...path,i,'then']]);
-  thenBody.appendChild(mkDZ([...path,i,'then']));
+  thenBody.appendChild(mkIfDZ([...path,i,'then']));
   wrap.appendChild(thenBody);
   const elHead=document.createElement('div');elHead.className='else-head';elHead.innerHTML='<span>↳</span><span>ELSE</span>';wrap.appendChild(elHead);
   const elBody=document.createElement('div');elBody.className='else-body';
   renderSeqInto(elBody,item.else||[],...[[...path,i,'else']]);
-  elBody.appendChild(mkDZ([...path,i,'else']));
+  elBody.appendChild(mkIfDZ([...path,i,'else']));
   wrap.appendChild(elBody);
   const endDiv=document.createElement('div');endDiv.className='if-end';endDiv.textContent='END IF';wrap.appendChild(endDiv);
   return wrap;
@@ -1003,10 +1048,22 @@ function mkDZ(path){
   dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
   dz.addEventListener('drop',e=>{
     e.preventDefault();dz.classList.remove('over');
-    if(!DRAG||DRAG.type!=='chip')return;
-    insertBlock(path,{type:'chip',id:DRAG.id});DRAG=null;
+    if(!DRAG)return;
+    if(DRAG.type==='chip') insertBlock(path,{type:'chip',id:DRAG.id});
+    DRAG=null;
   });
   return dz;
+}
+function mkIfDZ(path){
+  // Drop zone that also shows "+ add IF block" button — used inside IF branches
+  const wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:4px;align-items:center;';
+  const dz=mkDZ(path);
+  const ifBtn=document.createElement('button');
+  ifBtn.className='btn btn-s3 btn-xs';ifBtn.textContent='+ IF';
+  ifBtn.style.cssText='font-size:.58rem;padding:2px 6px;opacity:.65;flex-shrink:0;';
+  ifBtn.onclick=()=>{ insertBlock(path,{type:'if',cond:'winning',then:[],else:[]}); };
+  wrap.appendChild(dz);wrap.appendChild(ifBtn);
+  return wrap;
 }
 function getSeq(path){
   let cur=acct().programs[PROG_ROBOT];
@@ -1074,6 +1131,9 @@ function renderFieldScreen(){
   fCanvas.ondragover=e=>e.preventDefault();
   fCanvas.ondrop=e=>{
     e.preventDefault();if(!fDragId)return;
+    // Limit to 5 robots on field
+    const placed=Object.keys(acct().field||{});
+    if(!placed.includes(fDragId)&&placed.length>=5){toast('Max 5 robots on the field!','err');fDragId=null;return;}
     const rect=fCanvas.getBoundingClientRect();
     // RIGHT half = your half (x > 0.5)
     let nx=(e.clientX-rect.left)/rect.width,ny=(e.clientY-rect.top)/rect.height;
@@ -1118,13 +1178,20 @@ function drawField(){
 }
 function applyFormation(f){
   if(!(acct().robots||[]).length){toast('Add robots first','err');return;}
-  // formations are in the RIGHT half (your half, x>0.5)
-  const fm={'442':[[.76,.5],[.67,.22],[.67,.44],[.67,.60],[.67,.78],[.60,.28],[.60,.50],[.60,.66],[.55,.22],[.55,.50],[.55,.78]],
-    '433':[[.76,.5],[.67,.18],[.67,.43],[.67,.58],[.67,.82],[.60,.28],[.60,.50],[.60,.72],[.55,.22],[.55,.50],[.55,.78]],
-    '352':[[.76,.5],[.67,.22],[.67,.50],[.67,.78],[.60,.15],[.60,.35],[.60,.50],[.60,.65],[.60,.85],[.55,.33],[.55,.67]],
-    '532':[[.76,.5],[.66,.12],[.66,.30],[.66,.50],[.66,.70],[.66,.88],[.59,.30],[.59,.50],[.59,.70],[.54,.33],[.54,.67]]};
-  acct().field={};(acct().robots||[]).slice(0,11).forEach((r,i)=>{if(fm[f][i])acct().field[r.id]={x:fm[f][i][0],y:fm[f][i][1]};});
-  save();if(fCanvas)drawField();renderFieldSide();toast(`Formation ${f} applied`);
+  // All formations in the RIGHT half (your half, x>0.5), max 5 robots
+  // Positions: [x, y] normalised 0–1
+  const fm={
+    '442': [[.76,.50],[.67,.25],[.67,.55],[.67,.75],[.58,.40],[.58,.65],[.55,.28],[.55,.72],[.52,.40],[.52,.65]],
+    '433': [[.76,.50],[.67,.22],[.67,.50],[.67,.78],[.58,.30],[.58,.50],[.58,.70],[.53,.22],[.53,.50],[.53,.78]],
+    '352': [[.76,.50],[.64,.22],[.64,.50],[.64,.78],[.57,.18],[.57,.40],[.57,.60],[.57,.82],[.52,.35],[.52,.65]],
+    '532': [[.76,.50],[.65,.15],[.65,.35],[.65,.55],[.65,.75],[.65,.90],[.57,.35],[.57,.55],[.57,.75],[.52,.40],[.52,.60]],
+  };
+  // Cap robots placed to 5
+  acct().field={};
+  (acct().robots||[]).slice(0,5).forEach((r,i)=>{
+    if(fm[f][i]) acct().field[r.id]={x:fm[f][i][0],y:fm[f][i][1]};
+  });
+  save();if(fCanvas)drawField();renderFieldSide();toast(`Formation ${f} applied (max 5 robots)`);
 }
 
 // STADIUM & WEATHER PICKERS
@@ -1155,6 +1222,8 @@ function stopMatch(){
   MS.running=false;
   if(mRAF)cancelAnimationFrame(mRAF);
   stopRain();
+  const stopBtn=document.getElementById('stopBtn');
+  if(stopBtn) stopBtn.disabled=true;
   document.getElementById('matchOverlay').style.display='flex';
 }
 function closeEndOverlay(){
@@ -1208,88 +1277,76 @@ function buildAITeam(){
   const statMult = diff==='easy'?0.6 : diff==='hard'?1.0 : 0.8;
   const s=(base)=>Math.round(Math.max(1,Math.min(10, base*statMult + (diff==='hard'?1:0))));
 
-  // Robots: goalkeeper/defenders (deep), midfielders (mid), attackers (forward)
-  // Each has a distinct role identity via stats and chips
+  // 5 robots max (matches player formation limit)
+  // ai1 = SHIELD — camps own goal
+  // ai2-ai5 = pure attackers
   const aiR=[
-    // GK/Sweeper — deep defender, high DEF-chip focus
-    {id:'ai1', name: diff==='hard'?'IRON':'HAL',    emoji:'🛡️', color:'#ff3d5a', spd:s(5), str:s(7), int:s(7)},
-    // Left defender
-    {id:'ai2', name: diff==='hard'?'WALL':'BRACE',  emoji:'🦾', color:'#ff3d5a', spd:s(5), str:s(8), int:s(5)},
-    // Right defender
-    {id:'ai3', name: diff==='hard'?'FORT':'HOLD',   emoji:'🏰', color:'#ff3d5a', spd:s(5), str:s(8), int:s(5)},
-    // Central midfielder — engine, high INT
-    {id:'ai4', name: diff==='hard'?'SAGE':'MID',    emoji:'🧠', color:'#ff3d5a', spd:s(7), str:s(6), int:s(9)},
-    // Wide midfielder
-    {id:'ai5', name: diff==='hard'?'WIRE':'LINK',   emoji:'⚡', color:'#ff3d5a', spd:s(9), str:s(5), int:s(6)},
-    // Striker — high STR + SPD
-    {id:'ai6', name: diff==='hard'?'APEX':'RUSH',   emoji:'🔥', color:'#ff3d5a', spd:s(9), str:s(9), int:s(6)},
+    {id:'ai1', name: diff==='hard'?'IRON':'HAL',   emoji:'🛡️', color:'#ff3d5a', spd:s(3), str:s(8), int:s(6)},  // Shield goalkeeper — slow, strong
+    {id:'ai2', name: diff==='hard'?'APEX':'RUSH',  emoji:'🔥', color:'#ff3d5a', spd:s(9), str:s(9), int:s(6)},  // Main striker
+    {id:'ai3', name: diff==='hard'?'WIRE':'LINK',  emoji:'⚡', color:'#ff3d5a', spd:s(9), str:s(5), int:s(7)},  // Speedy attacker
+    {id:'ai4', name: diff==='hard'?'SAGE':'MID',   emoji:'🧠', color:'#ff3d5a', spd:s(7), str:s(6), int:s(9)},  // Smart playmaker
+    {id:'ai5', name: diff==='hard'?'BLAZE':'BOLT', emoji:'💥', color:'#ff3d5a', spd:s(8), str:s(8), int:s(5)},  // Power attacker
   ];
 
   // Chip programs by difficulty and role
   let progs;
   if(diff==='easy'){
-    // Easy: basic single chips, no conditionals, slow reaction
     progs={
-      ai1: mk(['d03','d09','d08']),           // just drop back and clear
-      ai2: mk(['d01','d02','d03']),           // tackle and hold
-      ai3: mk(['d01','d02','d12']),           // tackle and shield
-      ai4: mk(['m06','m09','m10']),           // safe passes only
-      ai5: mk(['m01','m06','a02']),           // basic move
-      ai6: mk(['a02','a01','m01']),           // simple dribble+shoot
+      ai1: mk(['d13','d12','d09']),                              // Shield: always guard goal
+      ai2: mk(['a02','a01','m01']),                              // simple dribble+shoot
+      ai3: mk(['m01','m08','a02']),                              // basic sprint
+      ai4: mk(['m06','m09','a01']),                              // safe passes
+      ai5: mk(['a02','a15','a01']),                              // barge and shoot
     };
   } else if(diff==='medium'){
-    // Medium: conditionals, smarter chip combos
     progs={
-      ai1:[{type:'if',cond:'losing',then:mk(['d04','d01']),else:mk(['d03','d09'])}],
-      ai2:[{type:'if',cond:'possession',then:mk(['m09','p03']),else:mk(['d01','d05'])}],
-      ai3:[{type:'if',cond:'no_poss',then:mk(['d06','d01']),else:mk(['d03','d12'])}],
-      ai4:[{type:'if',cond:'winning',then:mk(['p03','m06']),else:mk(['m08','a08'])},{type:'chip',id:'m03'}],
-      ai5:[{type:'if',cond:'possession',then:mk(['m05','a06']),else:mk(['m08','d04'])},{type:'chip',id:'m02'}],
-      ai6:[{type:'if',cond:'losing',then:mk(['s05','a01']),else:mk(['a02','a10'])},{type:'chip',id:'a08'}],
+      ai1:[                                                      // Shield: camp goal, rush out if losing badly
+        {type:'if',cond:'losing_big',then:mk(['d04','d01']),else:mk(['d13','d12','d09'])}
+      ],
+      ai2:[{type:'if',cond:'possession',then:mk(['a02','a10']),else:mk(['m08','m13'])},{type:'chip',id:'a01'}],
+      ai3:[{type:'if',cond:'ball_in_their_half',then:mk(['x01','a05']),else:mk(['m08','m01'])},{type:'chip',id:'m13'}],
+      ai4:[{type:'if',cond:'enemy_nearby',then:mk(['a07','a02']),else:mk(['m08','a08'])},{type:'chip',id:'m03'}],
+      ai5:[{type:'if',cond:'losing',then:mk(['s05','a01']),else:mk(['a02','a10'])},{type:'chip',id:'a08'}],
     };
   } else {
-    // Hard: deep conditional trees, high-power chips, smart responses
+    // Hard: ai1 always shields, others are relentless attackers with deep logic
     progs={
-      ai1:[
-        {type:'if',cond:'losing',then:mk(['d04','d06','d01']),else:[{type:'if',cond:'no_poss',then:mk(['d09','d12']),else:mk(['d03','p03'])}]},
-        {type:'chip',id:'d07'},
+      ai1:[   // Shield robot: deep goal camp, never leaves unless absolutely necessary
+        {type:'if',cond:'losing_big',then:[
+          {type:'if',cond:'ball_in_our_half',then:mk(['d04','d06','d01']),else:mk(['d09','d12'])}
+        ],else:mk(['d13','d12','d09','d02'])},
       ],
-      ai2:[
-        {type:'if',cond:'no_poss',then:[{type:'if',cond:'close',then:mk(['d04','d05']),else:mk(['d09','d12'])}],else:mk(['m08','m05'])},
-        {type:'chip',id:'d11'},
+      ai2:[   // Primary striker — aggressive goal hunter
+        {type:'if',cond:'i_have_ball',then:[{type:'if',cond:'near_enemy_goal',then:mk(['x01','a12']),else:mk(['a02','a09','m08'])}],else:mk(['m13','m08'])},
+        {type:'chip',id:'x02'},
       ],
-      ai3:[
-        {type:'if',cond:'no_poss',then:mk(['d06','d01','d10']),else:[{type:'if',cond:'early',then:mk(['m06','p03']),else:mk(['m08','p05'])}]},
-      ],
-      ai4:[
-        {type:'if',cond:'possession',then:[{type:'if',cond:'winning',then:mk(['p03','m06']),else:mk(['s08','m08','m03'])}],else:mk(['d04','m08','p06'])},
-        {type:'chip',id:'p06'},
-      ],
-      ai5:[
-        {type:'if',cond:'possession',then:[{type:'if',cond:'late',then:mk(['s03','a06','a08']),else:mk(['m05','m02','a13'])}],else:mk(['d04','m08'])},
+      ai3:[   // Speedy flanker — harass and sprint
+        {type:'if',cond:'possession',then:[{type:'if',cond:'near_enemy_goal',then:mk(['x01','a05']),else:mk(['m01','m08','a13'])}],else:mk(['m13','m08'])},
         {type:'chip',id:'s04'},
       ],
-      ai6:[
-        {type:'if',cond:'losing',then:mk(['s05','s01','a12']),else:[{type:'if',cond:'close',then:mk(['a10','a14','a01']),else:mk(['a08','a02','a09'])}]},
+      ai4:[   // Playmaker — reads the game
+        {type:'if',cond:'possession',then:[{type:'if',cond:'winning',then:mk(['a08','a10','a14']),else:mk(['s08','m08','m03'])}],else:mk(['m13','m08','p06'])},
+        {type:'chip',id:'p06'},
+      ],
+      ai5:[   // Power attacker — brute force
+        {type:'if',cond:'losing',then:mk(['s05','s01','a12']),else:[{type:'if',cond:'near_enemy_goal',then:mk(['a19','a01','x01']),else:mk(['m08','a02','a09'])}]},
         {type:'chip',id:'s09'},
       ],
     };
   }
 
-  // Formation: 2 deep defenders, 1 midfielder, 1 wide mid, 1 forward, 1 sweeper
-  // All in left half (x<0.5) — away team
+  // Formation: 5 robots, left half (away team)
+  // ai1 deep in goal, ai2-ai5 spread as attackers
   const field={
-    ai1:{x:0.06, y:0.50},   // sweeper/GK deep
-    ai2:{x:0.16, y:0.28},   // left CB
-    ai3:{x:0.16, y:0.72},   // right CB
-    ai4:{x:0.30, y:0.50},   // CM
-    ai5:{x:0.32, y:0.22},   // wide mid
-    ai6:{x:0.42, y:0.50},   // striker
+    ai1:{x:0.04, y:0.50},   // Shield — hugs goal line
+    ai2:{x:0.42, y:0.50},   // Centre striker
+    ai3:{x:0.34, y:0.20},   // Left flank
+    ai4:{x:0.34, y:0.80},   // Right flank
+    ai5:{x:0.28, y:0.50},   // Deep attacker / support
   };
 
   const names={easy:'Tin FC', medium:'Bot FC', hard:'TITAN AI'};
   const colors={easy:'#ff6b6b', medium:'#ff3d5a', hard:'#ff0033'};
-  // Apply difficulty color to all robots
   aiR.forEach(r=>r.color=colors[diff]);
 
   return{name:names[diff], robots:aiR, programs:progs, field, difficulty:diff};
@@ -1412,6 +1469,8 @@ function initMatch(homeRobots,homeProgs,homeField,homeName,away,isRain,isNight,s
   }
 
   MS.running=true;
+  const stopBtn=document.getElementById('stopBtn');
+  if(stopBtn) stopBtn.disabled=false;
   addLog('⚽ Kick off!','info');
   // Set difficulty badge
   const dBadge=document.getElementById('diffBadge');
@@ -1446,56 +1505,49 @@ function buildFlatProg(seq){
 }
 
 function resolveChip(player){
-  if(!player.prog.length)return CHIPS[0];
-  for(let tries=0;tries<player.prog.length*2+2;tries++){
-    const item=player.prog[player.progIdx%Math.max(1,player.prog.length)];
-    player.progIdx++;
+  if(!player.prog.length) return CHIPS[0];
+
+  // Recursively resolve — handles nested IF inside IF
+  function resolveItem(item){
+    if(!item) return null;
     if(typeof item==='string'){
       const chip=CHIPS.find(c=>c.id===item)||CHIPS[0];
-      // ── Action chips: x01=shoot, x02=goal_run ──
-      if(chip._action==='shoot'){ player._shootNow=true; addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action'); }
-      if(chip._action==='goal_run'){ player._goalRun=true; addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action'); }
+      if(chip._action==='shoot'){    player._shootNow=true;   addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action'); }
+      if(chip._action==='goal_run'){ player._goalRun=true;    addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action'); }
+      if(chip._action==='dodge'){    player._dodge=true;      addLog(`💨 ${player.robot.emoji} DODGE!`,'action'); }
+      if(chip._action==='wait_pass'){player._waitPass=true;   addLog(`⏸️ ${player.robot.emoji} WAITING FOR PASS`,'action'); }
       return chip;
     }
-    // ── SHOOT block: force an immediate aimed shot at goal ──
-    if(item&&item.type==='shoot'){
-      player._shootNow=true;
-      addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action');
-      return CHIPS.find(c=>c.id==='x01')||CHIPS[0];
-    }
-    // ── GOAL RUN block: sprint directly to enemy goal ──
-    if(item&&item.type==='goal_run'){
-      player._goalRun=true;
-      addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action');
-      return CHIPS.find(c=>c.id==='x02')||CHIPS[0];
-    }
-    if(item&&(item.type==='if'||item.then)){
-      const branch=evalCond(item.cond||'random',player)?item.then:item.else||[];
-      const flat=buildFlatProg(branch);
-      if(flat.length){
-        const cid=flat[0];
-        if(typeof cid==='string'){
-          const chip=CHIPS.find(c=>c.id===cid)||CHIPS[0];
-          const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
-          addLog(`🔀 IF ${condL} → ${chip.icon} ${chip.name}`,'if');
-          return chip;
-        }
-        // shoot block inside an if branch
-        if(cid&&cid.type==='shoot'){
-          player._shootNow=true;
-          const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
-          addLog(`🔀 IF ${condL} → 🎯 SHOOT AT GOAL`,'if');
-          return CHIPS.find(c=>c.id==='x01')||CHIPS[0];
-        }
-        // goal_run block inside an if branch
-        if(cid&&cid.type==='goal_run'){
-          player._goalRun=true;
-          const condL=IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l||item.cond;
-          addLog(`🔀 IF ${condL} → 🏃 GO TO ENEMY GOAL`,'if');
-          return CHIPS.find(c=>c.id==='x02')||CHIPS[0];
-        }
+    // Legacy block types
+    if(item.type==='shoot'){    player._shootNow=true;  addLog(`🎯 ${player.robot.emoji} SHOOT AT GOAL!`,'action'); return CHIPS.find(c=>c.id==='x01')||CHIPS[0]; }
+    if(item.type==='goal_run'){ player._goalRun=true;   addLog(`🏃 ${player.robot.emoji} CHARGING TO GOAL!`,'action'); return CHIPS.find(c=>c.id==='x02')||CHIPS[0]; }
+    // IF block — recurse into chosen branch (supports nested IFs)
+    if(item.type==='if'||item.then!==undefined){
+      const branch = evalCond(item.cond||'random', player) ? (item.then||[]) : (item.else||[]);
+      const condL  = IF_CONDS.find(x=>x.id===(item.cond||'random'))?.l || item.cond;
+      for(const sub of branch){
+        const result = resolveItem(sub);
+        if(result){ addLog(`🔀 IF ${condL} → ${result.icon} ${result.name}`,'if'); return result; }
       }
+      return null; // branch was empty, keep looping
     }
+    // Plain chip object
+    if(item.type==='chip'){
+      const chip=CHIPS.find(c=>c.id===item.id)||CHIPS[0];
+      if(chip._action==='shoot'){    player._shootNow=true;   }
+      if(chip._action==='goal_run'){ player._goalRun=true;    }
+      if(chip._action==='dodge'){    player._dodge=true;      }
+      if(chip._action==='wait_pass'){player._waitPass=true;   }
+      return chip;
+    }
+    return null;
+  }
+
+  for(let tries=0; tries<player.prog.length*3+4; tries++){
+    const item = player.prog[player.progIdx % Math.max(1,player.prog.length)];
+    player.progIdx++;
+    const result = resolveItem(item);
+    if(result) return result;
   }
   return CHIPS[0];
 }
@@ -1547,14 +1599,32 @@ function evalCond(cond,player){
       );
     }
     case 'enemy_nearby': {
-      // True if any opponent is within ~0.18 of this player
       return MG.players.some(q =>
         q.team !== player.team &&
         Math.hypot(q.x - player.x, q.y - player.y) < 0.18
       );
     }
-    case 'random':  return Math.random()<.5;
-    default:        return true;
+    case 'i_have_ball': {
+      const touchDist = PLAYER_RADIUS + BALL_RADIUS + 0.012;
+      return Math.hypot(player.x - MG.ball.x, player.y - MG.ball.y) < touchDist;
+    }
+    case 'winning_big': { const isHomeWB=player.team==='home'; return (isHomeWB?MG.homeScore:MG.awayScore)-(isHomeWB?MG.awayScore:MG.homeScore)>=2; }
+    case 'losing_big':  { const isHomeLB=player.team==='home'; return (isHomeLB?MG.awayScore:MG.homeScore)-(isHomeLB?MG.homeScore:MG.awayScore)>=2; }
+    case 'near_own_goal': {
+      const isHomeNG=player.team==='home';
+      return isHomeNG ? MG.ball.x > 0.80 : MG.ball.x < 0.20;
+    }
+    case 'last_quarter': return MG.tick/MG.maxTick >= 0.75;
+    case 'low_spd': return (player.robot.spd||5) < 4;
+    case 'multiple_enemies': {
+      const nearEnemies = MG.players.filter(q =>
+        q.team !== player.team && Math.hypot(q.x-player.x, q.y-player.y) < 0.22
+      );
+      return nearEnemies.length >= 2;
+    }
+    case 'random':   return Math.random()<.5;
+    case 'random25': return Math.random()<.25;
+    default:         return true;
   }
 }
 
@@ -2500,18 +2570,67 @@ function tickMatch(){
       const aimQuality = Math.min(1, intl*0.7 + chipPow*0.3 + (chip.cat==='attack'?0.2:0) + (chip.cat==='special'?0.25:0));
       const scatter = (1-aimQuality) * kickPow * 1.8;  // noise on kick direction
 
-      // ── 🎯 SHOOT AT GOAL block: override everything — fire directly at goal ──
+    // ── 🎯 SHOOT AT GOAL — player turns to face goal then fires ──
       if(p._shootNow){
         p._shootNow = false;
-        const toGoalX = attackGoalX - B.x;
-        const toGoalY = 0.5 - B.y;
-        const gd = Math.hypot(toGoalX, toGoalY*0.5)||0.001;
-        // Full power aimed shot, minimal scatter (uses INT for precision)
-        const shotPow = KICK_POWER * (0.55 + str*1.0 + chipPow*0.5) * rainPenalty;
-        B.vx = (toGoalX/gd)*shotPow*1.35 + rnd(scatter*0.35);
-        B.vy = (toGoalY*0.5/gd)*shotPow   + rnd(scatter*0.40);
-        MG.possession = p.team;
+        // Step 1: turn player to face the enemy goal (move toward it)
+        const faceGoalX = attackGoalX - p.x;
+        const faceGoalY = 0.5 - p.y;
+        const faceDist  = Math.hypot(faceGoalX, faceGoalY) || 0.001;
+        const faceSpd   = PLAYER_SPEED * 1.2;
+        p.vx = (faceGoalX/faceDist) * faceSpd;
+        p.vy = (faceGoalY/faceDist) * faceSpd;
+        p.x  = Math.max(0.02, Math.min(0.98, p.x + p.vx));
+        p.y  = Math.max(0.03, Math.min(0.97, p.y + p.vy));
+        // Step 2: only shoot if ball is reachable (within touch range)
+        const distToBallNow = Math.hypot(p.x - B.x, p.y - B.y);
+        if(distToBallNow < PLAYER_RADIUS + BALL_RADIUS + 0.06){
+          const toGoalX = attackGoalX - B.x;
+          const toGoalY = 0.5 - B.y;
+          const gd = Math.hypot(toGoalX, toGoalY*0.5) || 0.001;
+          const shotPow = KICK_POWER * (0.55 + str*1.0 + chipPow*0.5) * rainPenalty;
+          B.vx = (toGoalX/gd)*shotPow*1.35 + rnd(scatter*0.3);
+          B.vy = (toGoalY*0.5/gd)*shotPow   + rnd(scatter*0.35);
+          MG.possession = p.team;
+        }
         return;
+      }
+
+      // ── 💨 DODGE — sidestep away from nearest enemy ──
+      if(p._dodge){
+        p._dodge = false;
+        const nearestEnemy = MG.players
+          .filter(q=>q.team!==p.team)
+          .sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
+        if(nearestEnemy){
+          // Move perpendicular to enemy direction
+          const ex = p.x - nearestEnemy.x, ey = p.y - nearestEnemy.y;
+          const ed = Math.hypot(ex,ey)||0.001;
+          // Perpendicular = rotate 90°
+          const perpX = -ey/ed, perpY = ex/ed;
+          const dodgeSpd = PLAYER_SPEED * (0.5+(robotSpd/10)) * 1.6;
+          p.vx = perpX * dodgeSpd; p.vy = perpY * dodgeSpd;
+          p.x = Math.max(0.02,Math.min(0.98, p.x+p.vx));
+          p.y = Math.max(0.03,Math.min(0.97, p.y+p.vy));
+          p.trail.push({x:p.x,y:p.y}); if(p.trail.length>10)p.trail.shift();
+        }
+        return;
+      }
+
+      // ── ⏸️ WAIT FOR PASS — hold still, wait for ball to come close ──
+      if(p._waitPass){
+        // Stay put unless ball arrives nearby
+        const distToBall2 = Math.hypot(p.x-B.x, p.y-B.y);
+        if(distToBall2 > 0.15){
+          // Drift very slightly toward ball but mostly hold position
+          p.vx *= 0.1; p.vy *= 0.1;
+          p.x = Math.max(0.02,Math.min(0.98, p.x+p.vx));
+          p.y = Math.max(0.03,Math.min(0.97, p.y+p.vy));
+          p.trail.push({x:p.x,y:p.y}); if(p.trail.length>10)p.trail.shift();
+          return;  // skip movement — waiting
+        }
+        // Ball is nearby — clear the flag and let normal logic kick it
+        p._waitPass = false;
       }
 
       // ── DRIBBLE MODE: a02, a09, m13 — ball held close to player (carry, not kick) ──
@@ -2809,6 +2928,8 @@ function endPeriod(){
 
 async function finalizeMatch(){
   MS.running=false;MG.phase='ended';
+  const stopBtn=document.getElementById('stopBtn');
+  if(stopBtn) stopBtn.disabled=true;
   const h=MG.homeScore,a=MG.awayScore;
   let rpChange=0,resultStr='';
   const result=h>a?'win':a>h?'loss':'draw';
@@ -3312,33 +3433,38 @@ async function leaveClan(){
 // ==================== ONLINE / TEAM SHARING (SERVER) ====================
 function renderOnline(){
   if(!CUR)return;
-  document.getElementById('myCodeDisplay').textContent=acct().code||'----';
+  // Show shareCode (server) or fallback to local code
+  const code = acct().shareCode || acct().code || '------';
+  document.getElementById('myCodeDisplay').textContent = code;
   document.getElementById('oRecW').textContent=acct().record?.w||0;
   document.getElementById('oRecD').textContent=acct().record?.d||0;
   document.getElementById('oRecL').textContent=acct().record?.l||0;
 }
 async function genCode(){
   if(OFFLINE_MODE){
-    // Offline fallback
-    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<4;i++)code+=c[Math.floor(Math.random()*c.length)];
-    acct().code=code;
+    const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<6;i++)code+=c[Math.floor(Math.random()*c.length)];
+    acct().shareCode=code;acct().code=code;
     localStorage.setItem('bf5_team_'+code,JSON.stringify({name:acct().teamName||CUR,robots:acct().robots,programs:acct().programs,field:acct().field}));
-    save();renderOnline();toast('Code generated (offline)!');
+    save();renderOnline();toast('Code generated (offline): '+code);
     return;
   }
   try{
-    const {code}=await api('POST','/api/share-team');
-    acct().code=code;save();renderOnline();toast('Code generated!');
+    const data=await api('POST','/api/share-team');
+    acct().shareCode=data.code;acct().code=data.code;
+    save();renderOnline();toast('Code: '+data.code+' — share this with friends!');
   }catch(e){toast(e.message,'err');}
 }
 function copyCode(){
-  const code=acct().code;
-  if(!code){toast('Generate a code first','err');return;}
-  navigator.clipboard.writeText(code).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','err'));
+  const code=acct().shareCode||acct().code;
+  if(!code||code==='------'){toast('Generate a code first','err');return;}
+  navigator.clipboard.writeText(code).then(()=>toast('Code copied: '+code)).catch(()=>{
+    // fallback for browsers without clipboard API
+    prompt('Copy your code:',code);
+  });
 }
 async function loadChallenge(){
   const code=document.getElementById('challengeInp').value.trim().toUpperCase();
-  if(code.length<4){toast('Enter a 4-char code','err');return;}
+  if(code.length<4){toast('Enter at least 4 characters','err');return;}
   try{
     let saved=null;
     if(!OFFLINE_MODE){
@@ -3348,15 +3474,14 @@ async function loadChallenge(){
       const ls=localStorage.getItem('bf5_team_'+code)||localStorage.getItem('bf3_team_'+code);
       if(ls) saved=JSON.parse(ls);
     }
-    if(!saved){toast('No team found for that code','err');return;}
+    if(!saved){toast('No team found for code: '+code,'err');return;}
     document.getElementById('friendCodeInp').value=code;
-    // Store for match use
     localStorage.setItem('bf5_team_'+code,JSON.stringify(saved));
     pickVs('friend');
     goScreen('match',null);
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
-    toast('Code loaded — hit Kick Off!');
-  }catch(e){toast('Code error: '+e.message,'err');}
+    toast('✅ Team loaded! Hit Kick Off to play.');
+  }catch(e){toast('Error: '+e.message,'err');}
 }
 
 function updateRec(){
