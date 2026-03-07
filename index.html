@@ -231,6 +231,41 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
 .lt-pts{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ye);}
 /* CLANS */
 .clan-card{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:8px;}
+/* ── XP / Level ── */
+.xp-bar-wrap{height:5px;background:var(--s3);border-radius:3px;margin-top:4px;overflow:hidden;}
+.xp-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#f5c400,#ff7a2f);transition:width .4s;}
+.level-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f5c400;margin-left:4px;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+.rli-level{font-size:.6rem;font-weight:800;color:#f5c400;background:rgba(245,196,0,.15);padding:1px 5px;border-radius:4px;}
+/* ── Achievements ── */
+.ach-card{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:border-color .2s;}
+.ach-card.unlocked{border-color:#f5c40044;background:rgba(245,196,0,.05);}
+.ach-icon{font-size:1.8rem;width:40px;text-align:center;filter:grayscale(1);opacity:.4;}
+.ach-card.unlocked .ach-icon{filter:none;opacity:1;}
+.ach-name{font-size:.8rem;font-weight:800;}
+.ach-desc{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.ach-badge{margin-left:auto;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(245,196,0,.15);color:#f5c400;white-space:nowrap;}
+.ach-locked-badge{margin-left:auto;font-size:.65rem;color:var(--muted);white-space:nowrap;}
+/* ── Tournament ── */
+.bracket-wrap{display:flex;gap:0;overflow-x:auto;padding-bottom:10px;}
+.bracket-round{display:flex;flex-direction:column;justify-content:space-around;min-width:150px;padding:0 8px;}
+.bracket-round-title{font-size:.6rem;font-weight:800;color:var(--muted);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.bracket-match{background:var(--s2);border:1px solid var(--bd);border-radius:8px;margin:6px 0;overflow:hidden;}
+.bracket-team{display:flex;align-items:center;gap:6px;padding:6px 10px;font-size:.72rem;font-weight:700;}
+.bracket-team.winner{background:rgba(0,229,122,.1);color:var(--gr);}
+.bracket-team.loser{opacity:.45;}
+.bracket-team.tbd{color:var(--muted);font-style:italic;}
+.bracket-score{margin-left:auto;font-weight:800;font-size:.8rem;}
+.bracket-connector{width:8px;border-top:1px solid var(--bd);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);align-self:center;height:60%;}
+.tourn-status{text-align:center;padding:30px;color:var(--muted);}
+.tourn-next-btn{display:block;width:100%;margin-top:16px;}
+/* ── Clan Wars ── */
+.cw-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;}
+.cw-rank{font-size:.7rem;font-weight:800;color:var(--muted);width:20px;text-align:center;}
+.cw-tag{font-size:.65rem;font-weight:800;padding:2px 6px;border-radius:4px;}
+.cw-rp{margin-left:auto;font-size:.8rem;font-weight:800;color:var(--gr);}
+/* ── Achieve dot on nav ── */
+.nav-achieve-dot{display:inline-block;width:7px;height:7px;background:#f5c400;border-radius:50%;margin-left:3px;vertical-align:middle;}
 .clan-tag{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:6px;}
 /* End match overlay */
 .end-overlay{position:absolute;inset:0;background:rgba(7,8,14,.88);z-index:20;display:flex;align-items:center;justify-content:center;}
@@ -269,8 +304,10 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
       <button class="nav-btn" onclick="goScreen('field',this)">🏟 Formation</button>
       <button class="nav-btn" onclick="goScreen('match',this)">⚽ Match</button>
       <button class="nav-btn" onclick="goScreen('ranked',this)">🏆 Ranked</button>
+      <button class="nav-btn" onclick="goScreen('tournament',this)">🥊 Tournament</button>
       <button class="nav-btn" onclick="goScreen('leagues',this)">🥇 Leagues</button>
       <button class="nav-btn" onclick="goScreen('clans',this)">🛡 Clans</button>
+      <button class="nav-btn" id="achieveNavBtn" onclick="goScreen('achievements',this)">🎖 Achievements</button>
       <button class="nav-btn" onclick="goScreen('online',this)">🌐 Online</button>
     </nav>
     <div class="topbar-right">
@@ -422,13 +459,36 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
         <div id="leagueContent"></div>
       </div>
     </div>
+    <!-- TOURNAMENT -->
+    <div id="screen-tournament" class="screen">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:800px;margin:0 auto;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <div style="font-size:1rem;font-weight:800;">🥊 Tournament</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">8-team single elimination · Win it all</div>
+          </div>
+          <button class="btn btn-gr btn-sm" onclick="startTournament()">⚽ New Tournament</button>
+        </div>
+        <div id="tournamentContent"></div>
+      </div>
+    </div>
+    <!-- ACHIEVEMENTS -->
+    <div id="screen-achievements" class="screen">
+      <div style="flex:1;overflow-y:auto;padding:20px;max-width:700px;margin:0 auto;width:100%;">
+        <div style="margin-bottom:16px;">
+          <div style="font-size:1rem;font-weight:800;">🎖 Achievements</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Complete challenges to earn badges</div>
+        </div>
+        <div id="achievementsList"></div>
+      </div>
+    </div>
     <!-- CLANS -->
     <div id="screen-clans" class="screen">
       <div style="flex:1;overflow-y:auto;padding:20px;max-width:800px;margin:0 auto;width:100%;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
           <div>
             <div style="font-size:1rem;font-weight:800;">Clans</div>
-            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Team up · Climb together · Clan wars coming</div>
+            <div style="font-size:.72rem;color:var(--muted);margin-top:2px;">Team up · Climb together · Monthly clan wars</div>
           </div>
           <div style="display:flex;gap:6px;">
             <button class="btn btn-s3 btn-sm" onclick="openJoinClanModal()">Join Clan</button>
@@ -436,6 +496,11 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
           </div>
         </div>
         <div id="clanContent"></div>
+        <div style="margin-top:24px;">
+          <div style="font-size:.85rem;font-weight:800;margin-bottom:10px;">⚔️ Clan Wars — Monthly Leaderboard</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:10px)">Combined RP of all members · Resets 1st of each month</div>
+          <div id="clanWarsBoard"></div>
+        </div>
       </div>
     </div>
     <!-- ONLINE -->
@@ -515,6 +580,29 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);}
     <div class="modal-title">Join a Clan</div>
     <div id="joinClanList"></div>
     <div class="modal-footer"><button class="btn btn-s3" onclick="closeModal('joinClanModal')">Close</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="levelUpModal">
+  <div class="modal" style="width:320px;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">⬆️</div>
+    <div class="modal-title" id="levelUpTitle">LEVEL UP!</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:16px;" id="levelUpSub"></div>
+    <div style="font-size:.75rem;font-weight:800;margin-bottom:10px;color:var(--muted);">CHOOSE A STAT TO UPGRADE</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
+      <button class="btn btn-gr" onclick="spendLevelUp('spd')" id="luSpdBtn">⚡ SPD</button>
+      <button class="btn btn-bl" onclick="spendLevelUp('str')" id="luStrBtn">💪 STR</button>
+      <button class="btn btn-s3" onclick="spendLevelUp('int')" id="luIntBtn">🧠 INT</button>
+    </div>
+    <div style="font-size:.65rem;color:var(--muted);" id="levelUpPending"></div>
+    <button class="btn btn-s3 btn-sm" style="width:100%;justify-content:center;margin-top:10px;" onclick="closeModal('levelUpModal')">Later</button>
+  </div>
+</div>
+<div class="modal-wrap" id="achieveModal">
+  <div class="modal" style="width:300px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:6px;" id="achieveModalIcon">🎖</div>
+    <div class="modal-title" id="achieveModalTitle">Achievement Unlocked!</div>
+    <div style="font-size:.8rem;color:var(--muted);margin:8px 0 16px;" id="achieveModalDesc"></div>
+    <button class="btn btn-gr" style="width:100%;justify-content:center;" onclick="closeModal('achieveModal')">Nice!</button>
   </div>
 </div>
 <div id="toast"></div>
@@ -871,18 +959,29 @@ function goScreen(id,btn){
   if(id==='online')renderOnline();
   if(id==='ranked')renderRanked();
   if(id==='leagues')renderLeagues();
-  if(id==='clans')renderClans();
+  if(id==='clans'){renderClans();renderClanWars();}
+  if(id==='tournament')renderTournament();
+  if(id==='achievements')renderAchievements();
 }
 
 // ROBOTS
 function renderRobotsList(){
   const el=document.getElementById('robotsList'),R=acct().robots||[];
   if(!R.length){el.innerHTML=`<div class="empty-hint"><div class="big">🤖</div><div class="txt">No robots yet!</div><button class="btn btn-gr btn-sm" onclick="openNewRobotModal()">+ Create</button></div>`;return;}
-  el.innerHTML=R.map(r=>`<div class="rli${SEL_ROBOT===r.id?' sel':''}" onclick="selectRobot('${r.id}')">
-    <div class="rli-ava" style="background:${r.color}22;border:1px solid ${r.color}44">${r.emoji}</div>
-    <div style="flex:1;min-width:0;"><div class="rli-name">${r.name}</div><div class="rli-sub">SPD${r.spd} STR${r.str} INT${r.int}</div></div>
-    <span class="rli-ct">${countChips(r.id)}🧩</span>
-  </div>`).join('');
+  el.innerHTML=R.map(r=>{
+    const lvl=r.level||1, xp=r.xp||0, xpNext=xpForLevel(lvl);
+    const pct=Math.min(100,Math.round(xp/xpNext*100));
+    const hasPending=(r.pendingLevels||0)>0;
+    return `<div class="rli${SEL_ROBOT===r.id?' sel':''}" onclick="selectRobot('${r.id}')">
+      <div class="rli-ava" style="background:${r.color}22;border:1px solid ${r.color}44">${r.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="rli-name">${r.name}${hasPending?'<span class="level-dot"></span>':''}</div>
+        <div class="rli-sub">SPD${r.spd} STR${r.str} INT${r.int} &nbsp;<span class="rli-level">Lv${lvl}</span></div>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+      </div>
+      <span class="rli-ct">${countChips(r.id)}🧩</span>
+    </div>`;
+  }).join('');
 }
 function countChips(rid){
   let n=0;
@@ -969,7 +1068,8 @@ function pickEmoji(e){_newEmoji=e;const av=document.getElementById('newRobotAva'
 function saveNewRobot(){
   const name=document.getElementById('newRobotName').value.trim();
   if(!name){toast('Enter a name','err');return;}
-  const r={id:'r'+Date.now(),name,emoji:_newEmoji,color:_newColor,spd:_newStats.spd,str:_newStats.str,int:_newStats.int};
+  const r={id:'r'+Date.now(),name,emoji:_newEmoji,color:_newColor,spd:_newStats.spd,str:_newStats.str,int:_newStats.int,
+    level:1, xp:0, pendingLevels:0};
   acct().robots.push(r);acct().programs[r.id]=[];
   save();closeModal('robotModal');renderRobotsList();selectRobot(r.id);renderScratchTabs();toast('Robot created!');
 }
@@ -3127,13 +3227,19 @@ function drawMatch(){
     ctx.fillStyle=`rgba(255,255,255,${a})`;ctx.fill();
   });
 
-  // ── Player trails ──
+  // ── Player trails — glowing colored particle dots ──
   MG.players.forEach(pl=>{
     if(pl.trail.length<2)return;
-    ctx.beginPath();
-    ctx.moveTo(px(pl.trail[0].x),py(pl.trail[0].y));
-    for(let i=1;i<pl.trail.length;i++) ctx.lineTo(px(pl.trail[i].x),py(pl.trail[i].y));
-    ctx.strokeStyle=pl.robot.color+'30';ctx.lineWidth=3;ctx.stroke();
+    pl.trail.forEach((pt,i)=>{
+      const progress=i/pl.trail.length;
+      const alpha=progress*0.55;
+      const radius=Math.max(1, progress*5);
+      ctx.beginPath();
+      ctx.arc(px(pt.x),py(pt.y),radius,0,Math.PI*2);
+      // Parse robot color and apply with fading alpha
+      ctx.fillStyle=pl.robot.color+(Math.round(alpha*255).toString(16).padStart(2,'0'));
+      ctx.fill();
+    });
   });
 
   // ── Players ──
@@ -3488,8 +3594,440 @@ function updateRec(){
   document.getElementById('oRecW').textContent=r.w;document.getElementById('oRecD').textContent=r.d;document.getElementById('oRecL').textContent=r.l;
 }
 
-// INIT
-loadSt();
+// ═══════════════════════════════════════════════════
+//  ROBOT XP + LEVELING
+// ═══════════════════════════════════════════════════
+const XP_PER_GOAL = 40;   // XP given to each robot near a goal
+const GOAL_RADIUS  = 0.35; // ~35% of field width
+const MAX_LEVEL    = 20;
+
+function xpForLevel(lvl){ return 100 + (lvl-1)*50; } // lvl1→2=100, lvl2→3=150, etc.
+
+function awardGoalXP(team){
+  // Give XP to all home robots within GOAL_RADIUS of the ball when goal scored
+  if(team!=='home')return; // only award XP for goals the home (player) team scores
+  const B=MG.ball;
+  const homePlayers=MG.players.filter(p=>p.team==='home');
+  homePlayers.forEach(p=>{
+    const dist=Math.hypot(p.x-B.x,p.y-B.y);
+    if(dist>GOAL_RADIUS)return;
+    const r=acct().robots.find(x=>x.id===p.robot.id);
+    if(!r)return;
+    if(!r.level)r.level=1;
+    if(!r.xp)r.xp=0;
+    if(!r.pendingLevels)r.pendingLevels=0;
+    // Bonus XP if very close
+    const bonus=dist<0.12?20:0;
+    r.xp+=(XP_PER_GOAL+bonus);
+    addLog(`⬆ ${r.emoji} ${r.name} +${XP_PER_GOAL+bonus} XP`,'action');
+    // Level-up loop
+    while(r.level<MAX_LEVEL && r.xp>=xpForLevel(r.level)){
+      r.xp-=xpForLevel(r.level);
+      r.level++;
+      r.pendingLevels++;
+      addLog(`🌟 ${r.emoji} ${r.name} reached Level ${r.level}!`,'goal');
+    }
+  });
+  save();
+  renderRobotsList();
+  // Show dot on achievements nav if pending
+  updateAchieveDot();
+}
+
+let _levelUpRobotId=null;
+function openLevelUpModal(robotId){
+  const r=acct().robots.find(x=>x.id===robotId);
+  if(!r||!(r.pendingLevels>0))return;
+  _levelUpRobotId=robotId;
+  document.getElementById('levelUpTitle').textContent=`⬆️ ${r.emoji} ${r.name} — Level ${r.level}!`;
+  document.getElementById('levelUpSub').textContent=`You have ${r.pendingLevels} upgrade${r.pendingLevels>1?'s':''} to spend`;
+  document.getElementById('levelUpPending').textContent=`Current: SPD${r.spd} STR${r.str} INT${r.int}`;
+  // Disable buttons for maxed stats
+  ['spd','str','int'].forEach(s=>{
+    const btn=document.getElementById('lu'+s[0].toUpperCase()+s.slice(1)+'Btn');
+    if(btn)btn.disabled=(r[s]||0)>=10;
+  });
+  openModal('levelUpModal');
+}
+
+function spendLevelUp(stat){
+  const r=acct().robots.find(x=>x.id===_levelUpRobotId);
+  if(!r)return;
+  if((r[stat]||0)>=10){toast('Stat already maxed!','err');return;}
+  r[stat]=Math.min(10,(r[stat]||0)+1);
+  r.pendingLevels=Math.max(0,(r.pendingLevels||1)-1);
+  save();renderRobotsList();renderRobotEditor();
+  document.getElementById('levelUpPending').textContent=`Current: SPD${r.spd} STR${r.str} INT${r.int}`;
+  document.getElementById('levelUpSub').textContent=`${r.pendingLevels} upgrade${r.pendingLevels!==1?'s':''} remaining`;
+  if(r.pendingLevels<=0){ closeModal('levelUpModal'); toast(`${r.emoji} upgraded! ${stat.toUpperCase()} → ${r[stat]}`); }
+  checkAchievements();
+}
+
+// ═══════════════════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════════════════
+const ACHIEVEMENTS=[
+  {id:'first_win',   icon:'🏆', name:'First Blood',       desc:'Win your first match'},
+  {id:'score_10',    icon:'⚽', name:'10-Goal Club',       desc:'Score 10 goals total'},
+  {id:'win_streak5', icon:'🔥', name:'On Fire',            desc:'Win 5 matches in a row'},
+  {id:'create_clan', icon:'🛡️', name:'Clan Founder',       desc:'Create a clan'},
+  {id:'rank_gold',   icon:'🥇', name:'Gold Standard',      desc:'Reach Gold rank'},
+  {id:'win_tourn',   icon:'🥊', name:'Tournament Champion',desc:'Win a full 8-team tournament'},
+  {id:'max_robot',   icon:'🤖', name:'Maxed Out',          desc:'Level a robot to level 20'},
+  {id:'play_50',     icon:'🎮', name:'Veteran',            desc:'Play 50 matches'},
+];
+
+function checkAchievements(){
+  if(!CUR)return;
+  const a=acct();
+  if(!a.achievements)a.achievements={};
+  const r=a.record||{w:0,d:0,l:0};
+  const total=(r.w||0)+(r.d||0)+(r.l||0);
+  const newlyUnlocked=[];
+
+  function tryUnlock(id){
+    if(!a.achievements[id]){a.achievements[id]=Date.now();newlyUnlocked.push(id);}
+  }
+
+  if(r.w>=1)                                         tryUnlock('first_win');
+  if((a.totalGoals||0)>=10)                          tryUnlock('score_10');
+  if((a.winStreak||0)>=5)                            tryUnlock('win_streak5');
+  if(a.clan)                                         tryUnlock('create_clan');
+  if((a.rp||0)>=1000)                                tryUnlock('rank_gold');
+  if(a.tournamentWins>=1)                            tryUnlock('win_tourn');
+  if((a.robots||[]).some(rb=>(rb.level||1)>=20))     tryUnlock('max_robot');
+  if(total>=50)                                      tryUnlock('play_50');
+
+  if(newlyUnlocked.length){
+    save();
+    // Show popup for first unlocked achievement
+    const ach=ACHIEVEMENTS.find(x=>x.id===newlyUnlocked[0]);
+    if(ach){
+      document.getElementById('achieveModalIcon').textContent=ach.icon;
+      document.getElementById('achieveModalTitle').textContent=ach.name;
+      document.getElementById('achieveModalDesc').textContent=ach.desc;
+      openModal('achieveModal');
+    }
+    updateAchieveDot();
+  }
+}
+
+function updateAchieveDot(){
+  // Show dot on Achievements nav if any robot has pending levels
+  const hasPending=(acct().robots||[]).some(r=>(r.pendingLevels||0)>0);
+  const btn=document.getElementById('achieveNavBtn');
+  if(!btn)return;
+  const existing=btn.querySelector('.nav-achieve-dot');
+  if(hasPending&&!existing){
+    const dot=document.createElement('span');dot.className='nav-achieve-dot';btn.appendChild(dot);
+  } else if(!hasPending&&existing){
+    existing.remove();
+  }
+}
+
+function renderAchievements(){
+  if(!CUR){document.getElementById('achievementsList').innerHTML='<div style="color:var(--muted);text-align:center;padding:30px">Log in to track achievements</div>';return;}
+  const a=acct().achievements||{};
+  const robots=acct().robots||[];
+  document.getElementById('achievementsList').innerHTML=ACHIEVEMENTS.map(ach=>{
+    const unlocked=!!a[ach.id];
+    const date=unlocked?new Date(a[ach.id]).toLocaleDateString():'';
+    // Progress hints
+    let progress='';
+    if(!unlocked){
+      const rec=acct().record||{w:0,d:0,l:0};
+      const total=(rec.w||0)+(rec.d||0)+(rec.l||0);
+      if(ach.id==='score_10') progress=`${acct().totalGoals||0}/10 goals`;
+      if(ach.id==='play_50')  progress=`${total}/50 matches`;
+      if(ach.id==='win_streak5') progress=`${acct().winStreak||0}/5 streak`;
+      if(ach.id==='rank_gold') progress=`${acct().rp||0}/1000 RP`;
+      if(ach.id==='max_robot'){
+        const best=robots.reduce((m,r)=>Math.max(m,r.level||1),0);
+        progress=`Best robot: Lv${best}/20`;
+      }
+    }
+    return `<div class="ach-card${unlocked?' unlocked':''}">
+      <div class="ach-icon">${ach.icon}</div>
+      <div>
+        <div class="ach-name">${ach.name}</div>
+        <div class="ach-desc">${ach.desc}${progress?` · <span style="color:var(--gr)">${progress}</span>`:''}</div>
+      </div>
+      ${unlocked?`<div class="ach-badge">✅ ${date}</div>`:`<div class="ach-locked-badge">🔒 Locked</div>`}
+    </div>`;
+  }).join('');
+  // Also show pending level-up buttons
+  const pending=robots.filter(r=>(r.pendingLevels||0)>0);
+  if(pending.length){
+    document.getElementById('achievementsList').innerHTML=`
+      <div style="background:rgba(245,196,0,.1);border:1px solid rgba(245,196,0,.3);border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:.8rem;font-weight:800;margin-bottom:10px;">⬆️ Pending Level-Ups</div>
+        ${pending.map(r=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span>${r.emoji}</span><span style="flex:1;font-size:.8rem;font-weight:700">${r.name} — Lv${r.level} (${r.pendingLevels} upgrade${r.pendingLevels>1?'s':''})</span>
+          <button class="btn btn-gr btn-xs" onclick="openLevelUpModal('${r.id}')">Upgrade</button>
+        </div>`).join('')}
+      </div>
+    `+document.getElementById('achievementsList').innerHTML;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  TOURNAMENT
+// ═══════════════════════════════════════════════════
+// Stored in acct().tournament
+const TOURN_TEAMS=[
+  {name:'Tin FC',    emoji:'🤖',color:'#888'},
+  {name:'Bot FC',    emoji:'🦾',color:'#ff6b6b'},
+  {name:'TITAN AI',  emoji:'🔥',color:'#ff3d5a'},
+  {name:'Neon XI',   emoji:'⚡',color:'#3d7eff'},
+  {name:'Iron Corp', emoji:'🏰',color:'#9f6fff'},
+  {name:'Volt FC',   emoji:'💫',color:'#f5c400'},
+  {name:'Glitch SC', emoji:'🌀',color:'#00d4a8'},
+];
+
+function startTournament(){
+  if(!CUR){toast('Log in first','err');return;}
+  if((acct().robots||[]).length===0){toast('Build a team first','err');return;}
+  if(acct().tournament&&acct().tournament.status==='active'){
+    if(!confirm('Abandon current tournament and start a new one?'))return;
+  }
+  // 8 slots: player + 7 AI
+  const player={name:acct().teamName||CUR,emoji:acct().avatar||'🤖',color:'#00e57a',isPlayer:true};
+  const opps=TOURN_TEAMS.slice(0,7).map((t,i)=>({...t,diff:i<2?'easy':i<5?'medium':'hard'}));
+  // Shuffle and seed
+  const teams=[player,...opps].sort(()=>Math.random()-.5);
+  // Build bracket: QF (4 matches), SF (2), F (1)
+  const bracket={
+    teams,
+    rounds:[
+      {name:'Quarter Finals', matches: makeMatches(teams)},
+      {name:'Semi Finals',    matches:[]},
+      {name:'Final',          matches:[]},
+    ],
+    currentRound:0,
+    currentMatch:0,
+    status:'active',
+  };
+  acct().tournament=bracket;
+  save();renderTournament();
+}
+
+function makeMatches(teams){
+  const m=[];
+  for(let i=0;i<teams.length;i+=2)m.push({home:teams[i],away:teams[i+1],homeScore:null,awayScore:null,winner:null});
+  return m;
+}
+
+function renderTournament(){
+  const el=document.getElementById('tournamentContent');
+  if(!CUR){el.innerHTML='<div class="tourn-status">Log in to play tournaments</div>';return;}
+  const t=acct().tournament;
+  if(!t||t.status==='idle'){
+    el.innerHTML=`<div class="tourn-status">
+      <div style="font-size:3rem;margin-bottom:10px;">🥊</div>
+      <div style="font-size:.9rem;font-weight:800;margin-bottom:6px;">No tournament running</div>
+      <div style="font-size:.72rem;color:var(--muted)">Beat 7 AI teams to become champion</div>
+    </div>`;
+    return;
+  }
+  let html='<div class="bracket-wrap">';
+  t.rounds.forEach((round,ri)=>{
+    html+=`<div class="bracket-round"><div class="bracket-round-title">${round.name}</div>`;
+    if(!round.matches.length){
+      html+=`<div style="color:var(--muted);font-size:.7rem;text-align:center;padding:20px;">TBD</div>`;
+    } else {
+      round.matches.forEach((m,mi)=>{
+        const homeWin=m.winner&&m.winner===m.home.name;
+        const awayWin=m.winner&&m.winner===m.away.name;
+        html+=`<div class="bracket-match">
+          <div class="bracket-team${homeWin?' winner':awayWin?' loser':''}">
+            <span>${m.home.emoji}</span><span style="flex:1">${m.home.name}</span>
+            ${m.homeScore!==null?`<span class="bracket-score">${m.homeScore}</span>`:''}
+          </div>
+          <div style="height:1px;background:var(--bd)"></div>
+          <div class="bracket-team${awayWin?' winner':homeWin?' loser':''}">
+            <span>${m.away.emoji}</span><span style="flex:1">${m.away.name}</span>
+            ${m.awayScore!==null?`<span class="bracket-score">${m.awayScore}</span>`:''}
+          </div>
+        </div>`;
+      });
+    }
+    html+='</div>';
+  });
+  html+='</div>';
+
+  // Next action
+  const round=t.rounds[t.currentRound];
+  const match=round?.matches[t.currentMatch];
+  if(t.status==='active'&&match){
+    const isPlayerMatch=match.home.isPlayer||match.away.isPlayer;
+    if(isPlayerMatch){
+      html+=`<button class="btn btn-gr tourn-next-btn" onclick="playTournamentMatch()">⚽ Play Next Match vs ${match.home.isPlayer?match.away.name:match.home.name}</button>`;
+    } else {
+      html+=`<button class="btn btn-s3 tourn-next-btn" onclick="simTournamentMatch()">⏩ Simulate AI Match</button>`;
+    }
+  } else if(t.status==='won'){
+    html+=`<div style="text-align:center;padding:24px;background:rgba(245,196,0,.1);border-radius:12px;margin-top:16px;">
+      <div style="font-size:2.5rem">🏆</div>
+      <div style="font-size:1rem;font-weight:800;color:#f5c400;margin-top:8px;">TOURNAMENT CHAMPION!</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:4px;">+200 RP awarded</div>
+      <button class="btn btn-gr btn-sm" style="margin-top:12px" onclick="startTournament()">Play Again</button>
+    </div>`;
+  } else if(t.status==='eliminated'){
+    html+=`<div style="text-align:center;padding:20px;background:rgba(255,61,90,.07);border-radius:12px;margin-top:16px;">
+      <div style="font-size:2rem">😤</div>
+      <div style="font-size:.85rem;font-weight:800;color:var(--re);margin-top:8px;">Eliminated!</div>
+      <button class="btn btn-re btn-sm" style="margin-top:12px" onclick="startTournament()">Try Again</button>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+function playTournamentMatch(){
+  const t=acct().tournament;
+  const round=t.rounds[t.currentRound];
+  const match=round.matches[t.currentMatch];
+  // Set up the match vs the AI opponent
+  const opp=match.home.isPlayer?match.away:match.home;
+  // Store tournament context so finalizeMatch can report back
+  MS._tournamentMatch={roundIdx:t.currentRound, matchIdx:t.currentMatch, playerIsHome:match.home.isPlayer};
+  // Load the AI opponent at their difficulty
+  MS.vsMode='ai'; MS.difficulty=opp.diff||'medium';
+  goScreen('match',null);
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes('Match')));
+  toast(`⚽ Tournament: You vs ${opp.name} — Kick Off!`);
+}
+
+function simTournamentMatch(){
+  const t=acct().tournament;
+  const round=t.rounds[t.currentRound];
+  const match=round.matches[t.currentMatch];
+  // Simulate: random result weighted by team strength
+  const hScore=Math.floor(Math.random()*4);
+  const aScore=Math.floor(Math.random()*4);
+  match.homeScore=hScore; match.awayScore=aScore;
+  match.winner=hScore>=aScore?match.home.name:match.away.name;
+  advanceTournament(hScore,aScore,false);
+}
+
+function recordTournamentResult(playerScore,oppScore,playerIsHome){
+  const t=acct().tournament;
+  if(!t||!MS._tournamentMatch)return;
+  const {roundIdx,matchIdx,playerIsHome:pih}=MS._tournamentMatch;
+  const match=t.rounds[roundIdx].matches[matchIdx];
+  if(pih){match.homeScore=playerScore;match.awayScore=oppScore;}
+  else{match.homeScore=oppScore;match.awayScore=playerScore;}
+  const playerWon=playerScore>oppScore;
+  match.winner=playerWon?(pih?match.home.name:match.away.name):(pih?match.away.name:match.home.name);
+  MS._tournamentMatch=null;
+  advanceTournament(playerScore,oppScore,true,playerWon);
+}
+
+function advanceTournament(hScore,aScore,isPlayerMatch,playerWon){
+  const t=acct().tournament;
+  const round=t.rounds[t.currentRound];
+  const match=round.matches[t.currentMatch];
+  // Advance match pointer
+  t.currentMatch++;
+  if(t.currentMatch>=round.matches.length){
+    // Round complete — build next round
+    const winners=round.matches.map(m=>m.winner===m.home.name?m.home:m.away);
+    t.currentRound++;
+    t.currentMatch=0;
+    if(t.currentRound>=t.rounds.length){
+      // Tournament over
+      if(isPlayerMatch&&playerWon){
+        t.status='won';
+        if(!acct().tournamentWins)acct().tournamentWins=0;
+        acct().tournamentWins++;
+        acct().rp=(acct().rp||250)+200;
+        updateRec();updateRankBadge();
+        toast('🏆 TOURNAMENT CHAMPION! +200 RP');
+        checkAchievements();
+      } else if(isPlayerMatch&&!playerWon){
+        t.status='eliminated';
+      } else {
+        t.status='won'; // AI won
+      }
+    } else {
+      t.rounds[t.currentRound].matches=makeMatches(winners);
+      // Check if player got eliminated
+      const playerInRound=winners.some(w=>w.isPlayer);
+      if(!playerInRound){t.status='eliminated';}
+    }
+  } else {
+    // Check if player just got eliminated mid-round
+    if(isPlayerMatch&&!playerWon) t.status='eliminated';
+  }
+  save();renderTournament();
+}
+
+// ═══════════════════════════════════════════════════
+//  CLAN WARS
+// ═══════════════════════════════════════════════════
+async function renderClanWars(){
+  const el=document.getElementById('clanWarsBoard');
+  if(!el)return;
+  el.innerHTML='<div style="color:var(--muted);font-size:.75rem;padding:10px">Loading…</div>';
+  try{
+    const clans=await api('GET','/api/clans')||[];
+    const users=await api('GET','/api/leaderboard')||[];
+    if(!clans.length){el.innerHTML='<div style="color:var(--muted);font-size:.75rem;padding:10px">No clans yet — create one!</div>';return;}
+    // Compute clan total RP from leaderboard data
+    const clanRP={};
+    clans.forEach(c=>{clanRP[c.id]={clan:c,rp:0,members:0};});
+    users.forEach(u=>{
+      if(u.clan&&clanRP[u.clan]){clanRP[u.clan].rp+=(u.rp||0);clanRP[u.clan].members++;}
+    });
+    const sorted=Object.values(clanRP).filter(c=>c.members>0).sort((a,b)=>b.rp-a.rp);
+    if(!sorted.length){el.innerHTML='<div style="color:var(--muted);font-size:.75rem;padding:10px">No clan members with RP yet</div>';return;}
+    const medals=['🥇','🥈','🥉'];
+    el.innerHTML=sorted.map((c,i)=>`
+      <div class="cw-row">
+        <div class="cw-rank">${medals[i]||i+1}</div>
+        <span style="font-size:1.2rem">${c.clan.icon}</span>
+        <div>
+          <span style="font-size:.8rem;font-weight:800">${c.clan.name}</span>
+          <span class="cw-tag" style="background:${c.clan.color}22;color:${c.clan.color};margin-left:6px">[${c.clan.tag}]</span>
+          <div style="font-size:.65rem;color:var(--muted)">${c.members} member${c.members!==1?'s':''}</div>
+        </div>
+        <div class="cw-rp">${c.rp.toLocaleString()} RP</div>
+      </div>`).join('');
+  }catch(e){el.innerHTML=`<div style="color:var(--re);font-size:.75rem;padding:10px">${e.message}</div>`;}
+}
+
+// ═══════════════════════════════════════════════════
+//  PARTICLE TRAILS (enhanced)
+// ═══════════════════════════════════════════════════
+// Replaces the plain line trails with glowing colored particle trails
+
+// ═══════════════════════════════════════════════════
+//  HOOK INTO finalizeMatch for tournament + achievements
+// ═══════════════════════════════════════════════════
+const _origFinalizeMatch = finalizeMatch;
+finalizeMatch = async function(){
+  await _origFinalizeMatch();
+  // Track total goals
+  if(!acct().totalGoals)acct().totalGoals=0;
+  acct().totalGoals+=MG.homeScore;
+  // Track win streak
+  const result=MG.homeScore>MG.awayScore?'win':MG.homeScore<MG.awayScore?'loss':'draw';
+  if(result==='win'){if(!acct().winStreak)acct().winStreak=0;acct().winStreak++;}
+  else acct().winStreak=0;
+  // Tournament result hook
+  if(MS._tournamentMatch){
+    recordTournamentResult(MG.homeScore,MG.awayScore,MS._tournamentMatch.playerIsHome);
+  }
+  checkAchievements();
+  updateAchieveDot();
+  save();
+};
+
+// Hook goal XP into onGoal
+const _origOnGoal=onGoal;
+onGoal=function(team){
+  _origOnGoal(team);
+  awardGoalXP(team);
+};
 renderAuthForm();
 // Auto-login: if we have a stored token, verify it with server first
 (async()=>{
