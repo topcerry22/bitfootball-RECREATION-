@@ -1039,13 +1039,61 @@ function selectRobot(id){SEL_ROBOT=id;renderRobotsList();renderRobotEditor();}
 function renderRobotEditor(){
   const r=acct().robots.find(x=>x.id===SEL_ROBOT);if(!r)return;
   const el=document.getElementById('robotEditor');
-  const sc=(s,c)=>`<div class="stat-c"><div class="lbl">${s.toUpperCase()}</div><div class="val" style="color:${c}">${r[s]}</div><div class="bar"><div class="bfill" style="width:${r[s]*10}%;background:${c}"></div></div><div class="adj"><button class="btn btn-s3 btn-xs" onclick="adjStat('${r.id}','${s}',-1)">−</button><button class="btn btn-s3 btn-xs" onclick="adjStat('${r.id}','${s}',+1)">+</button></div></div>`;
-  el.innerHTML=`<div class="re-sec"><div style="display:flex;align-items:center;gap:14px;"><div style="width:60px;height:60px;border-radius:14px;background:${r.color}22;border:2px solid ${r.color}55;display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;flex-shrink:0;" onclick="openEmojiForRobot('${r.id}')">${r.emoji}</div><div style="flex:1;min-width:0;"><input class="inp" value="${r.name}" onchange="renameRobot('${r.id}',this.value)" style="font-weight:700;margin-bottom:7px;"><div class="cpal">${COLORS.map(c=>`<div class="csw${r.color===c?' on':''}" style="background:${c}" onclick="recolorRobot('${r.id}','${c}')"></div>`).join('')}</div></div></div></div>
-  <div class="re-sec"><div class="re-stitle">Stats</div><div class="stat3">${sc('spd','#00e57a')}${sc('str','#ff7a2f')}${sc('int','#9f6fff')}</div></div>
+  const lvl=r.level||1, xp=r.xp||0, xpNext=xpForLevel(lvl);
+  const pct=Math.min(100,Math.round(xp/xpNext*100));
+  const hasPending=(r.pendingLevels||0)>0;
+  const sc=(s,c)=>{
+    const maxed=(r[s]||0)>=10;
+    const canUp=hasPending&&!maxed;
+    return `<div class="stat-c">
+      <div class="lbl">${s.toUpperCase()}</div>
+      <div class="val" style="color:${c}">${r[s]}</div>
+      <div class="bar"><div class="bfill" style="width:${r[s]*10}%;background:${c}"></div></div>
+      <div class="adj">
+        <button class="btn btn-s3 btn-xs" style="opacity:.25;cursor:not-allowed" disabled title="Stats can't be decreased">−</button>
+        <button class="btn ${canUp?'btn-gr':'btn-s3'} btn-xs" onclick="adjStat('${r.id}','${s}',+1)" ${!canUp?'disabled title="Earn a level-up first"':''} style="${!canUp?'opacity:.35;cursor:not-allowed':''}">+</button>
+      </div>
+    </div>`;
+  };
+  el.innerHTML=`
+  <div class="re-sec"><div style="display:flex;align-items:center;gap:14px;">
+    <div style="width:60px;height:60px;border-radius:14px;background:${r.color}22;border:2px solid ${r.color}55;display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;flex-shrink:0;" onclick="openEmojiForRobot('${r.id}')">${r.emoji}</div>
+    <div style="flex:1;min-width:0;">
+      <input class="inp" value="${r.name}" onchange="renameRobot('${r.id}',this.value)" style="font-weight:700;margin-bottom:7px;">
+      <div class="cpal">${COLORS.map(c=>`<div class="csw${r.color===c?' on':''}" style="background:${c}" onclick="recolorRobot('${r.id}','${c}')"></div>`).join('')}</div>
+    </div>
+  </div></div>
+  <div class="re-sec">
+    <div class="re-stitle" style="display:flex;align-items:center;justify-content:space-between;">
+      Stats
+      <span style="font-size:.65rem;color:${hasPending?'#f5c400':'var(--muted)'}">
+        ${hasPending?`⬆️ ${r.pendingLevels} upgrade${r.pendingLevels>1?'s':''} available`:`Lv${lvl} · ${xp}/${xpNext} XP`}
+      </span>
+    </div>
+    <div class="stat3">${sc('spd','#00e57a')}${sc('str','#ff7a2f')}${sc('int','#9f6fff')}</div>
+    <div class="xp-bar-wrap" style="margin-top:8px;"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+    ${hasPending?`<button class="btn btn-gr btn-sm" style="width:100%;justify-content:center;margin-top:8px" onclick="openLevelUpModal('${r.id}')">⬆️ Spend Upgrade Point</button>`:''}
+  </div>
   <div class="re-sec"><div class="re-stitle" style="display:flex;align-items:center;justify-content:space-between;">Chip Program<button class="btn btn-s3 btn-xs" onclick="goScreen('scratch',null);setTimeout(()=>openProgramTab('${r.id}'),50)">Edit →</button></div><div style="font-size:.72rem;color:var(--muted);">${countChips(r.id)} chips programmed</div></div>
   <button class="btn btn-re btn-sm" onclick="deleteRobot('${r.id}')">Delete Robot</button>`;
 }
-function adjStat(id,s,d){const r=acct().robots.find(x=>x.id===id);if(!r)return;r[s]=Math.max(1,Math.min(10,r[s]+d));save();renderRobotEditor();}
+function adjStat(id,s,d){
+  const r=acct().robots.find(x=>x.id===id);
+  if(!r)return;
+  // Stats can only be changed by spending a level-up point
+  if(d>0){
+    if(!(r.pendingLevels>0)){toast('Earn a level-up to upgrade stats!','err');return;}
+    if((r[s]||0)>=10){toast('Stat already maxed!','err');return;}
+    r[s]=Math.min(10,(r[s]||0)+1);
+    r.pendingLevels=Math.max(0,(r.pendingLevels||1)-1);
+    toast(`${s.toUpperCase()} upgraded to ${r[s]}!`);
+    checkAchievements();
+  } else {
+    // Never allow decreasing — stats are permanent
+    toast('Stats cannot be decreased','err');return;
+  }
+  save();renderRobotEditor();renderRobotsList();
+}
 function renameRobot(id,v){const r=acct().robots.find(x=>x.id===id);if(r){r.name=v;save();renderRobotsList();}}
 function recolorRobot(id,c){const r=acct().robots.find(x=>x.id===id);if(r){r.color=c;save();renderRobotsList();renderRobotEditor();}}
 function deleteRobot(id){if(!confirm('Delete this robot?'))return;acct().robots=acct().robots.filter(x=>x.id!==id);delete acct().programs[id];delete acct().field[id];SEL_ROBOT=null;save();renderRobotsList();document.getElementById('robotEditor').innerHTML=`<div class="empty-hint"><div class="big">🤖</div><div class="txt">Select a robot to edit</div></div>`;}
@@ -1650,6 +1698,27 @@ function resolveChip(player){
     if(result) return result;
   }
   return CHIPS[0];
+}
+
+// resolveChipLive — re-reads the CURRENT prog item and evaluates IF conditions live
+// Does NOT advance progIdx. Used every movement tick so robots react to changing conditions.
+function resolveChipLive(player){
+  if(!player.prog||!player.prog.length) return null;
+  const item = player.prog[Math.max(0,(player.progIdx-1)) % Math.max(1,player.prog.length)];
+  if(!item) return null;
+  function resolveItem(it){
+    if(!it) return null;
+    if(typeof it==='string') return CHIPS.find(c=>c.id===it)||null;
+    if(it.type==='chip')     return CHIPS.find(c=>c.id===it.id)||null;
+    if(it.type==='shoot'||it.type==='goal_run') return player.lastChip||null;
+    if(it.type==='if'||it.then!==undefined){
+      const branch=evalCond(it.cond||'random',player)?(it.then||[]):(it.else||[]);
+      for(const sub of branch){const r=resolveItem(sub);if(r)return r;}
+      return null;
+    }
+    return null;
+  }
+  return resolveItem(item);
 }
 
 function evalCond(cond,player){
@@ -2302,8 +2371,10 @@ function tickMatch(){
       p.chipTimer=Math.max(20,90-((p.robot.spd||5)*6))+Math.floor(Math.random()*30);
       p.lastChip=resolveChip(p);
     }
+    // Re-evaluate IF conditions every tick so logic blocks respond to live game state
+    p._activeChip = resolveChipLive(p) || p.lastChip || CHIPS[0];
 
-    const chip=p.lastChip||CHIPS[0];
+    const chip=p._activeChip;
     const isHome=true;  // this forEach is home-only
 
     // Directional constants — home attacks LEFT goal (x=0)
